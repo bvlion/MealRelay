@@ -10,9 +10,8 @@ MealRelay は、日常の食事記録をできるだけ操作を増やさずに�
 .
 ├── android/   # Android アプリ関連資産
 ├── backend/   # Backend 関連資産
-├── ml/        # ML / model-related assets
 ├── AGENTS.md  # リポジトリ全体の開発・運用ルール
 └── README.md
 ```
 
-各ディレクトリの詳細は、それぞれの README を参照してください。現時点で Android、Backend、ML / model-related assets の具体的な技術選定や詳細構成は固定しません。後続 Issue の要件に基づき、必要になった段階で決定します。
+各ディレクトリの詳細は、それぞれの README を参照してください。現時点で Android と Backend の具体的な技術選定や詳細構成は固定しません。food / non-food 判定用モデルと関連資産の配置・管理方式は [Issue #4](https://github.com/bvlion/MealRelay/issues/4) で決定します。
