@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.bvlion.mealrelay"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.bvlion.mealrelay"
-        minSdk = 26
-        targetSdk = 36
+        minSdk = 37
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
     }

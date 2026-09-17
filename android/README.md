@@ -4,14 +4,17 @@ MealRelay の Android アプリです。後続 Issue で写真検知や手動入
 
 現時点ではランチャー Activity を含まず、通常のメイン画面や機能 UI はありません。
 
+対象環境は Android 17 です。Android 17 より古い OS には対応しません。
+`minSdk`、`compileSdk`、`targetSdk` はすべて 37 です。
+
 ## 構成
 
 - `app/`: Android アプリケーションモジュール
 
 ## 必要な環境
 
-- JDK 17 以上
-- Android SDK Platform 36
+- JDK 25
+- Android SDK Platform 37
 
 ## 検証
 
