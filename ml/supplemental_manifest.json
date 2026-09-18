@@ -1,0 +1,4072 @@
+[
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3c57719c2ac663b8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3c57719c2ac663b8.jpg",
+    "file": "open_images_screen_3c57719c2ac663b8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3d2580d59f499cce",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3d2580d59f499cce.jpg",
+    "file": "open_images_screen_3d2580d59f499cce.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3e7fbf654acfa213",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3e7fbf654acfa213.jpg",
+    "file": "open_images_screen_3e7fbf654acfa213.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3fcd4d7ee5c3b03d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3fcd4d7ee5c3b03d.jpg",
+    "file": "open_images_screen_3fcd4d7ee5c3b03d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3fe67f409f9db441",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3fe67f409f9db441.jpg",
+    "file": "open_images_screen_3fe67f409f9db441.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "3fefc0feb476ed7e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/3fefc0feb476ed7e.jpg",
+    "file": "open_images_screen_3fefc0feb476ed7e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "403656193dc35cad",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/403656193dc35cad.jpg",
+    "file": "open_images_screen_403656193dc35cad.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "40c3540c8c703e75",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/40c3540c8c703e75.jpg",
+    "file": "open_images_screen_40c3540c8c703e75.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4342a7037ea1bdea",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4342a7037ea1bdea.jpg",
+    "file": "open_images_screen_4342a7037ea1bdea.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "435d906eb2bbc878",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/435d906eb2bbc878.jpg",
+    "file": "open_images_screen_435d906eb2bbc878.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "437bf266bb77b9da",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/437bf266bb77b9da.jpg",
+    "file": "open_images_screen_437bf266bb77b9da.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4427b53f2c6a7d7d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4427b53f2c6a7d7d.jpg",
+    "file": "open_images_screen_4427b53f2c6a7d7d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "45156879c5dac37d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/45156879c5dac37d.jpg",
+    "file": "open_images_screen_45156879c5dac37d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "45a98c6eb828a0c9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/45a98c6eb828a0c9.jpg",
+    "file": "open_images_screen_45a98c6eb828a0c9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "45de55405fcf44e5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/45de55405fcf44e5.jpg",
+    "file": "open_images_screen_45de55405fcf44e5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "46afaf945caee54c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/46afaf945caee54c.jpg",
+    "file": "open_images_screen_46afaf945caee54c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "46b3ee69cede9f7c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/46b3ee69cede9f7c.jpg",
+    "file": "open_images_screen_46b3ee69cede9f7c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "48267a57b80319f7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/48267a57b80319f7.jpg",
+    "file": "open_images_screen_48267a57b80319f7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "483ade136f9e676d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/483ade136f9e676d.jpg",
+    "file": "open_images_screen_483ade136f9e676d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "496f2bb90818bbb2",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/496f2bb90818bbb2.jpg",
+    "file": "open_images_screen_496f2bb90818bbb2.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4afce4e856a68aed",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4afce4e856a68aed.jpg",
+    "file": "open_images_screen_4afce4e856a68aed.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4bd22ced20a97685",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4bd22ced20a97685.jpg",
+    "file": "open_images_screen_4bd22ced20a97685.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4c255e74648107e7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4c255e74648107e7.jpg",
+    "file": "open_images_screen_4c255e74648107e7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4e0277825c80fed8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4e0277825c80fed8.jpg",
+    "file": "open_images_screen_4e0277825c80fed8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "4fb125ec39f2f747",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/4fb125ec39f2f747.jpg",
+    "file": "open_images_screen_4fb125ec39f2f747.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "50cf0e2640533c1b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/50cf0e2640533c1b.jpg",
+    "file": "open_images_screen_50cf0e2640533c1b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5185966a8046f472",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5185966a8046f472.jpg",
+    "file": "open_images_screen_5185966a8046f472.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "55709f00b158ee38",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/55709f00b158ee38.jpg",
+    "file": "open_images_screen_55709f00b158ee38.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "55de29cb9397635f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/55de29cb9397635f.jpg",
+    "file": "open_images_screen_55de29cb9397635f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "56fcb95d0e8bce2b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/56fcb95d0e8bce2b.jpg",
+    "file": "open_images_screen_56fcb95d0e8bce2b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5825bc5eb83d4152",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5825bc5eb83d4152.jpg",
+    "file": "open_images_screen_5825bc5eb83d4152.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "595adc227d811554",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/595adc227d811554.jpg",
+    "file": "open_images_screen_595adc227d811554.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "59730ff54cda6627",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/59730ff54cda6627.jpg",
+    "file": "open_images_screen_59730ff54cda6627.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "597dbb8cccfd1b7b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/597dbb8cccfd1b7b.jpg",
+    "file": "open_images_screen_597dbb8cccfd1b7b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5bcc87c13b42e844",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5bcc87c13b42e844.jpg",
+    "file": "open_images_screen_5bcc87c13b42e844.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5c3b156a7de138d8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5c3b156a7de138d8.jpg",
+    "file": "open_images_screen_5c3b156a7de138d8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5deb90a9218564d0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5deb90a9218564d0.jpg",
+    "file": "open_images_screen_5deb90a9218564d0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "5f0a77d72e4ee1bf",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/5f0a77d72e4ee1bf.jpg",
+    "file": "open_images_screen_5f0a77d72e4ee1bf.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "61ad317ddcfdb148",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/61ad317ddcfdb148.jpg",
+    "file": "open_images_screen_61ad317ddcfdb148.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6261fb5e6bc208be",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6261fb5e6bc208be.jpg",
+    "file": "open_images_screen_6261fb5e6bc208be.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "63aae2fcaccefba7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/63aae2fcaccefba7.jpg",
+    "file": "open_images_screen_63aae2fcaccefba7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "66235d2030328e03",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/66235d2030328e03.jpg",
+    "file": "open_images_screen_66235d2030328e03.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "66771a4870c324f9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/66771a4870c324f9.jpg",
+    "file": "open_images_screen_66771a4870c324f9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "695b4fc14d56e32c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/695b4fc14d56e32c.jpg",
+    "file": "open_images_screen_695b4fc14d56e32c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6ab55d63ac6708e2",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6ab55d63ac6708e2.jpg",
+    "file": "open_images_screen_6ab55d63ac6708e2.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6bf467287bbb6e8b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6bf467287bbb6e8b.jpg",
+    "file": "open_images_screen_6bf467287bbb6e8b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6c905e3fd7aefe1b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6c905e3fd7aefe1b.jpg",
+    "file": "open_images_screen_6c905e3fd7aefe1b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6cb95fd90d7c2bac",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6cb95fd90d7c2bac.jpg",
+    "file": "open_images_screen_6cb95fd90d7c2bac.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6e2ea48a2474adf1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6e2ea48a2474adf1.jpg",
+    "file": "open_images_screen_6e2ea48a2474adf1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "6f7d324c359e42bd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/6f7d324c359e42bd.jpg",
+    "file": "open_images_screen_6f7d324c359e42bd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "701f228e7772487f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/701f228e7772487f.jpg",
+    "file": "open_images_screen_701f228e7772487f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "70f4fa357528a5d3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/70f4fa357528a5d3.jpg",
+    "file": "open_images_screen_70f4fa357528a5d3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "71037fe3d8da73aa",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/71037fe3d8da73aa.jpg",
+    "file": "open_images_screen_71037fe3d8da73aa.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "71631731c0d63e45",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/71631731c0d63e45.jpg",
+    "file": "open_images_screen_71631731c0d63e45.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "71899c2ad913de39",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/71899c2ad913de39.jpg",
+    "file": "open_images_screen_71899c2ad913de39.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7408fef212a5d3bc",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7408fef212a5d3bc.jpg",
+    "file": "open_images_screen_7408fef212a5d3bc.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "766de0978874e4ad",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/766de0978874e4ad.jpg",
+    "file": "open_images_screen_766de0978874e4ad.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "769196d5b7d25896",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/769196d5b7d25896.jpg",
+    "file": "open_images_screen_769196d5b7d25896.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7716a0fa54a57081",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7716a0fa54a57081.jpg",
+    "file": "open_images_screen_7716a0fa54a57081.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7825f9ab4054ad3d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7825f9ab4054ad3d.jpg",
+    "file": "open_images_screen_7825f9ab4054ad3d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7b7d0e5ff5823429",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7b7d0e5ff5823429.jpg",
+    "file": "open_images_screen_7b7d0e5ff5823429.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7c485a7dfe958934",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7c485a7dfe958934.jpg",
+    "file": "open_images_screen_7c485a7dfe958934.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7dbaee3401e010fb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7dbaee3401e010fb.jpg",
+    "file": "open_images_screen_7dbaee3401e010fb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7dd9e8efa288e7cd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7dd9e8efa288e7cd.jpg",
+    "file": "open_images_screen_7dd9e8efa288e7cd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7e197496d43073de",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7e197496d43073de.jpg",
+    "file": "open_images_screen_7e197496d43073de.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "7f23e1de7320aebd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/7f23e1de7320aebd.jpg",
+    "file": "open_images_screen_7f23e1de7320aebd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "808a6b0e7b762db5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/808a6b0e7b762db5.jpg",
+    "file": "open_images_screen_808a6b0e7b762db5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "821ef4fb4ecc71cf",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/821ef4fb4ecc71cf.jpg",
+    "file": "open_images_screen_821ef4fb4ecc71cf.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "82e651da7cf386ae",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/82e651da7cf386ae.jpg",
+    "file": "open_images_screen_82e651da7cf386ae.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "83e99dc9e2f8a70c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/83e99dc9e2f8a70c.jpg",
+    "file": "open_images_screen_83e99dc9e2f8a70c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "843b65da2d2f213e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/843b65da2d2f213e.jpg",
+    "file": "open_images_screen_843b65da2d2f213e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "84603b2dba0e4eb3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/84603b2dba0e4eb3.jpg",
+    "file": "open_images_screen_84603b2dba0e4eb3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "84a1048891bb636c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/84a1048891bb636c.jpg",
+    "file": "open_images_screen_84a1048891bb636c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8545bd276f287ca7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8545bd276f287ca7.jpg",
+    "file": "open_images_screen_8545bd276f287ca7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8571e8c8ba740f2c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8571e8c8ba740f2c.jpg",
+    "file": "open_images_screen_8571e8c8ba740f2c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "85788b2e228e3deb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/85788b2e228e3deb.jpg",
+    "file": "open_images_screen_85788b2e228e3deb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "857b6398458a0474",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/857b6398458a0474.jpg",
+    "file": "open_images_screen_857b6398458a0474.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "86760f63da399e07",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/86760f63da399e07.jpg",
+    "file": "open_images_screen_86760f63da399e07.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "87b6e15d87a7d5da",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/87b6e15d87a7d5da.jpg",
+    "file": "open_images_screen_87b6e15d87a7d5da.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "88d2508b4fba0184",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/88d2508b4fba0184.jpg",
+    "file": "open_images_screen_88d2508b4fba0184.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8af0b106463da353",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8af0b106463da353.jpg",
+    "file": "open_images_screen_8af0b106463da353.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8b031007bf62947a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8b031007bf62947a.jpg",
+    "file": "open_images_screen_8b031007bf62947a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8b7fee1942ea8849",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8b7fee1942ea8849.jpg",
+    "file": "open_images_screen_8b7fee1942ea8849.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8d0b1e22cc02c96a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8d0b1e22cc02c96a.jpg",
+    "file": "open_images_screen_8d0b1e22cc02c96a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8deb491ab16fe49b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8deb491ab16fe49b.jpg",
+    "file": "open_images_screen_8deb491ab16fe49b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8dfbdde8cf560c2e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8dfbdde8cf560c2e.jpg",
+    "file": "open_images_screen_8dfbdde8cf560c2e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "8e607578e06c8d63",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/8e607578e06c8d63.jpg",
+    "file": "open_images_screen_8e607578e06c8d63.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "9062afa58c7af78a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/9062afa58c7af78a.jpg",
+    "file": "open_images_screen_9062afa58c7af78a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "90ed579e04c8b872",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/90ed579e04c8b872.jpg",
+    "file": "open_images_screen_90ed579e04c8b872.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "91050cbd94f33e90",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/91050cbd94f33e90.jpg",
+    "file": "open_images_screen_91050cbd94f33e90.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "9179c65d79619957",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/9179c65d79619957.jpg",
+    "file": "open_images_screen_9179c65d79619957.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "945782e585e04e0e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/945782e585e04e0e.jpg",
+    "file": "open_images_screen_945782e585e04e0e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "95888085645ae346",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/95888085645ae346.jpg",
+    "file": "open_images_screen_95888085645ae346.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "964093a385a78af5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/964093a385a78af5.jpg",
+    "file": "open_images_screen_964093a385a78af5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "969d53d50722a485",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/969d53d50722a485.jpg",
+    "file": "open_images_screen_969d53d50722a485.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "96dac0044fbddc36",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/96dac0044fbddc36.jpg",
+    "file": "open_images_screen_96dac0044fbddc36.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "98c8c856835c9c4e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/98c8c856835c9c4e.jpg",
+    "file": "open_images_screen_98c8c856835c9c4e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "98f25c64461ba4a2",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/98f25c64461ba4a2.jpg",
+    "file": "open_images_screen_98f25c64461ba4a2.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "999aa811fa77a9fa",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/999aa811fa77a9fa.jpg",
+    "file": "open_images_screen_999aa811fa77a9fa.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "screen",
+    "split": "training",
+    "image_id": "99a5f2675d442461",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/99a5f2675d442461.jpg",
+    "file": "open_images_screen_99a5f2675d442461.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "0e481ee0c6655eb1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0e481ee0c6655eb1.jpg",
+    "file": "open_images_beverage_0e481ee0c6655eb1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "0e72ed08c6f28d38",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0e72ed08c6f28d38.jpg",
+    "file": "open_images_beverage_0e72ed08c6f28d38.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "0f65b1edbacf6563",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0f65b1edbacf6563.jpg",
+    "file": "open_images_beverage_0f65b1edbacf6563.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "109856ab36a1f13d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/109856ab36a1f13d.jpg",
+    "file": "open_images_beverage_109856ab36a1f13d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "10dc868dcca25738",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/10dc868dcca25738.jpg",
+    "file": "open_images_beverage_10dc868dcca25738.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "10fd5df6c15ddcad",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/10fd5df6c15ddcad.jpg",
+    "file": "open_images_beverage_10fd5df6c15ddcad.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "116cb9c709ca88e7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/116cb9c709ca88e7.jpg",
+    "file": "open_images_beverage_116cb9c709ca88e7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1172ad179f7d27c6",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1172ad179f7d27c6.jpg",
+    "file": "open_images_beverage_1172ad179f7d27c6.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "119c4ed65bb2bc24",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/119c4ed65bb2bc24.jpg",
+    "file": "open_images_beverage_119c4ed65bb2bc24.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "11c41a8d4373f4cf",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/11c41a8d4373f4cf.jpg",
+    "file": "open_images_beverage_11c41a8d4373f4cf.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "11e636d22f2e9bd4",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/11e636d22f2e9bd4.jpg",
+    "file": "open_images_beverage_11e636d22f2e9bd4.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "11f411d10708dbb0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/11f411d10708dbb0.jpg",
+    "file": "open_images_beverage_11f411d10708dbb0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "120d233407f1d14c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/120d233407f1d14c.jpg",
+    "file": "open_images_beverage_120d233407f1d14c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "12fda97ed0de705d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/12fda97ed0de705d.jpg",
+    "file": "open_images_beverage_12fda97ed0de705d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "13b6289aef7a24b7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/13b6289aef7a24b7.jpg",
+    "file": "open_images_beverage_13b6289aef7a24b7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "13d3f1e5893726a2",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/13d3f1e5893726a2.jpg",
+    "file": "open_images_beverage_13d3f1e5893726a2.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "141a942ad44d3080",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/141a942ad44d3080.jpg",
+    "file": "open_images_beverage_141a942ad44d3080.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1459f98b6a04c90e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1459f98b6a04c90e.jpg",
+    "file": "open_images_beverage_1459f98b6a04c90e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "146888b1fc610dd5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/146888b1fc610dd5.jpg",
+    "file": "open_images_beverage_146888b1fc610dd5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "14f3cf0bf538d81c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/14f3cf0bf538d81c.jpg",
+    "file": "open_images_beverage_14f3cf0bf538d81c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "152adeed60a8a967",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/152adeed60a8a967.jpg",
+    "file": "open_images_beverage_152adeed60a8a967.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "155600e5f1221f8c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/155600e5f1221f8c.jpg",
+    "file": "open_images_beverage_155600e5f1221f8c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "15c473ae47357d22",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/15c473ae47357d22.jpg",
+    "file": "open_images_beverage_15c473ae47357d22.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "15cc8c6a07fd3f0f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/15cc8c6a07fd3f0f.jpg",
+    "file": "open_images_beverage_15cc8c6a07fd3f0f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "15d983fc5f9af257",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/15d983fc5f9af257.jpg",
+    "file": "open_images_beverage_15d983fc5f9af257.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1649aecb5b6ad8cb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1649aecb5b6ad8cb.jpg",
+    "file": "open_images_beverage_1649aecb5b6ad8cb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1688dc2f56b3724a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1688dc2f56b3724a.jpg",
+    "file": "open_images_beverage_1688dc2f56b3724a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "16f097c5d6407f7d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/16f097c5d6407f7d.jpg",
+    "file": "open_images_beverage_16f097c5d6407f7d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "17135174fbbf3301",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/17135174fbbf3301.jpg",
+    "file": "open_images_beverage_17135174fbbf3301.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "17416c467792e70f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/17416c467792e70f.jpg",
+    "file": "open_images_beverage_17416c467792e70f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "17725a11db6bcfbb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/17725a11db6bcfbb.jpg",
+    "file": "open_images_beverage_17725a11db6bcfbb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "182c1f2bfa4b4280",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/182c1f2bfa4b4280.jpg",
+    "file": "open_images_beverage_182c1f2bfa4b4280.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "194811f0301a267a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/194811f0301a267a.jpg",
+    "file": "open_images_beverage_194811f0301a267a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "19611dcf54decdef",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/19611dcf54decdef.jpg",
+    "file": "open_images_beverage_19611dcf54decdef.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "19a9c18bb631cf3f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/19a9c18bb631cf3f.jpg",
+    "file": "open_images_beverage_19a9c18bb631cf3f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "19ac28ec1f64321b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/19ac28ec1f64321b.jpg",
+    "file": "open_images_beverage_19ac28ec1f64321b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "19b8808281efb372",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/19b8808281efb372.jpg",
+    "file": "open_images_beverage_19b8808281efb372.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "19c7c0fa9e3710e5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/19c7c0fa9e3710e5.jpg",
+    "file": "open_images_beverage_19c7c0fa9e3710e5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1a04c113301b09f8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1a04c113301b09f8.jpg",
+    "file": "open_images_beverage_1a04c113301b09f8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1a9d5f7cc9a88a1d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1a9d5f7cc9a88a1d.jpg",
+    "file": "open_images_beverage_1a9d5f7cc9a88a1d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1aa3acb3e0b57865",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1aa3acb3e0b57865.jpg",
+    "file": "open_images_beverage_1aa3acb3e0b57865.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1b2caa903ca364a0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1b2caa903ca364a0.jpg",
+    "file": "open_images_beverage_1b2caa903ca364a0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1b55f9174167a8d3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1b55f9174167a8d3.jpg",
+    "file": "open_images_beverage_1b55f9174167a8d3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1b616a9c4c418091",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1b616a9c4c418091.jpg",
+    "file": "open_images_beverage_1b616a9c4c418091.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1b75ec99a2b81fa6",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1b75ec99a2b81fa6.jpg",
+    "file": "open_images_beverage_1b75ec99a2b81fa6.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1bcc3a294ca5d0fd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1bcc3a294ca5d0fd.jpg",
+    "file": "open_images_beverage_1bcc3a294ca5d0fd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1bce4b55e194b4e1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1bce4b55e194b4e1.jpg",
+    "file": "open_images_beverage_1bce4b55e194b4e1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1be2707882bb962e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1be2707882bb962e.jpg",
+    "file": "open_images_beverage_1be2707882bb962e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1ca08f385715627b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1ca08f385715627b.jpg",
+    "file": "open_images_beverage_1ca08f385715627b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1ccbc3fea331b255",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1ccbc3fea331b255.jpg",
+    "file": "open_images_beverage_1ccbc3fea331b255.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1de0d03ace1248c5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1de0d03ace1248c5.jpg",
+    "file": "open_images_beverage_1de0d03ace1248c5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "1e6104d5518cb3f9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/1e6104d5518cb3f9.jpg",
+    "file": "open_images_beverage_1e6104d5518cb3f9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "202d7af95dba5dfb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/202d7af95dba5dfb.jpg",
+    "file": "open_images_beverage_202d7af95dba5dfb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "209d29bb257749e1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/209d29bb257749e1.jpg",
+    "file": "open_images_beverage_209d29bb257749e1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "20bc3793dd47fb89",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/20bc3793dd47fb89.jpg",
+    "file": "open_images_beverage_20bc3793dd47fb89.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "20d46de74f618aef",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/20d46de74f618aef.jpg",
+    "file": "open_images_beverage_20d46de74f618aef.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "21656bca9d83702f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/21656bca9d83702f.jpg",
+    "file": "open_images_beverage_21656bca9d83702f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2198847783e240e7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2198847783e240e7.jpg",
+    "file": "open_images_beverage_2198847783e240e7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "21d68297ff292660",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/21d68297ff292660.jpg",
+    "file": "open_images_beverage_21d68297ff292660.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "220dd0459513f089",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/220dd0459513f089.jpg",
+    "file": "open_images_beverage_220dd0459513f089.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2217a3fb6f66fdd1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2217a3fb6f66fdd1.jpg",
+    "file": "open_images_beverage_2217a3fb6f66fdd1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "227baf99c9e2c2b8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/227baf99c9e2c2b8.jpg",
+    "file": "open_images_beverage_227baf99c9e2c2b8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "23552f7871a7cc04",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/23552f7871a7cc04.jpg",
+    "file": "open_images_beverage_23552f7871a7cc04.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "238dcccb010a214c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/238dcccb010a214c.jpg",
+    "file": "open_images_beverage_238dcccb010a214c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "23deeb38b5097d22",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/23deeb38b5097d22.jpg",
+    "file": "open_images_beverage_23deeb38b5097d22.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "240290e2f775af42",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/240290e2f775af42.jpg",
+    "file": "open_images_beverage_240290e2f775af42.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "24766458a9f83849",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/24766458a9f83849.jpg",
+    "file": "open_images_beverage_24766458a9f83849.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "24e7a124ecb7ef0f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/24e7a124ecb7ef0f.jpg",
+    "file": "open_images_beverage_24e7a124ecb7ef0f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "24f774992bd5e264",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/24f774992bd5e264.jpg",
+    "file": "open_images_beverage_24f774992bd5e264.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2518fee9f6e3ff5f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2518fee9f6e3ff5f.jpg",
+    "file": "open_images_beverage_2518fee9f6e3ff5f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "255fc93b4b29d961",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/255fc93b4b29d961.jpg",
+    "file": "open_images_beverage_255fc93b4b29d961.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "25883211f830e4c9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/25883211f830e4c9.jpg",
+    "file": "open_images_beverage_25883211f830e4c9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "25abf35bf511fe1c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/25abf35bf511fe1c.jpg",
+    "file": "open_images_beverage_25abf35bf511fe1c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "25d107f1590c1772",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/25d107f1590c1772.jpg",
+    "file": "open_images_beverage_25d107f1590c1772.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "26a214bf0adfd026",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/26a214bf0adfd026.jpg",
+    "file": "open_images_beverage_26a214bf0adfd026.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "26d71e58792aa12c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/26d71e58792aa12c.jpg",
+    "file": "open_images_beverage_26d71e58792aa12c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "270ce982277b7d23",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/270ce982277b7d23.jpg",
+    "file": "open_images_beverage_270ce982277b7d23.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2714ab153133c64d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2714ab153133c64d.jpg",
+    "file": "open_images_beverage_2714ab153133c64d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "282af40d0a1bf7c8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/282af40d0a1bf7c8.jpg",
+    "file": "open_images_beverage_282af40d0a1bf7c8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "282c7390572c422a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/282c7390572c422a.jpg",
+    "file": "open_images_beverage_282c7390572c422a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "28623b1ffc32d7d3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/28623b1ffc32d7d3.jpg",
+    "file": "open_images_beverage_28623b1ffc32d7d3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "286de7c921469cec",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/286de7c921469cec.jpg",
+    "file": "open_images_beverage_286de7c921469cec.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "291f50e909f7872e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/291f50e909f7872e.jpg",
+    "file": "open_images_beverage_291f50e909f7872e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "295a97832a763f86",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/295a97832a763f86.jpg",
+    "file": "open_images_beverage_295a97832a763f86.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2979602627e97d74",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2979602627e97d74.jpg",
+    "file": "open_images_beverage_2979602627e97d74.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2a4a39c3e0a2df56",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2a4a39c3e0a2df56.jpg",
+    "file": "open_images_beverage_2a4a39c3e0a2df56.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2a4ad4d57dcfa3a4",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2a4ad4d57dcfa3a4.jpg",
+    "file": "open_images_beverage_2a4ad4d57dcfa3a4.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2a548bd4b973dca8",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2a548bd4b973dca8.jpg",
+    "file": "open_images_beverage_2a548bd4b973dca8.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2afd33acdae1db65",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2afd33acdae1db65.jpg",
+    "file": "open_images_beverage_2afd33acdae1db65.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2b0d24e40261ed1a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2b0d24e40261ed1a.jpg",
+    "file": "open_images_beverage_2b0d24e40261ed1a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2b279228e144bfa0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2b279228e144bfa0.jpg",
+    "file": "open_images_beverage_2b279228e144bfa0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2b330e67fa502387",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2b330e67fa502387.jpg",
+    "file": "open_images_beverage_2b330e67fa502387.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2c7b2578fa6e8b28",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2c7b2578fa6e8b28.jpg",
+    "file": "open_images_beverage_2c7b2578fa6e8b28.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2c87374e8d2f3a34",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2c87374e8d2f3a34.jpg",
+    "file": "open_images_beverage_2c87374e8d2f3a34.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2ca8eaae23146daf",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2ca8eaae23146daf.jpg",
+    "file": "open_images_beverage_2ca8eaae23146daf.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2ca98d21a076b2ce",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2ca98d21a076b2ce.jpg",
+    "file": "open_images_beverage_2ca98d21a076b2ce.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2da8bf70da06147e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2da8bf70da06147e.jpg",
+    "file": "open_images_beverage_2da8bf70da06147e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2db0a13fe42bd957",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2db0a13fe42bd957.jpg",
+    "file": "open_images_beverage_2db0a13fe42bd957.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2df8955be6cc820d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2df8955be6cc820d.jpg",
+    "file": "open_images_beverage_2df8955be6cc820d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "beverage",
+    "split": "training",
+    "image_id": "2e01648889a0c0ba",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/2e01648889a0c0ba.jpg",
+    "file": "open_images_beverage_2e01648889a0c0ba.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "047e855c8b295d93",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/047e855c8b295d93.jpg",
+    "file": "open_images_food_047e855c8b295d93.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "04affe6d329fab8c",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/04affe6d329fab8c.jpg",
+    "file": "open_images_food_04affe6d329fab8c.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "04c885f01aba9de1",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/04c885f01aba9de1.jpg",
+    "file": "open_images_food_04c885f01aba9de1.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "04e45a329032c784",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/04e45a329032c784.jpg",
+    "file": "open_images_food_04e45a329032c784.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "04f943d73c5fc12f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/04f943d73c5fc12f.jpg",
+    "file": "open_images_food_04f943d73c5fc12f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0501fd5de7111b6e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0501fd5de7111b6e.jpg",
+    "file": "open_images_food_0501fd5de7111b6e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0509b9bac0ba306b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0509b9bac0ba306b.jpg",
+    "file": "open_images_food_0509b9bac0ba306b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0517736a244ca1a0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0517736a244ca1a0.jpg",
+    "file": "open_images_food_0517736a244ca1a0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "051ea30a7abae758",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/051ea30a7abae758.jpg",
+    "file": "open_images_food_051ea30a7abae758.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0543ad6f9b0f0927",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0543ad6f9b0f0927.jpg",
+    "file": "open_images_food_0543ad6f9b0f0927.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0550b879165d4392",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0550b879165d4392.jpg",
+    "file": "open_images_food_0550b879165d4392.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "056b823b35b47079",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/056b823b35b47079.jpg",
+    "file": "open_images_food_056b823b35b47079.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "05707a3b4f9a42a0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/05707a3b4f9a42a0.jpg",
+    "file": "open_images_food_05707a3b4f9a42a0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0573cd6c1cfb32e0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0573cd6c1cfb32e0.jpg",
+    "file": "open_images_food_0573cd6c1cfb32e0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "057d0e3dc7e56806",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/057d0e3dc7e56806.jpg",
+    "file": "open_images_food_057d0e3dc7e56806.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "057d937b39a946e5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/057d937b39a946e5.jpg",
+    "file": "open_images_food_057d937b39a946e5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "059637321da78deb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/059637321da78deb.jpg",
+    "file": "open_images_food_059637321da78deb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "059bbdbdb843af6a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/059bbdbdb843af6a.jpg",
+    "file": "open_images_food_059bbdbdb843af6a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "05bacbb71e1a8184",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/05bacbb71e1a8184.jpg",
+    "file": "open_images_food_05bacbb71e1a8184.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "05c0ea7641852df3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/05c0ea7641852df3.jpg",
+    "file": "open_images_food_05c0ea7641852df3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "05f9cbbf2dcc1d05",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/05f9cbbf2dcc1d05.jpg",
+    "file": "open_images_food_05f9cbbf2dcc1d05.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "06047edced02a386",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/06047edced02a386.jpg",
+    "file": "open_images_food_06047edced02a386.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0607df9b23dfdb56",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0607df9b23dfdb56.jpg",
+    "file": "open_images_food_0607df9b23dfdb56.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "060837af11d323b9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/060837af11d323b9.jpg",
+    "file": "open_images_food_060837af11d323b9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0666a349c3bac264",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0666a349c3bac264.jpg",
+    "file": "open_images_food_0666a349c3bac264.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "069adef4d348852e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/069adef4d348852e.jpg",
+    "file": "open_images_food_069adef4d348852e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "06a09479d705ec11",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/06a09479d705ec11.jpg",
+    "file": "open_images_food_06a09479d705ec11.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "06c8ed604ebd3b17",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/06c8ed604ebd3b17.jpg",
+    "file": "open_images_food_06c8ed604ebd3b17.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "06ec1fd5e06fbf28",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/06ec1fd5e06fbf28.jpg",
+    "file": "open_images_food_06ec1fd5e06fbf28.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "06f1422ed59ff8c9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/06f1422ed59ff8c9.jpg",
+    "file": "open_images_food_06f1422ed59ff8c9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0701ff1789905309",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0701ff1789905309.jpg",
+    "file": "open_images_food_0701ff1789905309.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0711b793f4a52abc",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0711b793f4a52abc.jpg",
+    "file": "open_images_food_0711b793f4a52abc.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "07147ae6229840c3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/07147ae6229840c3.jpg",
+    "file": "open_images_food_07147ae6229840c3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "071af503f95aee59",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/071af503f95aee59.jpg",
+    "file": "open_images_food_071af503f95aee59.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0731fcf20f5aceea",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0731fcf20f5aceea.jpg",
+    "file": "open_images_food_0731fcf20f5aceea.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "073656ee0dc47e82",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/073656ee0dc47e82.jpg",
+    "file": "open_images_food_073656ee0dc47e82.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "073c0119516166a3",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/073c0119516166a3.jpg",
+    "file": "open_images_food_073c0119516166a3.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0777341d26b4c994",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0777341d26b4c994.jpg",
+    "file": "open_images_food_0777341d26b4c994.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0798321a39c00de9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0798321a39c00de9.jpg",
+    "file": "open_images_food_0798321a39c00de9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "079d870c5c5a2b71",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/079d870c5c5a2b71.jpg",
+    "file": "open_images_food_079d870c5c5a2b71.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "07c9baa2741e5b90",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/07c9baa2741e5b90.jpg",
+    "file": "open_images_food_07c9baa2741e5b90.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "07d897eacf63e840",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/07d897eacf63e840.jpg",
+    "file": "open_images_food_07d897eacf63e840.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "07e6ca03c01ebd0f",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/07e6ca03c01ebd0f.jpg",
+    "file": "open_images_food_07e6ca03c01ebd0f.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "080329408b96faa0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/080329408b96faa0.jpg",
+    "file": "open_images_food_080329408b96faa0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08053556dc12be2d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08053556dc12be2d.jpg",
+    "file": "open_images_food_08053556dc12be2d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08109c14228e33fb",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08109c14228e33fb.jpg",
+    "file": "open_images_food_08109c14228e33fb.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0816c7911a0ce7e7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0816c7911a0ce7e7.jpg",
+    "file": "open_images_food_0816c7911a0ce7e7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "086224b8c3266d3e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/086224b8c3266d3e.jpg",
+    "file": "open_images_food_086224b8c3266d3e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0864de36d6df03db",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0864de36d6df03db.jpg",
+    "file": "open_images_food_0864de36d6df03db.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08663c46028419cc",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08663c46028419cc.jpg",
+    "file": "open_images_food_08663c46028419cc.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "086705ab0bcebaef",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/086705ab0bcebaef.jpg",
+    "file": "open_images_food_086705ab0bcebaef.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0869fc37650cd99e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0869fc37650cd99e.jpg",
+    "file": "open_images_food_0869fc37650cd99e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0872b58c0bcc57a6",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0872b58c0bcc57a6.jpg",
+    "file": "open_images_food_0872b58c0bcc57a6.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "087ad9940a86c7f0",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/087ad9940a86c7f0.jpg",
+    "file": "open_images_food_087ad9940a86c7f0.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "088ed67511cdacb5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/088ed67511cdacb5.jpg",
+    "file": "open_images_food_088ed67511cdacb5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08a47224dca15408",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08a47224dca15408.jpg",
+    "file": "open_images_food_08a47224dca15408.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08b1115942036252",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08b1115942036252.jpg",
+    "file": "open_images_food_08b1115942036252.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08b38afe6c5fa6cc",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08b38afe6c5fa6cc.jpg",
+    "file": "open_images_food_08b38afe6c5fa6cc.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08bc48ffae1a678a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08bc48ffae1a678a.jpg",
+    "file": "open_images_food_08bc48ffae1a678a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08d00efffce1ffae",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08d00efffce1ffae.jpg",
+    "file": "open_images_food_08d00efffce1ffae.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08d3861491d5e1fd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08d3861491d5e1fd.jpg",
+    "file": "open_images_food_08d3861491d5e1fd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "08dd8fcb0c2e9d5d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/08dd8fcb0c2e9d5d.jpg",
+    "file": "open_images_food_08dd8fcb0c2e9d5d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "093d610f36345097",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/093d610f36345097.jpg",
+    "file": "open_images_food_093d610f36345097.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "098a05de8b2bf72e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/098a05de8b2bf72e.jpg",
+    "file": "open_images_food_098a05de8b2bf72e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "099d7d15ed12aebd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/099d7d15ed12aebd.jpg",
+    "file": "open_images_food_099d7d15ed12aebd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "09e6b0c77717cef9",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/09e6b0c77717cef9.jpg",
+    "file": "open_images_food_09e6b0c77717cef9.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a1fd86792e2e454",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a1fd86792e2e454.jpg",
+    "file": "open_images_food_0a1fd86792e2e454.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a23d3f0e7d850f4",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a23d3f0e7d850f4.jpg",
+    "file": "open_images_food_0a23d3f0e7d850f4.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a392d80c905a9df",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a392d80c905a9df.jpg",
+    "file": "open_images_food_0a392d80c905a9df.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a4fa30e1de3dbee",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a4fa30e1de3dbee.jpg",
+    "file": "open_images_food_0a4fa30e1de3dbee.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a5acbdb0191b4f7",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a5acbdb0191b4f7.jpg",
+    "file": "open_images_food_0a5acbdb0191b4f7.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a73064c82730ff5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a73064c82730ff5.jpg",
+    "file": "open_images_food_0a73064c82730ff5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a7636cb70064722",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a7636cb70064722.jpg",
+    "file": "open_images_food_0a7636cb70064722.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a82f0443c940816",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a82f0443c940816.jpg",
+    "file": "open_images_food_0a82f0443c940816.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0a917bbca24cf75d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0a917bbca24cf75d.jpg",
+    "file": "open_images_food_0a917bbca24cf75d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0aa7906158488930",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0aa7906158488930.jpg",
+    "file": "open_images_food_0aa7906158488930.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0aad79bc03364c65",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0aad79bc03364c65.jpg",
+    "file": "open_images_food_0aad79bc03364c65.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0ad0e2422be3445b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0ad0e2422be3445b.jpg",
+    "file": "open_images_food_0ad0e2422be3445b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0aec8075414b7262",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0aec8075414b7262.jpg",
+    "file": "open_images_food_0aec8075414b7262.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b30482b7342b747",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b30482b7342b747.jpg",
+    "file": "open_images_food_0b30482b7342b747.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b45a3bdbaa44c7e",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b45a3bdbaa44c7e.jpg",
+    "file": "open_images_food_0b45a3bdbaa44c7e.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b45ddc2b9b8eb9a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b45ddc2b9b8eb9a.jpg",
+    "file": "open_images_food_0b45ddc2b9b8eb9a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b6227bb06345402",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b6227bb06345402.jpg",
+    "file": "open_images_food_0b6227bb06345402.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b6ef374714ee86b",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b6ef374714ee86b.jpg",
+    "file": "open_images_food_0b6ef374714ee86b.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0b730c49ccf74eae",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0b730c49ccf74eae.jpg",
+    "file": "open_images_food_0b730c49ccf74eae.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0ba8c10a50989360",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0ba8c10a50989360.jpg",
+    "file": "open_images_food_0ba8c10a50989360.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0bb7bd87b4509fcd",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0bb7bd87b4509fcd.jpg",
+    "file": "open_images_food_0bb7bd87b4509fcd.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0bca43c8afa39c75",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0bca43c8afa39c75.jpg",
+    "file": "open_images_food_0bca43c8afa39c75.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0bd94459858954ac",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0bd94459858954ac.jpg",
+    "file": "open_images_food_0bd94459858954ac.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0be9c11f16cf1fbe",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0be9c11f16cf1fbe.jpg",
+    "file": "open_images_food_0be9c11f16cf1fbe.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0bfcd180b1d67f94",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0bfcd180b1d67f94.jpg",
+    "file": "open_images_food_0bfcd180b1d67f94.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c1574422512912a",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c1574422512912a.jpg",
+    "file": "open_images_food_0c1574422512912a.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c2db137ca0d7fc2",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c2db137ca0d7fc2.jpg",
+    "file": "open_images_food_0c2db137ca0d7fc2.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c40a4bdf00c2a48",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c40a4bdf00c2a48.jpg",
+    "file": "open_images_food_0c40a4bdf00c2a48.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c4ad228358c3843",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c4ad228358c3843.jpg",
+    "file": "open_images_food_0c4ad228358c3843.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c5ba9f5d1851c1d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c5ba9f5d1851c1d.jpg",
+    "file": "open_images_food_0c5ba9f5d1851c1d.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c6d43972100a0e5",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c6d43972100a0e5.jpg",
+    "file": "open_images_food_0c6d43972100a0e5.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c8f84c8315e1d50",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c8f84c8315e1d50.jpg",
+    "file": "open_images_food_0c8f84c8315e1d50.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0c97ce20e62e4106",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0c97ce20e62e4106.jpg",
+    "file": "open_images_food_0c97ce20e62e4106.jpg"
+  },
+  {
+    "source": "Open Images V5 validation",
+    "group": "food",
+    "split": "training",
+    "image_id": "0cb00eeadc9bb43d",
+    "url": "https://open-images-dataset.s3.amazonaws.com/validation/0cb00eeadc9bb43d.jpg",
+    "file": "open_images_food_0cb00eeadc9bb43d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:(20251019) Delikatess Schinken-Fleischwurst 01.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:(20251019)_Delikatess_Schinken-Fleischwurst_01.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_526f2be613364d59.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:-365 last supper (28048567303).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:-365_last_supper_(28048567303).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_food_0fd3276b37146af0.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:03-DEC-2022 - KL1846 VIE-AMS (B737-800 - PH-BGA) (03).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:03-DEC-2022_-_KL1846_VIE-AMS_(B737-800_-_PH-BGA)_(03).jpg",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "file": "commons_packaged_food_702d5eb661039294.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:07-NOV-2022 - AF1439 HAJ-CDG (E170 - F-HBXC) (03).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:07-NOV-2022_-_AF1439_HAJ-CDG_(E170_-_F-HBXC)_(03).jpg",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "file": "commons_packaged_food_60572715cf78463e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:10-APR-2022 - AS169 SEA-SJC (B737-900 - N214AK) (03).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:10-APR-2022_-_AS169_SEA-SJC_(B737-900_-_N214AK)_(03).jpg",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "file": "commons_packaged_food_b94a1c32e930d498.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:2021-10-12 13 03 16 A pineapple-shaped chocolate chip cookie from the Honolulu Cookie Company served aboard a Hawaiian Airlines flight from Hawaii to California.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:2021-10-12_13_03_16_A_pineapple-shaped_chocolate_chip_cookie_from_the_Honolulu_Cookie_Company_served_aboard_a_Hawaiian_Airlines_flight_from_Hawaii_to_California.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_792fd5a1dfa27820.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Andrew and Starr Edwards' Bitchin' Sauce (Chipotle).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Andrew_and_Starr_Edwards%27_Bitchin%27_Sauce_(Chipotle).jpg",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_packaged_food_2b4b13465751b304.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Arepas de chócolo, quesito campesino y panes de leche.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Arepas_de_ch%C3%B3colo,_quesito_campesino_y_panes_de_leche.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_food_fb86aee88aa33eba.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Bento walad Aqiqah.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Bento_walad_Aqiqah.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_7c5576193f336db0.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Birthday Cake (7193642040).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Birthday_Cake_(7193642040).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_food_81d90c2031d884b2.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Box Bento dan Boneka Domba.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Box_Bento_dan_Boneka_Domba.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_d158fa7ba0260281.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Box Bento.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Box_Bento.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_4ab51d35feda2686.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Box Karton.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Box_Karton.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_7b0e498be6d4af19.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Catton food stuff and ingredients.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Catton_food_stuff_and_ingredients.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_6e6becc7786154dd.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Coffeebag(black)-250g.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Coffeebag(black)-250g.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_6b79b9a4c4a8b36c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Coffeebag(kraft)-250g.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Coffeebag(kraft)-250g.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_04b83358cd93239d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Coffeebag(white)-250g.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Coffeebag(white)-250g.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_b9745e3a4bc0b973.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Eine Packung Rote Linsen.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Eine_Packung_Rote_Linsen.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_0d3755ccb9fefeb4.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Food in Kharkiv (19).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Food_in_Kharkiv_(19).jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_295892a88abcee51.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Food items considered commodities for government programs such as Commodity Supplemental Food Program.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Food_items_considered_commodities_for_government_programs_such_as_Commodity_Supplemental_Food_Program.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_471c5cf36567a8f8.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Fortune - 1930.02 - 62 - Packaged Steaks, Chops, Shoulder, Lamb Stew.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Fortune_-_1930.02_-_62_-_Packaged_Steaks,_Chops,_Shoulder,_Lamb_Stew.png",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_packaged_food_72a2c35610c0b27c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:Girella biscuit @ Milan (49871165117).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Girella_biscuit_@_Milan_(49871165117).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_food_49211ac09e54ee62.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK KTD 觀塘 Kwun Tong 物華街 Mut Wah Street shop 華豐藥業 Wah Fung Medical Store 2025 N13P 02.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_KTD_%E8%A7%80%E5%A1%98_Kwun_Tong_%E7%89%A9%E8%8F%AF%E8%A1%97_Mut_Wah_Street_shop_%E8%8F%AF%E8%B1%90%E8%97%A5%E6%A5%AD_Wah_Fung_Medical_Store_2025_N13P_02.jpg",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_packaged_food_7d7baa775e262644.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK SYP Sai Ying Pun First Street ParknShop frozen packaged pork ham October 2021 SS2.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_SYP_Sai_Ying_Pun_First_Street_ParknShop_frozen_packaged_pork_ham_October_2021_SS2.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_0616931f3f2e9991.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 新蒲崗 San Po Kong 景福街 King Fuk Street 譽港灣 Mikiki mall 一田百貨超級市場 YATA food Supermarket December 2020 SS2 09.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E6%96%B0%E8%92%B2%E5%B4%97_San_Po_Kong_%E6%99%AF%E7%A6%8F%E8%A1%97_King_Fuk_Street_%E8%AD%BD%E6%B8%AF%E7%81%A3_Mikiki_mall_%E4%B8%80%E7%94%B0%E7%99%BE%E8%B2%A8%E8%B6%85%E7%B4%9A%E5%B8%82%E5%A0%B4_YATA_food_Supermarket_December_2020_SS2_09.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_c21e124bc0d98062.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 聯合道 Junction Road 樂富商場 Lok Fu Place mall UNY Department Store 生活創庫 December 2020 SSG 03.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E8%81%AF%E5%90%88%E9%81%93_Junction_Road_%E6%A8%82%E5%AF%8C%E5%95%86%E5%A0%B4_Lok_Fu_Place_mall_UNY_Department_Store_%E7%94%9F%E6%B4%BB%E5%89%B5%E5%BA%AB_December_2020_SSG_03.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_17b016569d65ad43.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 聯合道 Junction Road 樂富商場 Lok Fu Place mall UNY Department Store 生活創庫 December 2020 SSG 10.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E8%81%AF%E5%90%88%E9%81%93_Junction_Road_%E6%A8%82%E5%AF%8C%E5%95%86%E5%A0%B4_Lok_Fu_Place_mall_UNY_Department_Store_%E7%94%9F%E6%B4%BB%E5%89%B5%E5%BA%AB_December_2020_SSG_10.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_b4441fba470e3c4f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 聯合道 Junction Road 樂富商場 Lok Fu Place mall UNY Department Store 生活創庫 December 2020 SSG 13.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E8%81%AF%E5%90%88%E9%81%93_Junction_Road_%E6%A8%82%E5%AF%8C%E5%95%86%E5%A0%B4_Lok_Fu_Place_mall_UNY_Department_Store_%E7%94%9F%E6%B4%BB%E5%89%B5%E5%BA%AB_December_2020_SSG_13.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_ec9371ee5902d9a7.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 聯合道 Junction Road 樂富商場 Lok Fu Place mall restaurant December 2020 SSG 41.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E8%81%AF%E5%90%88%E9%81%93_Junction_Road_%E6%A8%82%E5%AF%8C%E5%95%86%E5%A0%B4_Lok_Fu_Place_mall_restaurant_December_2020_SSG_41.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_cfb02a2791a8c2e1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "training",
+    "title": "File:HK WTS 聯合道 Junction Road 樂富商場 Lok Fu Place mall 百佳超級市場 ParknShop supermarket December 2020 SSG 17.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_WTS_%E8%81%AF%E5%90%88%E9%81%93_Junction_Road_%E6%A8%82%E5%AF%8C%E5%95%86%E5%A0%B4_Lok_Fu_Place_mall_%E7%99%BE%E4%BD%B3%E8%B6%85%E7%B4%9A%E5%B8%82%E5%A0%B4_ParknShop_supermarket_December_2020_SSG_17.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_24b1976b44d195bd.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 侯王道 Hau Wong Road shop January 2021 SSG 230.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E4%BE%AF%E7%8E%8B%E9%81%93_Hau_Wong_Road_shop_January_2021_SSG_230.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_1e4e664c60cd5870.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 南角道 Nam Kok Road shop January 2021 SSG 07.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%8D%97%E8%A7%92%E9%81%93_Nam_Kok_Road_shop_January_2021_SSG_07.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_222d2d6fe40b785c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 南角道 Nam Kok Road shop January 2021 SSG 11.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%8D%97%E8%A7%92%E9%81%93_Nam_Kok_Road_shop_January_2021_SSG_11.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_a3ca5463d093b8f9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 南角道 Nam Kok Road shop January 2021 SSG 38.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%8D%97%E8%A7%92%E9%81%93_Nam_Kok_Road_shop_January_2021_SSG_38.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_3a1dc98ba7abf71f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 01.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_01.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_ca527c732fb41de6.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 03.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_03.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_5ab660d5345d2e57.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 06.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_06.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_35308a0b131f9540.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 07.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_07.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_db6b46f563807fb5.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 08.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_08.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_90d03ff920c6a064.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 100.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_100.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_8ae709b0bbe06870.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 106.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_106.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_da83276edcd7f6b9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 107.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_107.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_59513eccc27b031e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 108.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_108.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_4fdf594ca604d166.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 11.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_11.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_97537b721df2d2b6.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 110.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_110.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_f6186bb87c237129.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 14.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_14.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_a9d7c8371ded2ccb.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 18.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_18.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_11d4fd674f3d7e6a.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 21.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_21.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_02f56279e237f1fd.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:HK 九龍城 Kln City 城南道 South Wall Road food shop January 2021 SSG 23.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E4%B9%9D%E9%BE%8D%E5%9F%8E_Kln_City_%E5%9F%8E%E5%8D%97%E9%81%93_South_Wall_Road_food_shop_January_2021_SSG_23.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_food_d927d17ce1c18f68.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_food",
+    "split": "evaluation",
+    "title": "File:Higher Taste Happy Hoagie (28652503984).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Higher_Taste_Happy_Hoagie_(28652503984).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_food_2935b937c7361820.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:\"We'll have lots to eat this winter, won't we Mother?\" Grow your own. Can your own - DPLA - 366de2495284c4fe0c37140a05583584.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:%22We%27ll_have_lots_to_eat_this_winter,_won%27t_we_Mother%3F%22_Grow_your_own._Can_your_own_-_DPLA_-_366de2495284c4fe0c37140a05583584.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_0a68e911a2048f63.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:-2022-10-29 Tin Ham display, Morrisons, Cromer.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:-2022-10-29_Tin_Ham_display,_Morrisons,_Cromer.JPG",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_d52b9bd115be852b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:-2022-10-29 Tin meat & pies display, Morrisons, Cromer.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:-2022-10-29_Tin_meat_%26_pies_display,_Morrisons,_Cromer.JPG",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_95efb5cb19ccaf8d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:A person carrying a can of Karo syrup at Bergs Supermarket, circa 1950 (6326800049).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:A_person_carrying_a_can_of_Karo_syrup_at_Bergs_Supermarket,_circa_1950_(6326800049).jpg",
+    "license": "No restrictions",
+    "license_url": "https://www.flickr.com/commons/usage/",
+    "file": "commons_canned_food_64b0dd70bb329018.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:A. Clasificación de los objetos.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:A._Clasificaci%C3%B3n_de_los_objetos.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_b9fe8fd413b10871.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Aardappelsago.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Aardappelsago.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_bc57474709cb547f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Adaptation of canned ramen.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Adaptation_of_canned_ramen.png",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_22aa8dc6f4fa95ae.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Artashat Cannery 03942.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Artashat_Cannery_03942.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_3cbef4c15fffefb1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Back of bretel butter can.webp",
+    "url": "https://commons.wikimedia.org/wiki/File:Back_of_bretel_butter_can.webp",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_canned_food_c7f783680bf539ac.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Ballard biscuits ad The Ladies' home journal (1948) (14580711967) (cropped).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Ballard_biscuits_ad_The_Ladies%27_home_journal_(1948)_(14580711967)_(cropped).jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_eff6067e3452c2d6.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Banks with canned wild plants. Buryatia. Russia.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Banks_with_canned_wild_plants._Buryatia._Russia.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_4eaa0585ef47eafa.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Bauerntag im Freilichtmuseum Roscheider Hof 2016.webm",
+    "url": "https://commons.wikimedia.org/wiki/File:Bauerntag_im_Freilichtmuseum_Roscheider_Hof_2016.webm",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_6aafc5eaacf3e44e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Blank Can.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Blank_Can.png",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_canned_food_2ce44827a092e05a.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Boy scouts Carrying Donated Food.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Boy_scouts_Carrying_Donated_Food.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_cf7f94dad0b992ee.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Broken bed held-up by tin cans.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Broken_bed_held-up_by_tin_cans.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_10d43dd18baba67b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Brotes de bambú enlatados.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Brotes_de_bamb%C3%BA_enlatados.JPG",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_b4fc71aaa08440bd.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:CASTLE OF ST. GEORGE Lisbon Portugal (24643716066).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:CASTLE_OF_ST._GEORGE_Lisbon_Portugal_(24643716066).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_b4f0bd36eff825cb.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Can Tea Ration, powder.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Can_Tea_Ration,_powder.JPG",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_931c0abea62602ba.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Can of peaches.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Can_of_peaches.jpg",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_canned_food_ab8ef491bf221d4f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Can with a white background.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Can_with_a_white_background.png",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_canned_food_93f870a7db7d60d3.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canned black bread.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canned_black_bread.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_da1043bc1e7f00ad.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canned food (Port Lockroy, Antarctica).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canned_food_(Port_Lockroy,_Antarctica).jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_b0527cc4c357083e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canned food on shelves in Naha 2015.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canned_food_on_shelves_in_Naha_2015.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_51da29ca27a0c59d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canned roast pork.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canned_roast_pork.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_f7d4b44018592d0d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canned sarma.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canned_sarma.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_3e8d5ec2de3c6dc7.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:CannedDace.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:CannedDace.JPG",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_985d37baafb92c19.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Canning (6268037124).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canning_(6268037124).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_9aeed8c73107a828.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Cans (10356352865).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cans_(10356352865).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_463094eace40bed7.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Cans (8519852257).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cans_(8519852257).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_8e8efdb58309fe74.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "training",
+    "title": "File:Cans of Bretel butter with a plate of toast.webp",
+    "url": "https://commons.wikimedia.org/wiki/File:Cans_of_Bretel_butter_with_a_plate_of_toast.webp",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_canned_food_e5410933eab220f3.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:CanstructionLogo.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:CanstructionLogo.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_5f4c672bc2e513d9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Canyoucanacan.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Canyoucanacan.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_e1382443e3ecb7c8.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:ChampaignCountyHistoricalMuseum 20080301 4285.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:ChampaignCountyHistoricalMuseum_20080301_4285.jpg",
+    "license": "CC BY-SA 3.0 us",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/us/deed.en",
+    "file": "commons_canned_food_d0bbe286a68ed640.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Christchurch Meat Company Limited Compressed corned mutton, warranted to keep in any climate. Christchurch Press Co Lith, N.Z. 1906-1920?.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Christchurch_Meat_Company_Limited_Compressed_corned_mutton,_warranted_to_keep_in_any_climate._Christchurch_Press_Co_Lith,_N.Z._1906-1920%3F.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_5ca21bdd749db9e2.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Conservas Riestra, La Caeyra, El Carro.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Conservas_Riestra,_La_Caeyra,_El_Carro.png",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_b599d02ae2e891b9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Cooking Dinner ET5A6458 (29836689812).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cooking_Dinner_ET5A6458_(29836689812).jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_836e6e74c5755b6f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Corned-beef.png",
+    "url": "https://commons.wikimedia.org/wiki/File:Corned-beef.png",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_2a9212a5f3915a5e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Corso Camping Margarine - Van den Bergh en Jurgens NV Rotterdam - Export Kwaliteit.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Corso_Camping_Margarine_-_Van_den_Bergh_en_Jurgens_NV_Rotterdam_-_Export_Kwaliteit.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_9c9c34999d7c1c2a.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Cranberry Sauce from can.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cranberry_Sauce_from_can.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_canned_food_02ce6fba7bb1c91a.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Cranberry sauce1.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cranberry_sauce1.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_canned_food_854c0cd50e358f36.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:CriscoContainer.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:CriscoContainer.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_af930eb03de4af3b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:DEU Braegenwurst Dose MSZ091027.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:DEU_Braegenwurst_Dose_MSZ091027.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_264f0f2ca690149c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:DEU Knackwurst + Leberwurst MLTK 97 MSZ111117.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:DEU_Knackwurst_%2B_Leberwurst_MLTK_97_MSZ111117.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_aa3e4ecd5df7371d.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:DEU Knackwurst Dose MSZ091027.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:DEU_Knackwurst_Dose_MSZ091027.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_2904e4a4f4e00ba7.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Display of home-canned food1a35476v.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Display_of_home-canned_food1a35476v.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_c17f51c2ea66121c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Edamame-Pack.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Edamame-Pack.jpg",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "file": "commons_canned_food_e15b43fd3e71b0f3.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Első Kecskeméti Konzervgyár R.T. (1).JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Els%C5%91_Kecskem%C3%A9ti_Konzervgy%C3%A1r_R.T._(1).JPG",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_canned_food_0b39d9fbcf5b678b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Epices Colombo.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Epices_Colombo.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_canned_food_aeb30982f27dff9a.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:FEMA - 10245 - Photograph by Mark Wolfe taken on 08-25-2004 in Florida.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:FEMA_-_10245_-_Photograph_by_Mark_Wolfe_taken_on_08-25-2004_in_Florida.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_92b7775805f09b87.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "canned_food",
+    "split": "evaluation",
+    "title": "File:Tinned food, with advice and recipes for its treatment - being John Moir & Son's (Limited) export catalogue (IA b2804793x).pdf",
+    "url": "https://commons.wikimedia.org/wiki/File:Tinned_food,_with_advice_and_recipes_for_its_treatment_-_being_John_Moir_%26_Son%27s_(Limited)_export_catalogue_(IA_b2804793x).pdf",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_canned_food_b759fa7379b1cae5.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Cream and Sweet bean paste and Strawberry sandwich in Nagoya.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Cream_and_Sweet_bean_paste_and_Strawberry_sandwich_in_Nagoya.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_92515dab42600fda.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:HK TKL 調景嶺 Tiu Keng Leng 彩明街市 Choi Ming Market 天天烘焙 Day Day Fresh Bakery 白方包 white Sandwich bread plastic bag package December 2019 SSG 01.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_TKL_%E8%AA%BF%E6%99%AF%E5%B6%BA_Tiu_Keng_Leng_%E5%BD%A9%E6%98%8E%E8%A1%97%E5%B8%82_Choi_Ming_Market_%E5%A4%A9%E5%A4%A9%E7%83%98%E7%84%99_Day_Day_Fresh_Bakery_%E7%99%BD%E6%96%B9%E5%8C%85_white_Sandwich_bread_plastic_bag_package_December_2019_SSG_01.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_3bc23dcc0c2851a4.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Ham and cheese toast sandwich and cafe latte at doutor, mitaka (44172787425).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Ham_and_cheese_toast_sandwich_and_cafe_latte_at_doutor,_mitaka_(44172787425).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_7cb29530360ff81e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Jimmy John's wrapped sandwiches and chips (29822324831).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Jimmy_John%27s_wrapped_sandwiches_and_chips_(29822324831).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_7e7eb4961075fde5.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Lunch, Philippine Airlines, 2025 (01).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Lunch,_Philippine_Airlines,_2025_(01).jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_79fdbe5a250a9d1f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Package of sandwich by KLM 03.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Package_of_sandwich_by_KLM_03.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_3da5c640678a9549.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Prepackaged sandwich.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Prepackaged_sandwich.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_f5827374f046244c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Safeway Ham & Cheese, Turkey & Colby Jack Hoagies (17357059036).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Safeway_Ham_%26_Cheese,_Turkey_%26_Colby_Jack_Hoagies_(17357059036).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_6833826270669658.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Tandoori chicken sandwich, Philippine Airlines, 2023 (01).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Tandoori_chicken_sandwich,_Philippine_Airlines,_2023_(01).jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_88c30f8d10d9c30b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "training",
+    "title": "File:Tandoori chicken sandwich, Philippine Airlines, 2023 (02).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Tandoori_chicken_sandwich,_Philippine_Airlines,_2023_(02).jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_cee8348b926bf0c9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:Wikimania 2026 - Sandwiches heap.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Wikimania_2026_-_Sandwiches_heap.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_8f2e001cbea0a1b4.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:Wrapping of sandwich by KLM.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Wrapping_of_sandwich_by_KLM.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sandwiches_cd140f126ffda229.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:Yakisoba sandwich by gaelenh in Tokyo.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Yakisoba_sandwich_by_gaelenh_in_Tokyo.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_3ae5ef4cf6a96282.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:お弁当は2種類 (42294703841).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:%E3%81%8A%E5%BC%81%E5%BD%93%E3%81%AF2%E7%A8%AE%E9%A1%9E_(42294703841).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sandwiches_ffd02381282145b6.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:たまご好きの為のたまごサンド からし類を使用しております (35981071536).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:%E3%81%9F%E3%81%BE%E3%81%94%E5%A5%BD%E3%81%8D%E3%81%AE%E7%82%BA%E3%81%AE%E3%81%9F%E3%81%BE%E3%81%94%E3%82%B5%E3%83%B3%E3%83%89_%E3%81%8B%E3%82%89%E3%81%97%E9%A1%9E%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E3%81%8A%E3%82%8A%E3%81%BE%E3%81%99_(35981071536).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_b2605eec9e142c52.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:とん勝さんど (3903909928).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:%E3%81%A8%E3%82%93%E5%8B%9D%E3%81%95%E3%82%93%E3%81%A9_(3903909928).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_31af4e7f72f6213c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sandwiches",
+    "split": "evaluation",
+    "title": "File:サンドイッチハウス メルヘン (27562853857).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:%E3%82%B5%E3%83%B3%E3%83%89%E3%82%A4%E3%83%83%E3%83%81%E3%83%8F%E3%82%A6%E3%82%B9_%E3%83%A1%E3%83%AB%E3%83%98%E3%83%B3_(27562853857).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sandwiches_0baf84357ad160d1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:A plate of sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:A_plate_of_sushi.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_b2069ffb5e39f4d2.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Asianafood.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Asianafood.JPG",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_0f55f1d7200d9959.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Assorted Sushi Bento Set By Banej, Singapore, May 2018.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Assorted_Sushi_Bento_Set_By_Banej,_Singapore,_May_2018.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_e9efb279c86feb1b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Deluxe Sushi Pack at Sakura Sushi Express.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Deluxe_Sushi_Pack_at_Sakura_Sushi_Express.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_ad49ee861cce2bfb.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:EPSN5015 (129022373).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:EPSN5015_(129022373).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_36782acf33099eea.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Eat Happy im Edeka im IsarCenter Ottobrunn 2022-10-10.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Eat_Happy_im_Edeka_im_IsarCenter_Ottobrunn_2022-10-10.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_ab607d5f22ce4411.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Fast food tray, Novosibirsk 1.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Fast_food_tray,_Novosibirsk_1.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_222d7ed6ce35c824.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Flickr - cyclonebill - Sushi (7).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Flickr_-_cyclonebill_-_Sushi_(7).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_c2c6c80f636a55e5.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Flickr - cyclonebill - Sushi (8).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Flickr_-_cyclonebill_-_Sushi_(8).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_a7d81811f73edb6f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Flickr - cyclonebill - Sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Flickr_-_cyclonebill_-_Sushi.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_048a91cf5b3f1dc0.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Flower Love Sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Flower_Love_Sushi.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_e731a3095448b9f1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Gendai.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Gendai.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_e608354e0942bf02.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Gyoen Bento (17030217088).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Gyoen_Bento_(17030217088).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_24a9ebb2ea67b471.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:HK Fortress night Wellcome Shop supermarket food Sashimi May-2012.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_Fortress_night_Wellcome_Shop_supermarket_food_Sashimi_May-2012.JPG",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_2b90be151aa6e13b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:HK 藍田 Lam Tin 啟田商場 Kai Tin Shopping Centre food shop 爭鮮外帶壽司店 Sushi Take-away January 2017 IX1 01.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E8%97%8D%E7%94%B0_Lam_Tin_%E5%95%9F%E7%94%B0%E5%95%86%E5%A0%B4_Kai_Tin_Shopping_Centre_food_shop_%E7%88%AD%E9%AE%AE%E5%A4%96%E5%B8%B6%E5%A3%BD%E5%8F%B8%E5%BA%97_Sushi_Take-away_January_2017_IX1_01.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_1bfa1ef8da8dc861.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:HK 藍田 Lam Tin 啟田商場 Kai Tin Shopping Centre food shop 爭鮮外帶壽司店 Sushi Take-away January 2017 IX1 05.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E8%97%8D%E7%94%B0_Lam_Tin_%E5%95%9F%E7%94%B0%E5%95%86%E5%A0%B4_Kai_Tin_Shopping_Centre_food_shop_%E7%88%AD%E9%AE%AE%E5%A4%96%E5%B8%B6%E5%A3%BD%E5%8F%B8%E5%BA%97_Sushi_Take-away_January_2017_IX1_05.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_33ae3023fa56f690.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:HK 藍田 Lam Tin 啟田商場 Kai Tin Shopping Centre food shop 爭鮮外帶壽司店 Sushi Take-away January 2017 IX1 06.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:HK_%E8%97%8D%E7%94%B0_Lam_Tin_%E5%95%9F%E7%94%B0%E5%95%86%E5%A0%B4_Kai_Tin_Shopping_Centre_food_shop_%E7%88%AD%E9%AE%AE%E5%A4%96%E5%B8%B6%E5%A3%BD%E5%8F%B8%E5%BA%97_Sushi_Take-away_January_2017_IX1_06.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_fb9e6b030bf7e666.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Japanese food on a table.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Japanese_food_on_a_table.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_1bcdad53b6b19339.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Japanese shrimp Salmon Crab sushi.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Japanese_shrimp_Salmon_Crab_sushi.JPG",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_96ac7baa37b3c5f6.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Jämtlands sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:J%C3%A4mtlands_sushi.jpg",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_packaged_sushi_c946a36b5362f942.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:KansaiSushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:KansaiSushi.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_packaged_sushi_ca97191e9372b18f.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Kushiro ekiben iwashino hokkaburi&zukesanma.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Kushiro_ekiben_iwashino_hokkaburi%26zukesanma.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_5b4610dc35e46a4c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Lunch in Japan (96696132).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Lunch_in_Japan_(96696132).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_2e906e60fa6bf8bf.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Packaged Sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Packaged_Sushi.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_27b1e640b921c565.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Packaged sushi in Costco Neihu Warehouse 20170413.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Packaged_sushi_in_Costco_Neihu_Warehouse_20170413.jpg",
+    "license": "CC0",
+    "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "file": "commons_packaged_sushi_a17bcc56e471ce30.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Packaged sushi with non-raw fish.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Packaged_sushi_with_non-raw_fish.jpg",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "file": "commons_packaged_sushi_55c32069f1938ba4.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Pre-packaged sushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Pre-packaged_sushi.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_packaged_sushi_f07c896512c73009.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Sushi (5360306021).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_(5360306021).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_ef3b69ae60f71ec1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Sushi (6290322531).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_(6290322531).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_276433f1d242733c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "training",
+    "title": "File:Sushi 2.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_2.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_79d22ff59872f6f2.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Bento Set By Banej.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_Bento_Set_By_Banej.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_6288590d5774ed49.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Box.JPG",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_Box.JPG",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "file": "commons_packaged_sushi_b0a38b86c8cf4906.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Express sushi take-out box NTD40 20120603.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_Express_sushi_take-out_box_NTD40_20120603.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_af6b3c6fef1906ae.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Salmon-abdomen1.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_Salmon-abdomen1.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_2cc06746881be4de.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Sashimi Platter at Suzuran Japan Foods Trading.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_Sashimi_Platter_at_Suzuran_Japan_Foods_Trading.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_4d7bb3a8a09a3bc9.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi Værøy.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_V%C3%A6r%C3%B8y.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_5bc35afb380e23b5.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi and katsudon by Scumfrog.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_and_katsudon_by_Scumfrog.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_e910b1db1a8689d8.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi and sashimi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_and_sashimi.jpg",
+    "license": "CC BY 3.0",
+    "license_url": "https://creativecommons.org/licenses/by/3.0",
+    "file": "commons_packaged_sushi_d8bcd0b094059325.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi bento by Noonch at Narita airport.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_bento_by_Noonch_at_Narita_airport.jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_9e240763219cc932.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi bento.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_bento.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+    "file": "commons_packaged_sushi_afec1cf9d2ca9f1e.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi box.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_box.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_packaged_sushi_b8028871581c7a29.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi sainsburys.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_sainsburys.jpg",
+    "license": "Public domain",
+    "license_url": null,
+    "file": "commons_packaged_sushi_24d9b00ec28093cf.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi selection at the supermarket (5174836624).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi_selection_at_the_supermarket_(5174836624).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_1e769caa3f1f4421.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi-Box (14744350659).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi-Box_(14744350659).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_9d393ddfe7d8959b.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi-Tempura Roll covered (24155104881).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi-Tempura_Roll_covered_(24155104881).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_12d0373aa61cbf62.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Sushi-Tempura Roll uncovered (24155104951).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Sushi-Tempura_Roll_uncovered_(24155104951).jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_87227267479a7391.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Taiwan Sushi 2016 (31868860522).jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Taiwan_Sushi_2016_(31868860522).jpg",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "file": "commons_packaged_sushi_ff8326c9c44a3459.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Toro sanma aburi-yaki zushi 0 by hirotomo.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Toro_sanma_aburi-yaki_zushi_0_by_hirotomo.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_c77c41e47e6a170c.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:Toro sanma aburi-yaki zushi 1 by hirotomo.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:Toro_sanma_aburi-yaki_zushi_1_by_hirotomo.jpg",
+    "license": "CC BY-SA 2.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+    "file": "commons_packaged_sushi_769261ef68a73ee1.jpg"
+  },
+  {
+    "source": "Wikimedia Commons",
+    "group": "packaged_sushi",
+    "split": "evaluation",
+    "title": "File:TunaSushi.jpg",
+    "url": "https://commons.wikimedia.org/wiki/File:TunaSushi.jpg",
+    "license": "CC BY-SA 3.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "file": "commons_packaged_sushi_103439e4e0075a0f.jpg"
+  }
+]
