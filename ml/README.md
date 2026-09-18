@@ -32,7 +32,7 @@ Issue #4 の判断基準に従い、non-food の誤送信につながる偽陽�
 - [Open Images V5](https://storage.googleapis.com/openimages/web/index.html) の端末画面100枚、飲み物100枚、food 100枚
 - [Wikimedia Commons](https://commons.wikimedia.org/) の包装食品、缶詰、包装済みサンドイッチ、包装済み寿司、合計100枚
 
-追加後の学習用分割は food 1,800枚、non-food 1,600枚です。採用モデルで使用した画像ID、配布元URL、ライセンスは [supplemental_manifest.json](./supplemental_manifest.json) に固定しています。Wikimedia Commonsの作者情報を含む取得時のmanifestは作業ディレクトリへ保存します。学習画像自体はリポジトリへ含めません。
+追加後の学習用分割は food 1,800枚、non-food 1,600枚です。採用モデルで使用した画像ID、取得URL、画像ごとのSHA-256、配布元URL、ライセンスは [supplemental_manifest.json](./supplemental_manifest.json) に固定しています。取得処理はカテゴリの現在内容から画像を再選択せず、このmanifestだけを参照します。取得不能またはSHA-256不一致の場合は処理を失敗させます。Wikimedia Commonsの作者情報は各配布元URLから確認できます。学習画像自体はリポジトリへ含めません。
 
 ## 再現手順
 
@@ -50,6 +50,7 @@ unzip /tmp/food5k.zip -d ml/data
 
 python ml/prepare_supplemental_data.py \
   --dataset ml/data \
+  --manifest ml/supplemental_manifest.json \
   --work-directory ml/output/supplemental
 
 python ml/train_and_evaluate.py \
@@ -70,7 +71,7 @@ python ml/evaluate_food_directory.py \
   --output ml/output/supplemental/packaged_evaluation.json
 ```
 
-同梱モデルのSHA-256は `47bdb861c4a51a3b29aa5572c42abe2a55d879f04d70da2c254b0def2b424db4`、固定した追加データmanifestのSHA-256は `7fb16a46a9842bd099f02ccbfa3a43777089b4192b8b9251f5e8491d6f1a7c46` です。
+同梱モデルのSHA-256は `47bdb861c4a51a3b29aa5572c42abe2a55d879f04d70da2c254b0def2b424db4`、固定した追加データmanifestのSHA-256は `f65ce1272bddb841f0a37c034f4074d3c8267ba2e5fb39ed6f6d73b1a2d4a141` です。
 
 ## 評価結果
 

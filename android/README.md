@@ -11,7 +11,7 @@ MealRelay の Android アプリです。後続 Issue で写真検知や手動入
 
 - `app/`: Android アプリケーションモジュール
 
-`FoodClassifier` は、同梱した量子化モデルを LiteRT で実行し、`Bitmap` を端末内だけで food / non-food に分類します。画像は縦横比を維持して224 × 224へ縮小し、余白を黒で補います。判定のための通信や外部API呼び出しはありません。
+`FoodClassifier` は、同梱した量子化モデルを LiteRT で実行し、`Bitmap` を端末内だけで food / non-food に分類します。HARDWARE BitmapはソフトウェアBitmapへコピーしたうえで、縦横比を維持して224 × 224へ縮小し、余白を黒で補います。判定のための通信や外部API呼び出しはありません。
 
 デバッグ用APKに宣言済み権限がないこと、および16 KBページ向けZIPアラインメントを確認済みです。
 

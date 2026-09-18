@@ -36,12 +36,16 @@ public final class FoodClassifier implements AutoCloseable {
       throw new IllegalArgumentException("Bitmap must contain a readable image");
     }
 
+    Bitmap readableBitmap = bitmap.getConfig() == Bitmap.Config.HARDWARE
+        ? bitmap.copy(Bitmap.Config.ARGB_8888, false)
+        : bitmap;
     float scale = Math.min(
-        (float) IMAGE_SIZE / bitmap.getWidth(),
-        (float) IMAGE_SIZE / bitmap.getHeight());
-    int scaledWidth = Math.max(1, Math.round(bitmap.getWidth() * scale));
-    int scaledHeight = Math.max(1, Math.round(bitmap.getHeight() * scale));
-    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
+        (float) IMAGE_SIZE / readableBitmap.getWidth(),
+        (float) IMAGE_SIZE / readableBitmap.getHeight());
+    int scaledWidth = Math.max(1, Math.round(readableBitmap.getWidth() * scale));
+    int scaledHeight = Math.max(1, Math.round(readableBitmap.getHeight() * scale));
+    Bitmap scaledBitmap = Bitmap.createScaledBitmap(
+        readableBitmap, scaledWidth, scaledHeight, true);
     Bitmap modelBitmap = Bitmap.createBitmap(IMAGE_SIZE, IMAGE_SIZE, Bitmap.Config.ARGB_8888);
     modelBitmap.eraseColor(Color.BLACK);
     Canvas canvas = new Canvas(modelBitmap);
@@ -62,8 +66,11 @@ public final class FoodClassifier implements AutoCloseable {
     inputBuffer.rewind();
     interpreter.run(inputBuffer, output);
 
-    if (scaledBitmap != bitmap) {
+    if (scaledBitmap != readableBitmap) {
       scaledBitmap.recycle();
+    }
+    if (readableBitmap != bitmap) {
+      readableBitmap.recycle();
     }
     modelBitmap.recycle();
     return Byte.toUnsignedInt(output[0][0]) >= FOOD_PROBABILITY_THRESHOLD_QUANTIZED;

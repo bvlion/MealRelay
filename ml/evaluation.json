@@ -5,7 +5,7 @@
     "quantization": "full integer uint8 input and output",
     "size_bytes": 1218032,
     "sha256": "47bdb861c4a51a3b29aa5572c42abe2a55d879f04d70da2c254b0def2b424db4",
-    "supplemental_manifest_sha256": "7fb16a46a9842bd099f02ccbfa3a43777089b4192b8b9251f5e8491d6f1a7c46",
+    "supplemental_manifest_sha256": "f65ce1272bddb841f0a37c034f4074d3c8267ba2e5fb39ed6f6d73b1a2d4a141",
     "threshold": 0.640625,
     "threshold_quantized": 164
   },
@@ -91,7 +91,7 @@
     "environment": "Pixel_9 AVD, Android 17 API 37, arm64, 16 KB page size",
     "apk_declared_permissions": [],
     "apk_zipalign_16_kb_verification": "passed",
-    "tests": 2,
+    "tests": 3,
     "failures": 0,
     "errors": 0,
     "fixtures": [
