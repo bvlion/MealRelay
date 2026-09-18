@@ -39,3 +39,5 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 ```
 
 Kotlinの計装テストでは、Food-5K の配布元評価用分割から選んだ食事1枚と風景1枚に加え、同じ食事画像を224 × 224のHARDWARE Bitmapとして読み込む経路を確認します。配布元が表示するライセンスは CC0 1.0 です。
+
+`FoodClassifierEvaluationTest` は、`ml/evaluate_android.py` から指定された外部画像をHARDWARE Bitmapとしてデコードし、配布対象の `FoodClassifier.isFood()` を通してvalidationとholdoutを評価します。通常の `connectedAndroidTest` では外部画像を要求せず、評価スクリプトから個別に起動した場合だけ全画像を処理します。

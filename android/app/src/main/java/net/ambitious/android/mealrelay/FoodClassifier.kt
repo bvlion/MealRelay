@@ -88,6 +88,6 @@ class FoodClassifier(context: Context) : AutoCloseable {
   private companion object {
     const val MODEL_ASSET_NAME = "food_classifier_int8.tflite"
     const val IMAGE_SIZE = 224
-    const val FOOD_PROBABILITY_THRESHOLD_QUANTIZED = 164
+    const val FOOD_PROBABILITY_THRESHOLD_QUANTIZED = 153
   }
 }
