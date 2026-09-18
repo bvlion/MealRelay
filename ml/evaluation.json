@@ -5,12 +5,14 @@
     "quantization": "full integer uint8 input and output",
     "size_bytes": 1218032,
     "sha256": "47bdb861c4a51a3b29aa5572c42abe2a55d879f04d70da2c254b0def2b424db4",
-    "supplemental_manifest_sha256": "f65ce1272bddb841f0a37c034f4074d3c8267ba2e5fb39ed6f6d73b1a2d4a141",
+    "supplemental_manifest_sha256": "d05ef8e20aaee447c1683235f959e26ca4ae5bee9719ead16e95627fadf7f004",
+    "evaluation_manifest_sha256": "7557dcf89b708e1f9fad2a0dc0565d65ffd0b60b178cb5f7a09f7c4f1d90d2a8",
     "threshold": 0.640625,
     "threshold_quantized": 164
   },
-  "food_5k": {
-    "validation": {
+  "selection": {
+    "policy": "Select architecture, sampling, and threshold using Food-5K validation only",
+    "selected_food_5k_validation": {
       "food_count": 500,
       "non_food_count": 500,
       "true_positives": 398,
@@ -22,72 +24,94 @@
       "food_precision": 0.995,
       "accuracy": 0.896
     },
-    "evaluation": {
-      "food_count": 500,
-      "non_food_count": 500,
-      "true_positives": 389,
-      "false_negatives": 111,
-      "true_negatives": 497,
-      "false_positives": 3,
-      "food_recall": 0.778,
-      "non_food_false_positive_rate": 0.006,
-      "food_precision": 0.9923469387755102,
-      "accuracy": 0.886
+    "candidate_validation_comparison": {
+      "partially_unfrozen_backbone": {
+        "food_recall": 0.736,
+        "non_food_false_positive_rate": 0.004
+      },
+      "frozen_backbone_without_commons_supplement": {
+        "food_recall": 0.748,
+        "non_food_false_positive_rate": 0.004
+      },
+      "selected_frozen_backbone": {
+        "food_recall": 0.796,
+        "non_food_false_positive_rate": 0.004
+      },
+      "five_times_packaged_food_samples": {
+        "food_recall": 0.71,
+        "non_food_false_positive_rate": 0.004
+      }
     }
   },
-  "open_images_v5_independent_evaluation": {
-    "selection": "First unique positive image-label annotations by image ID, excluding all supplemental training image IDs",
-    "person": {
-      "expected": "non_food",
-      "image_count": 40,
-      "predicted_food_count": 0,
-      "food_rate": 0.0
+  "held_out_evaluation": {
+    "dataset": "Fixed manifest of Open Images V5 test and previously unused Wikimedia Commons images; selected after model configuration was fixed and inferred once",
+    "overall": {
+      "non_food_count": 190,
+      "false_positives": 2,
+      "non_food_false_positive_rate": 0.010526315789473684,
+      "food_count": 167,
+      "true_positives": 83,
+      "food_recall": 0.49700598802395207,
+      "food_precision": 0.9764705882352941,
+      "accuracy": 0.7591036414565826
     },
-    "scenery": {
-      "expected": "non_food",
-      "image_count": 50,
-      "predicted_food_count": 0,
-      "food_rate": 0.0,
-      "proxy_labels": [
-        "Tree",
-        "House",
-        "Building"
-      ]
-    },
-    "terminal_screen": {
-      "expected": "non_food",
-      "image_count": 50,
-      "predicted_food_count": 1,
-      "food_rate": 0.02,
-      "false_positive_image_ids": [
-        "238450f5d97b2d2b"
-      ]
-    },
-    "document": {
-      "expected": "non_food",
-      "image_count": 50,
-      "predicted_food_count": 0,
-      "food_rate": 0.0
-    },
-    "beverage": {
-      "expected": "food",
-      "image_count": 50,
-      "predicted_food_count": 21,
-      "food_rate": 0.42
-    },
-    "food": {
-      "expected": "food",
-      "image_count": 50,
-      "predicted_food_count": 33,
-      "food_rate": 0.66
+    "categories": {
+      "person": {
+        "expected": "non_food",
+        "image_count": 40,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "scenery": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "terminal_screen": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "document": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 2,
+        "food_rate": 0.04,
+        "false_positive_files": [
+          "open_images_test_document_1049484bd72e8fcc.jpg",
+          "open_images_test_document_11e349eddb991989.jpg"
+        ]
+      },
+      "beverage": {
+        "expected": "food",
+        "image_count": 50,
+        "predicted_food_count": 19,
+        "food_rate": 0.38
+      },
+      "food": {
+        "expected": "food",
+        "image_count": 50,
+        "predicted_food_count": 35,
+        "food_rate": 0.7
+      },
+      "canned_food": {
+        "expected": "food",
+        "image_count": 43,
+        "predicted_food_count": 21,
+        "food_rate": 0.4883720930232558
+      },
+      "packaged_food": {
+        "expected": "food",
+        "image_count": 24,
+        "predicted_food_count": 8,
+        "food_rate": 0.3333333333333333
+      }
     }
-  },
-  "wikimedia_commons_packaged_food_evaluation": {
-    "image_count": 67,
-    "predicted_food_count": 30,
-    "food_recall": 0.44776119402985076
   },
   "android_runtime_evaluation": {
+    "implementation_language": "Kotlin",
     "environment": "Pixel_9 AVD, Android 17 API 37, arm64, 16 KB page size",
     "apk_declared_permissions": [],
     "apk_zipalign_16_kb_verification": "passed",
@@ -96,21 +120,8 @@
     "errors": 0,
     "fixtures": [
       "Food-5K evaluation food/104.jpg",
-      "Food-5K evaluation non_food/1.jpg"
+      "Food-5K evaluation non_food/1.jpg",
+      "224 x 224 HARDWARE Bitmap created by the instrumentation test"
     ]
-  },
-  "rejected_experiments": {
-    "partially_unfrozen_backbone": {
-      "training_data": "Food-5K plus 300 Open Images supplemental images",
-      "food_5k_evaluation_food_recall": 0.734,
-      "food_5k_evaluation_non_food_false_positive_rate": 0.012,
-      "reason": "The matching frozen-backbone experiment had a 0.004 false-positive rate"
-    },
-    "five_times_packaged_food_samples": {
-      "food_5k_evaluation_food_recall": 0.724,
-      "food_5k_evaluation_non_food_false_positive_rate": 0.006,
-      "packaged_food_recall": 0.4626865671641791,
-      "reason": "Only a small packaged-food gain while reducing general food recall from 0.778"
-    }
   }
 }

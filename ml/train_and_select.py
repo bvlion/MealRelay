@@ -135,7 +135,6 @@ arguments = parser.parse_args()
 tf.keras.utils.set_random_seed(RANDOM_SEED)
 training_dataset = load_dataset(arguments.dataset / "training", is_training=True)
 validation_dataset = load_dataset(arguments.dataset / "validation", is_training=False)
-evaluation_dataset = load_dataset(arguments.dataset / "evaluation", is_training=False)
 model = create_model()
 model.compile(
   optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
@@ -159,7 +158,6 @@ model_path = arguments.output / "food_classifier_int8.tflite"
 model_path.write_bytes(quantize_model(model, validation_dataset))
 validation_labels, validation_probabilities = predict_tflite(model_path, validation_dataset)
 threshold = choose_threshold(validation_labels, validation_probabilities)
-evaluation_labels, evaluation_probabilities = predict_tflite(model_path, evaluation_dataset)
 interpreter = tf.lite.Interpreter(model_path=str(model_path))
 interpreter.allocate_tensors()
 output_scale, output_zero_point = interpreter.get_output_details()[0]["quantization"]
@@ -169,9 +167,8 @@ report = {
   "quantization": "full integer uint8 input and output",
   "threshold_quantized": int(round(threshold / output_scale + output_zero_point)),
   "validation": calculate_metrics(validation_labels, validation_probabilities, threshold),
-  "evaluation": calculate_metrics(evaluation_labels, evaluation_probabilities, threshold),
 }
-(arguments.output / "evaluation.json").write_text(
+(arguments.output / "selection.json").write_text(
   json.dumps(report, indent=2) + "\n", encoding="utf-8"
 )
 print(json.dumps(report, indent=2))

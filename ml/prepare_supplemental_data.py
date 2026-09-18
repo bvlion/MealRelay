@@ -57,6 +57,7 @@ session.mount(
   ),
 )
 
+downloads = []
 for item in manifest:
   if item["source"] == OPEN_IMAGES_SOURCE and item["split"] == "training":
     if item["group"] == "screen":
@@ -69,15 +70,38 @@ for item in manifest:
   elif item["source"] == WIKIMEDIA_COMMONS_SOURCE:
     if item["split"] == "training":
       destination = arguments.dataset / "training" / "food" / item["file"]
-    elif item["split"] == "evaluation":
-      destination = arguments.work_directory / "packaged_evaluation" / item["file"]
+    elif item["split"] == "tuning":
+      destination = arguments.work_directory / "packaged_tuning" / item["file"]
     else:
       raise ValueError(f"Unsupported split in manifest: {item['split']}")
   else:
     raise ValueError(
       f"Unsupported source or split in manifest: {item['source']} / {item['split']}"
     )
+  downloads.append((item, destination))
 
+expected_paths = {destination for _, destination in downloads}
+managed_directories = {
+  arguments.dataset / "training" / "food",
+  arguments.dataset / "training" / "non_food",
+  arguments.work_directory / "packaged_tuning",
+}
+stale_paths = []
+for directory in managed_directories:
+  if not directory.exists():
+    continue
+  for path in directory.iterdir():
+    if (
+      path.is_file()
+      and path.name.startswith(("open_images_", "commons_", "oversample_"))
+      and path not in expected_paths
+    ):
+      stale_paths.append(path)
+if stale_paths:
+  stale_files = ", ".join(str(path) for path in sorted(stale_paths))
+  raise ValueError(f"Managed supplemental files are absent from manifest: {stale_files}")
+
+for item, destination in downloads:
   download(session, item["download_url"], destination, item["sha256"])
 
 (arguments.work_directory / "supplemental_manifest.json").write_text(
