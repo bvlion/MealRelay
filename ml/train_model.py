@@ -56,8 +56,12 @@ def quantize_model(model: tf.keras.Model, calibration: tf.data.Dataset) -> bytes
   converter.optimizations = [tf.lite.Optimize.DEFAULT]
 
   def representative_dataset():
-    for images, _ in calibration.unbatch().batch(1).take(300):
-      yield [tf.cast(images, tf.float32)]
+    for class_label in (0.0, 1.0):
+      class_images = calibration.unbatch().filter(
+        lambda images, label: tf.equal(label[0], class_label)
+      )
+      for images, _ in class_images.batch(1).take(150):
+        yield [tf.cast(images, tf.float32)]
 
   converter.representative_dataset = representative_dataset
   converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
@@ -94,7 +98,9 @@ model.fit(
 
 arguments.output.mkdir(parents=True, exist_ok=True)
 model_path = arguments.output / "food_classifier_int8.tflite"
-model_path.write_bytes(quantize_model(model, validation_dataset))
+model_path.write_bytes(
+  quantize_model(model, load_dataset(arguments.dataset / "training", is_training=False))
+)
 report = {
   "model": "MobileNetV3Small",
   "image_size": IMAGE_SIZE,

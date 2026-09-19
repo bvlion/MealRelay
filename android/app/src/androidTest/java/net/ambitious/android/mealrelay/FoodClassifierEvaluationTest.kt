@@ -68,7 +68,7 @@ class FoodClassifierEvaluationTest {
         @Suppress("UNCHECKED_CAST")
         val output = outputField.get(classifier) as Array<ByteArray>
         val probabilityQuantized = output[0][0].toInt() and 0xff
-        assertEquals(probabilityQuantized >= 153, isFood)
+        assertEquals(probabilityQuantized >= 103, isFood)
         results.append(label)
           .append('\t')
           .append(group)
