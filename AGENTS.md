@@ -24,7 +24,7 @@ Androidの実装コードとテストコードはKotlinで統一する。Javaの
 
 依存関係とGradle pluginのバージョンはVersion Catalogで管理する。
 
-`src/test` はローカルJVMテスト、`src/androidTest` はAndroid上で実行するinstrumented testとして使い分ける。テストfixtureやresourceは、そのテストが属するsource set内で管理し、`src/test` から `src/androidTest` のファイルを参照するなど、source setをまたいだ依存を作らない。
+`src/test` と `src/androidTest` は別のsource setとして扱い、テストfixtureやresourceを相互参照しない。
 
 ## プライバシー
 
