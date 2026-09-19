@@ -8,7 +8,9 @@
         </intent>
     </queries>
 
-    <application android:label="MealRelay">
+    <application
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:label="MealRelay">
         <activity
             android:name=".PhotoPermissionActivity"
             android:exported="true">

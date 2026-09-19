@@ -26,6 +26,7 @@ data class PhotoScanStateEntity(
   @PrimaryKey val id: Int = 1,
   val version: String?,
   val generation: Long,
+  @ColumnInfo(name = "enrolled_generation") val enrolledGeneration: Long = generation,
   @ColumnInfo(name = "enrolled_at") val enrolledAt: Long,
   @ColumnInfo(name = "has_full_access") val hasFullAccess: Boolean = true,
 )
@@ -54,7 +55,7 @@ interface PhotoProcessingDao {
   fun getResults(): List<PhotoResultEntity>
 }
 
-@Database(entities = [PhotoResultEntity::class, PhotoScanStateEntity::class], version = 1, exportSchema = true)
+@Database(entities = [PhotoResultEntity::class, PhotoScanStateEntity::class], version = 2, exportSchema = true)
 abstract class PhotoProcessingDatabase : RoomDatabase() {
   abstract fun photoProcessingDao(): PhotoProcessingDao
 

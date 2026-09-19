@@ -32,6 +32,7 @@ class PhotoScanner(
       photoProcessingDao.updateScanState(scanState.copy(
         version = currentVersion,
         generation = scanGeneration,
+        enrolledGeneration = scanGeneration,
         enrolledAt = System.currentTimeMillis(),
         hasFullAccess = true,
       ))
@@ -48,6 +49,7 @@ class PhotoScanner(
       collection,
       arrayOf(
         MediaStore.Images.Media._ID,
+        MediaStore.Images.Media.GENERATION_ADDED,
         MediaStore.Images.Media.GENERATION_MODIFIED,
         MediaStore.Images.Media.DATE_TAKEN,
         MediaStore.Images.Media.RELATIVE_PATH,
@@ -61,6 +63,7 @@ class PhotoScanner(
     var classifyPhoto: ((Uri) -> Boolean)? = null
     cursor.use {
       val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+      val addedGenerationColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.GENERATION_ADDED)
       val capturedAtColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
       val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
       val ownerColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.OWNER_PACKAGE_NAME)
@@ -74,7 +77,11 @@ class PhotoScanner(
         val ownerPackage = cursor.getString(ownerColumn)
         val isCameraPhoto = (cameraPackage != null && ownerPackage == cameraPackage) ||
           (ownerPackage == null && cursor.getString(pathColumn) == "DCIM/Camera/")
-        if (!isCameraPhoto || (isResynchronizing && capturedAt < scanState.enrolledAt)) {
+        val wasAddedAfterEnrollment = cursor.getLong(addedGenerationColumn) > scanState.enrolledGeneration
+        if (!isCameraPhoto ||
+          (isResynchronizing && capturedAt < scanState.enrolledAt) ||
+          (!isResynchronizing && !wasAddedAfterEnrollment)
+        ) {
           continue
         }
         if (capturedAt <= 0) {
@@ -109,7 +116,11 @@ class PhotoScanner(
     if (shouldStop() || MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY) != currentVersion) {
       return false
     }
-    photoProcessingDao.updateScanState(scanState.copy(version = currentVersion, generation = scanGeneration))
+    photoProcessingDao.updateScanState(scanState.copy(
+      version = currentVersion,
+      generation = scanGeneration,
+      enrolledGeneration = if (isResynchronizing) scanGeneration else scanState.enrolledGeneration,
+    ))
     return true
   }
 }

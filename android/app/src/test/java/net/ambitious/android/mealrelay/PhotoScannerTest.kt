@@ -119,6 +119,17 @@ class PhotoScannerTest {
       assertEquals(reusedUri, results[1].uri)
       assertEquals(2000L, results[1].capturedAt)
       assertFalse(results.any { it.uri.endsWith("/8") })
+
+      provider.generation = 4
+      provider.photos = listOf(
+        Photo(7, 1, 2000),
+        Photo(id = 8, addedGeneration = 2, modifiedGeneration = 4, capturedAt = 1000),
+        Photo(9, 3, 3000),
+        Photo(10, 4, 900),
+      )
+      assertTrue(scanner.scan { false })
+      assertEquals(listOf(7L, 9L, 10L), classifiedIds)
+      assertFalse(dao.getResults().any { it.uri.endsWith("/8") })
     } finally {
       database.close()
     }
@@ -176,6 +187,42 @@ class PhotoScannerTest {
       assertEquals(listOf(4L), classifiedIds)
       assertEquals(1000L, dao.getResults().single().capturedAt)
       assertEquals(6L, dao.getScanState()?.generation)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun sameVersionScanSkipsPreEnrollmentPhotoModifiedLater() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 7
+    provider.photos = listOf(
+      Photo(id = 1, addedGeneration = 1, modifiedGeneration = 6, capturedAt = 1000),
+      Photo(id = 2, addedGeneration = 6, modifiedGeneration = 7, capturedAt = 1000),
+    )
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(
+        PhotoScanStateEntity(
+          version = provider.version,
+          generation = 5,
+          enrolledGeneration = 5,
+          enrolledAt = 1500,
+        ),
+      )
+      val classifiedIds = mutableListOf<Long>()
+      val classify: (Uri) -> Boolean = { uri ->
+        classifiedIds.add(ContentUris.parseId(uri))
+        true
+      }
+
+      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertEquals(listOf(2L), classifiedIds)
+      assertEquals(7L, dao.getScanState()?.generation)
     } finally {
       database.close()
     }
@@ -334,7 +381,12 @@ class PhotoScannerTest {
     }
   }
 
-  data class Photo(val id: Long, val modifiedGeneration: Long, val capturedAt: Long)
+  data class Photo(
+    val id: Long,
+    val modifiedGeneration: Long,
+    val capturedAt: Long,
+    val addedGeneration: Long = modifiedGeneration,
+  )
 
   class PhotoMediaProvider : ContentProvider() {
     var version = "version-1"
@@ -367,6 +419,7 @@ class PhotoScannerTest {
         cursor.addRow(columns.map { column ->
           when (column) {
             MediaStore.Images.Media._ID -> photo.id
+            MediaStore.Images.Media.GENERATION_ADDED -> photo.addedGeneration
             MediaStore.Images.Media.GENERATION_MODIFIED -> photo.modifiedGeneration
             MediaStore.Images.Media.DATE_TAKEN -> photo.capturedAt
             MediaStore.Images.Media.RELATIVE_PATH -> "DCIM/Camera/"

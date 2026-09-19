@@ -32,7 +32,12 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       val photoProcessingDao = PhotoProcessingDatabase.get(applicationContext).photoProcessingDao()
       synchronized(PhotoScanner::class.java) {
         val scanState = photoProcessingDao.getScanState()
-        val newState = PhotoScanStateEntity(version = version, generation = generation, enrolledAt = enrolledAt)
+        val newState = PhotoScanStateEntity(
+          version = version,
+          generation = generation,
+          enrolledGeneration = generation,
+          enrolledAt = enrolledAt,
+        )
         if (scanState == null) {
           photoProcessingDao.insertScanState(newState)
         } else if (inputData.getBoolean("should_reset", false) || !scanState.hasFullAccess) {
