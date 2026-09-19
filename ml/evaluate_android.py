@@ -291,7 +291,9 @@ else:
       "food_count": len(food_results),
       "true_positives": true_positive_count,
       "food_recall": true_positive_count / len(food_results),
-      "food_precision": true_positive_count / predicted_food_count,
+      "food_precision": (
+        true_positive_count / predicted_food_count if predicted_food_count else 0.0
+      ),
       "accuracy": (
         len(non_food_results) - false_positive_count + true_positive_count
       ) / len(results),
