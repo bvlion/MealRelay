@@ -22,6 +22,10 @@ Issueと実装の間に矛盾がある場合や、要件そのものに影響す
 
 Androidの実装コードとテストコードはKotlinで統一する。Javaの実装コードは追加しない。
 
+依存関係とGradle pluginのバージョンはVersion Catalogで管理する。
+
+`src/test` はローカルJVMテスト、`src/androidTest` はAndroid上で実行するinstrumented testとして使い分ける。テストfixtureやresourceは、そのテストが属するsource set内で管理し、`src/test` から `src/androidTest` のファイルを参照するなど、source setをまたいだ依存を作らない。
+
 ## プライバシー
 
 リポジトリ内のIssue、Pull Request、コード、コメント、テストデータ、fixture、プロンプト例、ドキュメント等に、家族を特定できる個人名や固有の呼称を含めないこと。
