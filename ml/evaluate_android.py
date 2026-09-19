@@ -127,6 +127,18 @@ with tempfile.TemporaryDirectory(
   subprocess.run(
     [arguments.adb, "install", "-r", str(arguments.test_apk)], check=True
   )
+  subprocess.run(
+    [
+      arguments.adb,
+      "shell",
+      "run-as",
+      "net.ambitious.android.mealrelay",
+      "rm",
+      "-f",
+      "files/food_classifier_evaluation.tsv",
+    ],
+    check=True,
+  )
   subprocess.run([arguments.adb, "shell", "rm", "-rf", REMOTE_ROOT], check=True)
   subprocess.run([arguments.adb, "shell", "mkdir", "-p", REMOTE_ROOT], check=True)
   subprocess.run(
@@ -191,6 +203,11 @@ for line in completed.stdout.splitlines():
     }
   )
 
+if len(results) != len(entries):
+  raise ValueError(
+    f"Android evaluation returned {len(results)} rows; expected {len(entries)}"
+  )
+
 if arguments.dataset is not None:
   non_food_count = sum(result["label"] == "non_food" for result in results)
   food_count = sum(result["label"] == "food" for result in results)
@@ -223,6 +240,7 @@ if arguments.dataset is not None:
     result["label"] == "non_food" and result["probability_quantized"] >= threshold
     for result in results
   )
+  predicted_food_count = true_positives + false_positives
   report = {
     "preprocessing": "Android FoodClassifier using a HARDWARE Bitmap",
     "threshold_quantized": threshold,
@@ -235,7 +253,9 @@ if arguments.dataset is not None:
       "false_positives": false_positives,
       "food_recall": true_positives / food_count,
       "non_food_false_positive_rate": false_positives / non_food_count,
-      "food_precision": true_positives / (true_positives + false_positives),
+      "food_precision": (
+        true_positives / predicted_food_count if predicted_food_count else 0.0
+      ),
       "accuracy": (
         true_positives + non_food_count - false_positives
       ) / len(results),
