@@ -1,0 +1,133 @@
+{
+  "model": {
+    "architecture": "MobileNetV3Small",
+    "image_size": 224,
+    "quantization": "full integer uint8 input and output",
+    "representative_dataset": "150 food and 150 non_food images from the training split",
+    "training_images": "1700 food and 1600 non_food; Wikimedia Commons training images excluded",
+    "size_bytes": 1218032,
+    "sha256": "b3dc2cca6475637e65cd9eff1111d6bc4dcdd8dc948463592ee999ea07a29076",
+    "supplemental_manifest_sha256": "d05ef8e20aaee447c1683235f959e26ca4ae5bee9719ead16e95627fadf7f004",
+    "evaluation_manifest_sha256": "7557dcf89b708e1f9fad2a0dc0565d65ffd0b60b178cb5f7a09f7c4f1d90d2a8",
+    "threshold": 0.40234375,
+    "threshold_quantized": 103
+  },
+  "selection": {
+    "policy": "Select architecture, sampling, and threshold using Food-5K validation through the Android FoodClassifier preprocessing path only",
+    "selected_food_5k_validation": {
+      "food_count": 500,
+      "non_food_count": 500,
+      "true_positives": 398,
+      "false_negatives": 102,
+      "true_negatives": 498,
+      "false_positives": 2,
+      "food_recall": 0.796,
+      "non_food_false_positive_rate": 0.004,
+      "food_precision": 0.995,
+      "accuracy": 0.896
+    },
+    "candidate_validation_comparison": {
+      "partially_unfrozen_backbone": {
+        "threshold_quantized": 256,
+        "food_recall": 0.0,
+        "non_food_false_positive_rate": 0.0
+      },
+      "selected_frozen_backbone_without_commons_supplement": {
+        "threshold_quantized": 103,
+        "food_recall": 0.796,
+        "non_food_false_positive_rate": 0.004
+      },
+      "frozen_backbone_with_commons_supplement": {
+        "threshold_quantized": 164,
+        "food_recall": 0.736,
+        "non_food_false_positive_rate": 0.004
+      },
+      "five_times_packaged_food_samples": {
+        "threshold_quantized": 182,
+        "food_recall": 0.674,
+        "non_food_false_positive_rate": 0.002
+      }
+    }
+  },
+  "held_out_evaluation": {
+    "dataset": "Fixed manifest of Open Images V5 test and previously unused Wikimedia Commons images; excluded from model and threshold selection",
+    "preprocessing": "Android FoodClassifier using ImageDecoder HARDWARE Bitmaps on Pixel_9 AVD",
+    "overall": {
+      "non_food_count": 190,
+      "false_positives": 0,
+      "non_food_false_positive_rate": 0.0,
+      "food_count": 167,
+      "true_positives": 65,
+      "food_recall": 0.38922155688622756,
+      "food_precision": 1.0,
+      "accuracy": 0.7142857142857143
+    },
+    "categories": {
+      "person": {
+        "expected": "non_food",
+        "image_count": 40,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "scenery": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "terminal_screen": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 0,
+        "food_rate": 0.0
+      },
+      "document": {
+        "expected": "non_food",
+        "image_count": 50,
+        "predicted_food_count": 0,
+        "food_rate": 0.0,
+        "false_positive_files": []
+      },
+      "beverage": {
+        "expected": "food",
+        "image_count": 50,
+        "predicted_food_count": 14,
+        "food_rate": 0.28
+      },
+      "food": {
+        "expected": "food",
+        "image_count": 50,
+        "predicted_food_count": 30,
+        "food_rate": 0.6
+      },
+      "canned_food": {
+        "expected": "food",
+        "image_count": 43,
+        "predicted_food_count": 17,
+        "food_rate": 0.3953488372093023
+      },
+      "packaged_food": {
+        "expected": "food",
+        "image_count": 24,
+        "predicted_food_count": 4,
+        "food_rate": 0.16666666666666666
+      }
+    }
+  },
+  "android_runtime_evaluation": {
+    "implementation_language": "Kotlin",
+    "environment": "Pixel_9 AVD, Android 17 API 37, arm64, 16 KB page size",
+    "apk_declared_permissions": [],
+    "apk_zipalign_16_kb_verification": "passed",
+    "tests": 4,
+    "failures": 0,
+    "errors": 0,
+    "validation_images_evaluated_with_food_classifier": 1000,
+    "held_out_images_evaluated_with_food_classifier": 357,
+    "fixtures": [
+      "Food-5K evaluation food/104.jpg",
+      "Food-5K evaluation non_food/1.jpg",
+      "224 x 224 HARDWARE Bitmap created by the instrumentation test"
+    ]
+  }
+}

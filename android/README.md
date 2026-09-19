@@ -11,6 +11,12 @@ MealRelay の Android アプリです。後続 Issue で写真検知や手動入
 
 - `app/`: Android アプリケーションモジュール
 
+Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを LiteRT で実行し、`Bitmap` を端末内だけで food / non-food に分類します。HARDWARE BitmapはソフトウェアBitmapへコピーしたうえで、縦横比を維持して224 × 224へ縮小し、余白を黒で補います。判定のための通信や外部API呼び出しはありません。
+
+デバッグ用APKに宣言済み権限がないこと、および16 KBページ向けZIPアラインメントを確認済みです。
+
+モデル、閾値、学習データおよび評価結果は [../ml/README.md](../ml/README.md) に記録しています。
+
 ## 必要な環境
 
 - JDK 25
@@ -25,3 +31,13 @@ MealRelay の Android アプリです。後続 Issue で写真検知や手動入
 ```
 
 ビルド後のデバッグ用 APK は `app/build/outputs/apk/debug/app-debug.apk` に生成されます。
+
+起動中のAndroidエミュレーターまたは実機で、モデルを含む計装テストを実行する場合は次を実行します。
+
+```shell
+./gradlew connectedAndroidTest
+```
+
+Kotlinの計装テストでは、Food-5K の配布元評価用分割から選んだ食事1枚と風景1枚に加え、同じ食事画像を224 × 224のHARDWARE Bitmapとして読み込む経路を確認します。配布元が表示するライセンスは CC0 1.0 です。
+
+`FoodClassifierEvaluationTest` は、`ml/evaluate_android.py` から指定された外部画像をHARDWARE Bitmapとしてデコードし、配布対象の `FoodClassifier.isFood()` を通してvalidationとholdoutを評価します。通常の `connectedAndroidTest` では外部画像を要求せず、評価スクリプトから個別に起動した場合だけ全画像を処理します。
