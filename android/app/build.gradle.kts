@@ -1,5 +1,6 @@
 plugins {
   alias(libs.plugins.android.application)
+  alias(libs.plugins.ksp)
 }
 
 android {
@@ -20,9 +21,11 @@ android {
 
 dependencies {
   implementation(libs.litert)
+  implementation(libs.work.runtime)
+  implementation(libs.room.runtime)
+  ksp(libs.room.compiler)
 
   testImplementation(libs.junit)
-  testImplementation(libs.mockito)
   testImplementation(libs.robolectric)
 
   androidTestImplementation(libs.androidx.test.ext.junit)
