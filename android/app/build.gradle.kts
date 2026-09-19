@@ -1,5 +1,5 @@
 plugins {
-  id("com.android.application")
+  alias(libs.plugins.android.application)
 }
 
 android {
@@ -17,8 +17,8 @@ android {
 }
 
 dependencies {
-  implementation("com.google.ai.edge.litert:litert:1.4.2")
+  implementation(libs.litert)
 
-  androidTestImplementation("androidx.test.ext:junit:1.3.0")
-  androidTestImplementation("androidx.test:runner:1.7.0")
+  androidTestImplementation(libs.androidx.test.ext.junit)
+  androidTestImplementation(libs.androidx.test.runner)
 }
