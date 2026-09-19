@@ -28,7 +28,7 @@ class PhotoPermissionActivity : Activity() {
     if (requestCode == 1 &&
       checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
     ) {
-      PhotoEnrollmentWorker.enqueue(this)
+      PhotoEnrollmentWorker.enqueue(this, shouldReset = true)
     }
     finish()
   }

@@ -1,6 +1,8 @@
 package net.ambitious.android.mealrelay
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
@@ -14,19 +16,18 @@ import java.util.concurrent.TimeUnit
 class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
   override fun doWork(): Result = try {
     val isComplete = synchronized(PhotoScanner::class.java) {
-      var classification: PhotoClassification? = null
-      try {
+      PhotoClassification(applicationContext).use { classification ->
         PhotoScanner(
           applicationContext,
           PhotoProcessingDatabase.get(applicationContext).photoProcessingDao(),
-        ) {
-          val classifier = PhotoClassification(applicationContext)
-          classification = classifier
-          classifier::isFood
-        }.scan { isStopped }
-      } finally {
-        classification?.close()
+          classification::prepareClassifier,
+        ).scan { isStopped }
       }
+    }
+    if (isComplete && applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
+      PackageManager.PERMISSION_GRANTED
+    ) {
+      PhotoWatchWorker.enqueue(applicationContext).result.get()
     }
     if (isComplete) Result.success() else Result.retry()
   } catch (exception: Exception) {

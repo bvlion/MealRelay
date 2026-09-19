@@ -16,12 +16,27 @@ class PhotoScanner(
 ) {
   fun scan(shouldStop: () -> Boolean): Boolean {
     if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+      photoProcessingDao.markFullAccessLost()
       return true
     }
     val scanState = photoProcessingDao.getScanState() ?: return false
     val currentVersion: String? = MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
     if (currentVersion == null) return false
     val scanGeneration = MediaStore.getGeneration(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+    if (!scanState.hasFullAccess) {
+      if (shouldStop()) return false
+      if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+        photoProcessingDao.markFullAccessLost()
+        return false
+      }
+      photoProcessingDao.updateScanState(scanState.copy(
+        version = currentVersion,
+        generation = scanGeneration,
+        enrolledAt = System.currentTimeMillis(),
+        hasFullAccess = true,
+      ))
+      return true
+    }
     val isResynchronizing = scanState.version != currentVersion
     val generation = if (isResynchronizing) 0 else scanState.generation
     val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -51,6 +66,10 @@ class PhotoScanner(
       val ownerColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.OWNER_PACKAGE_NAME)
       while (cursor.moveToNext()) {
         if (shouldStop()) return false
+        if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+          photoProcessingDao.markFullAccessLost()
+          return false
+        }
         val capturedAt = cursor.getLong(capturedAtColumn)
         val ownerPackage = cursor.getString(ownerColumn)
         val isCameraPhoto = (cameraPackage != null && ownerPackage == cameraPackage) ||
@@ -70,6 +89,10 @@ class PhotoScanner(
         val isFood = try {
           classifier(uri)
         } catch (exception: Exception) {
+          if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            photoProcessingDao.markFullAccessLost()
+            return false
+          }
           Log.w("PhotoScanner", "camera photo classification failed", exception)
           null
         }
@@ -78,6 +101,10 @@ class PhotoScanner(
           Log.i("PhotoScanner", "camera photo classified isFood=$isFood")
         }
       }
+    }
+    if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+      photoProcessingDao.markFullAccessLost()
+      return false
     }
     if (shouldStop() || MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY) != currentVersion) {
       return false

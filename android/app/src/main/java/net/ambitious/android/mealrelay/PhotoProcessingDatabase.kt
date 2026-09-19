@@ -27,6 +27,7 @@ data class PhotoScanStateEntity(
   val version: String?,
   val generation: Long,
   @ColumnInfo(name = "enrolled_at") val enrolledAt: Long,
+  @ColumnInfo(name = "has_full_access") val hasFullAccess: Boolean = true,
 )
 
 @Dao
@@ -39,6 +40,9 @@ interface PhotoProcessingDao {
 
   @Update
   fun updateScanState(state: PhotoScanStateEntity)
+
+  @Query("UPDATE photo_scan_state SET has_full_access = 0 WHERE id = 1")
+  fun markFullAccessLost()
 
   @Query("SELECT EXISTS(SELECT 1 FROM photo_results WHERE version = :version AND uri = :uri)")
   fun hasResult(version: String, uri: String): Boolean

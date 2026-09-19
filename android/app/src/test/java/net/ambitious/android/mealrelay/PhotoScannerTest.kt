@@ -237,6 +237,75 @@ class PhotoScannerTest {
       Shadows.shadowOf(application).denyPermissions(Manifest.permission.READ_MEDIA_IMAGES)
       assertTrue(scanner.scan { false })
       assertEquals(0, classifierCreations)
+      assertFalse(dao.getScanState()?.hasFullAccess ?: true)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun permissionRestorationStartsAfterPhotosTakenWithoutAccess() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 1
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 1, enrolledAt = 1000))
+      val classifiedIds = mutableListOf<Long>()
+      val classify: (Uri) -> Boolean = { uri ->
+        classifiedIds.add(ContentUris.parseId(uri))
+        true
+      }
+      val scanner = PhotoScanner(application, dao) { classify }
+
+      Shadows.shadowOf(application).denyPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+      assertTrue(scanner.scan { false })
+      assertFalse(dao.getScanState()?.hasFullAccess ?: true)
+      provider.generation = 3
+      provider.photos = listOf(Photo(2, 2, 2000), Photo(3, 3, 3000))
+
+      Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+      assertTrue(scanner.scan { false })
+      assertTrue(dao.getScanState()?.hasFullAccess ?: false)
+      assertEquals(3L, dao.getScanState()?.generation)
+      assertTrue(dao.getResults().isEmpty())
+      assertTrue(classifiedIds.isEmpty())
+
+      provider.generation = 4
+      provider.photos = provider.photos + Photo(4, 4, 4000)
+      assertTrue(scanner.scan { false })
+      assertEquals(listOf(4L), classifiedIds)
+      assertEquals(4L, dao.getScanState()?.generation)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun permissionLossDuringClassificationDoesNotRecordFailedPhoto() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 2
+    provider.photos = listOf(Photo(1, 1, 1000), Photo(2, 2, 2000))
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
+      val scanner = PhotoScanner(application, dao) {
+        { _ ->
+          Shadows.shadowOf(application).denyPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+          throw SecurityException("test permission loss")
+        }
+      }
+      assertFalse(scanner.scan { false })
+      assertTrue(dao.getResults().isEmpty())
+      assertEquals(0L, dao.getScanState()?.generation)
+      assertFalse(dao.getScanState()?.hasFullAccess ?: true)
     } finally {
       database.close()
     }

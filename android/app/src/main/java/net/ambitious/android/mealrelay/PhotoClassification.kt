@@ -6,9 +6,16 @@ import android.net.Uri
 
 class PhotoClassification(context: Context) : AutoCloseable {
   private val contentResolver = context.contentResolver
-  private val classifier = FoodClassifier(context)
+  private val applicationContext = context.applicationContext
+  private var classifier: FoodClassifier? = null
+
+  fun prepareClassifier(): (Uri) -> Boolean {
+    if (classifier == null) classifier = FoodClassifier(applicationContext)
+    return this::isFood
+  }
 
   fun isFood(uri: Uri): Boolean {
+    val classifier = checkNotNull(classifier)
     val source = ImageDecoder.createSource(contentResolver, uri)
     val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
       decoder.allocator = ImageDecoder.ALLOCATOR_HARDWARE
@@ -21,6 +28,7 @@ class PhotoClassification(context: Context) : AutoCloseable {
   }
 
   override fun close() {
-    classifier.close()
+    classifier?.close()
+    classifier = null
   }
 }

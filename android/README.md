@@ -15,6 +15,8 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 
 写真検知には WorkManager の MediaStore 変更監視と定期走査を使います。WorkManager が永続化した作業から、アプリを開いていない間や端末の再起動後も走査を再開します。標準カメラが所有する画像を対象とし、所有元が不明な場合は `DCIM/Camera/` の画像を対象とします。撮影時刻には MediaStore の `DATE_TAKEN` を使用し、取得できない写真は分類しません。判定用画像は ImageDecoder で元の解像度のHARDWARE Bitmapとして読み込み、Issue #4 / PR #16で評価した `FoodClassifier` 内の前処理を通します。
 
+写真へのフルアクセスを失ったことを走査で検知すると、その状態をRoomに記録します。再許可時は新しいMediaStore generationを開始点とし、権限がなかった期間の写真を遡って分類しません。`PhotoClassification` は走査中に所有し、最初の分類対象が見つかったときだけモデルを読み込み、走査終了時に閉じます。
+
 分類結果は Room の `photo_detection.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。MediaStore version、generation、登録時刻も同じデータベースの `photo_scan_state` テーブルに保持します。MediaStore versionが変わった場合は、再同期が完了するまで旧versionの走査状態を維持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。元画像の複製や外部送信は行いません。外部送信は Issue #18 の対象です。
 
 Room のversion 1 schemaは `app/schemas/` に保存し、以後のschema履歴とともに管理します。

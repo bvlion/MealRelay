@@ -14,12 +14,15 @@ import androidx.work.WorkManager
 
 class PhotoWatchWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
   override fun doWork(): Result {
-    if (applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) !=
-      PackageManager.PERMISSION_GRANTED
-    ) {
-      return Result.success()
-    }
     return try {
+      if (applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) !=
+        PackageManager.PERMISSION_GRANTED
+      ) {
+        synchronized(PhotoScanner::class.java) {
+          PhotoProcessingDatabase.get(applicationContext).photoProcessingDao().markFullAccessLost()
+        }
+        return Result.success()
+      }
       enqueue(applicationContext, ExistingWorkPolicy.APPEND_OR_REPLACE).result.get()
       PhotoScanWorker.enqueue(applicationContext).result.get()
       Result.success()
