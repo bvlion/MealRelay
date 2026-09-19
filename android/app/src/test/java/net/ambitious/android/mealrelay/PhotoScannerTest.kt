@@ -15,6 +15,7 @@ import androidx.room.Room
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +45,8 @@ class PhotoScannerTest {
       val dao = database.photoProcessingDao()
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
       val classifiedIds = mutableListOf<Long>()
-      val scanner = PhotoScanner(application, dao) { uri ->
+      var classifierCreations = 0
+      val classify: (Uri) -> Boolean = { uri ->
         val id = ContentUris.parseId(uri)
         classifiedIds.add(id)
         when (id) {
@@ -53,9 +55,14 @@ class PhotoScannerTest {
           else -> true
         }
       }
+      val scanner = PhotoScanner(application, dao) {
+        classifierCreations++
+        classify
+      }
 
       assertTrue(scanner.scan { false })
       assertEquals(listOf(1L, 2L, 3L), classifiedIds)
+      assertEquals(1, classifierCreations)
       val results = dao.getResults()
       assertEquals(3, results.size)
       assertNull(results[0].isFood)
@@ -89,12 +96,13 @@ class PhotoScannerTest {
       dao.insertResult(PhotoResultEntity("version-1", reusedUri, 1000, false))
       val classifiedIds = mutableListOf<Long>()
       var isStopped = false
-      val scanner = PhotoScanner(application, dao) { uri ->
+      val classify: (Uri) -> Boolean = { uri ->
         val id = ContentUris.parseId(uri)
         classifiedIds.add(id)
         if (id == 7L) isStopped = true
         true
       }
+      val scanner = PhotoScanner(application, dao) { classify }
 
       assertFalse(scanner.scan { isStopped })
       assertEquals("version-1", dao.getScanState()?.version)
@@ -129,18 +137,103 @@ class PhotoScannerTest {
       val dao = database.photoProcessingDao()
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1500))
       val classifiedIds = mutableListOf<Long>()
-      val scanner = PhotoScanner(application, dao) { uri ->
+      val classify: (Uri) -> Boolean = { uri ->
         classifiedIds.add(ContentUris.parseId(uri))
         true
       }
+      val scanner = PhotoScanner(application, dao) { classify }
       assertTrue(scanner.scan { false })
       assertEquals(2L, dao.getScanState()?.generation)
 
       provider.generation = 3
-      provider.photos = listOf(Photo(2, 2, 2000), Photo(1, 3, 2200), Photo(3, 3, 1000))
+      provider.photos = listOf(Photo(2, 2, 2000), Photo(1, 3, 2200))
       assertTrue(scanner.scan { false })
       assertEquals(listOf(2L, 1L), classifiedIds)
       assertEquals(3L, dao.getScanState()?.generation)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun sameVersionScanAcceptsNewGenerationWithEarlierCaptureTime() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 6
+    provider.photos = listOf(Photo(4, 6, 1000))
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 5, enrolledAt = 1500))
+      val classifiedIds = mutableListOf<Long>()
+      val classify: (Uri) -> Boolean = { uri ->
+        classifiedIds.add(ContentUris.parseId(uri))
+        true
+      }
+      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertEquals(listOf(4L), classifiedIds)
+      assertEquals(1000L, dao.getResults().single().capturedAt)
+      assertEquals(6L, dao.getScanState()?.generation)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun noCandidateOrUnavailableVolumeOrPermissionDoesNotCreateClassifier() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
+      var classifierCreations = 0
+      val classify: (Uri) -> Boolean = { true }
+      val scanner = PhotoScanner(application, dao) {
+        classifierCreations++
+        classify
+      }
+      assertTrue(scanner.scan { false })
+      assertEquals(0, classifierCreations)
+
+      provider.generation = 1
+      provider.photos = listOf(Photo(1, 1, 1000))
+      provider.isVolumeAvailable = false
+      assertFalse(scanner.scan { false })
+      assertEquals(0L, dao.getScanState()?.generation)
+      assertEquals(0, classifierCreations)
+
+      provider.isVolumeAvailable = true
+      Shadows.shadowOf(application).denyPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+      assertTrue(scanner.scan { false })
+      assertEquals(0, classifierCreations)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun classifierInitializationFailureKeepsPhotoForRetry() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 1
+    provider.photos = listOf(Photo(1, 1, 1000))
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
+      val scanner = PhotoScanner(application, dao) {
+        throw IllegalStateException("test classifier initialization failure")
+      }
+      assertThrows(IllegalStateException::class.java) { scanner.scan { false } }
+      assertTrue(dao.getResults().isEmpty())
+      assertEquals(0L, dao.getScanState()?.generation)
     } finally {
       database.close()
     }
@@ -152,12 +245,13 @@ class PhotoScannerTest {
     var version = "version-1"
     var generation = 0L
     var photos = emptyList<Photo>()
+    var isVolumeAvailable = true
 
     override fun onCreate() = true
 
     override fun call(method: String, arg: String?, extras: Bundle?): Bundle = Bundle().apply {
       when (method) {
-        "get_version" -> putString(Intent.EXTRA_TEXT, version)
+        "get_version" -> putString(Intent.EXTRA_TEXT, if (isVolumeAvailable) version else null)
         "get_generation" -> putLong(Intent.EXTRA_INDEX, generation)
       }
     }

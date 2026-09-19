@@ -12,14 +12,15 @@ import android.util.Log
 class PhotoScanner(
   private val context: Context,
   private val photoProcessingDao: PhotoProcessingDao,
-  private val classify: (Uri) -> Boolean,
+  private val createClassifier: () -> (Uri) -> Boolean,
 ) {
   fun scan(shouldStop: () -> Boolean): Boolean {
     if (context.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
       return true
     }
     val scanState = photoProcessingDao.getScanState() ?: return false
-    val currentVersion = requireNotNull(MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY))
+    val currentVersion: String? = MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+    if (currentVersion == null) return false
     val scanGeneration = MediaStore.getGeneration(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
     val isResynchronizing = scanState.version != currentVersion
     val generation = if (isResynchronizing) 0 else scanState.generation
@@ -42,6 +43,7 @@ class PhotoScanner(
       arrayOf(generation.toString(), scanGeneration.toString()),
       "${MediaStore.Images.Media.GENERATION_MODIFIED} ASC, ${MediaStore.Images.Media._ID} ASC",
     )) { "MediaStore query returned no cursor" }
+    var classifyPhoto: ((Uri) -> Boolean)? = null
     cursor.use {
       val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
       val capturedAtColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
@@ -53,7 +55,7 @@ class PhotoScanner(
         val ownerPackage = cursor.getString(ownerColumn)
         val isCameraPhoto = (cameraPackage != null && ownerPackage == cameraPackage) ||
           (ownerPackage == null && cursor.getString(pathColumn) == "DCIM/Camera/")
-        if (!isCameraPhoto || capturedAt < scanState.enrolledAt) {
+        if (!isCameraPhoto || (isResynchronizing && capturedAt < scanState.enrolledAt)) {
           continue
         }
         if (capturedAt <= 0) {
@@ -64,8 +66,9 @@ class PhotoScanner(
         if (photoProcessingDao.hasResult(currentVersion, uri.toString())) {
           continue
         }
+        val classifier = classifyPhoto ?: createClassifier().also { classifyPhoto = it }
         val isFood = try {
-          classify(uri)
+          classifier(uri)
         } catch (exception: Exception) {
           Log.w("PhotoScanner", "camera photo classification failed", exception)
           null

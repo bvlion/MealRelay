@@ -50,7 +50,7 @@ interface PhotoProcessingDao {
   fun getResults(): List<PhotoResultEntity>
 }
 
-@Database(entities = [PhotoResultEntity::class, PhotoScanStateEntity::class], version = 1, exportSchema = false)
+@Database(entities = [PhotoResultEntity::class, PhotoScanStateEntity::class], version = 1, exportSchema = true)
 abstract class PhotoProcessingDatabase : RoomDatabase() {
   abstract fun photoProcessingDao(): PhotoProcessingDao
 

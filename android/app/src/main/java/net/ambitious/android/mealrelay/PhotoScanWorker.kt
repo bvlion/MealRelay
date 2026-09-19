@@ -14,12 +14,18 @@ import java.util.concurrent.TimeUnit
 class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
   override fun doWork(): Result = try {
     val isComplete = synchronized(PhotoScanner::class.java) {
-      PhotoClassification(applicationContext).use { classification ->
+      var classification: PhotoClassification? = null
+      try {
         PhotoScanner(
           applicationContext,
           PhotoProcessingDatabase.get(applicationContext).photoProcessingDao(),
-          classification::isFood,
-        ).scan { isStopped }
+        ) {
+          val classifier = PhotoClassification(applicationContext)
+          classification = classifier
+          classifier::isFood
+        }.scan { isStopped }
+      } finally {
+        classification?.close()
       }
     }
     if (isComplete) Result.success() else Result.retry()

@@ -17,6 +17,8 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 
 分類結果は Room の `photo_detection.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。MediaStore version、generation、登録時刻も同じデータベースの `photo_scan_state` テーブルに保持します。MediaStore versionが変わった場合は、再同期が完了するまで旧versionの走査状態を維持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。元画像の複製や外部送信は行いません。外部送信は Issue #18 の対象です。
 
+Room のversion 1 schemaは `app/schemas/` に保存し、以後のschema履歴とともに管理します。
+
 16 KBページ向けZIPアラインメントを確認済みです。
 
 モデル、閾値、学習データおよび評価結果は [../ml/README.md](../ml/README.md) に記録しています。

@@ -20,8 +20,9 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       return Result.success()
     }
     return try {
-      val version = inputData.getString("version")
-        ?: requireNotNull(MediaStore.getVersion(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY))
+      val currentVersion: String? = MediaStore.getVersion(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+      if (currentVersion == null) return Result.retry()
+      val version = inputData.getString("version") ?: currentVersion
       val generation = inputData.getLong("generation", -1).takeIf { it >= 0 }
         ?: MediaStore.getGeneration(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY)
       val enrolledAt = inputData.getLong("enrolled_at", System.currentTimeMillis())
