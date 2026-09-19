@@ -16,6 +16,8 @@ import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -106,12 +108,20 @@ class PhotoDetectionJobTest {
     ShadowImageDecoder.failedDecodesRemaining = AtomicInteger(0)
     val preferences = application.getSharedPreferences("photo_detection", 0)
     preferences.edit().putString("version", provider.version).putLong("generation", 0)
-      .putLong("enrolled_at", 1).commit()
+      .putLong("enrolled_at", 1500).commit()
     val parameters = Mockito.mock(JobParameters::class.java)
     Mockito.`when`(parameters.jobId).thenReturn(PhotoDetectionJob.CONTENT_JOB_ID)
     val job = Robolectric.setupService(PhotoDetectionJob::class.java)
     val classifier = Mockito.mock(FoodClassifier::class.java)
-    Mockito.doReturn(true).`when`(classifier).isFood(
+    val classificationCalls = AtomicInteger()
+    val resynchronizationInterrupted = CountDownLatch(1)
+    Mockito.doAnswer {
+      if (classificationCalls.incrementAndGet() == 2) {
+        job.onStopJob(parameters)
+        resynchronizationInterrupted.countDown()
+      }
+      true
+    }.`when`(classifier).isFood(
       Mockito.any(Bitmap::class.java) ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
     )
     job.foodClassifier = classifier
@@ -124,8 +134,13 @@ class PhotoDetectionJobTest {
     assertEquals(5L, preferences.getLong("generation", 0))
     provider.version = "version-2"
     provider.generation = 2
-    provider.photos = listOf(Photo(7, 1, 2000, validPhoto))
+    provider.photos = listOf(
+      Photo(7, 1, 2000, validPhoto),
+      Photo(8, 2, 1000, validPhoto),
+    )
 
+    job.onStartJob(parameters)
+    assertTrue(resynchronizationInterrupted.await(5, TimeUnit.SECONDS))
     job.onStartJob(parameters)
     deadline = System.nanoTime() + 10_000_000_000L
     while (preferences.getString("version", null) != "version-2" && System.nanoTime() < deadline) {
@@ -148,9 +163,7 @@ class PhotoDetectionJobTest {
         assertEquals(2000L, cursor.getLong(2))
       }
     }
-    Mockito.verify(classifier, Mockito.times(2)).isFood(
-      Mockito.any(Bitmap::class.java) ?: Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888),
-    )
+    assertEquals(2, classificationCalls.get())
   }
 
   @Test

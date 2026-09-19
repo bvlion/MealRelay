@@ -79,7 +79,7 @@ class PhotoDetectionJob : JobService() {
                   Intent(MediaStore.ACTION_IMAGE_CAPTURE),
                   PackageManager.MATCH_DEFAULT_ONLY,
                 )?.activityInfo?.packageName
-                contentResolver.query(
+                requireNotNull(contentResolver.query(
                   collection,
                   arrayOf(
                     MediaStore.Images.Media._ID,
@@ -91,7 +91,7 @@ class PhotoDetectionJob : JobService() {
                   "${MediaStore.Images.Media.GENERATION_ADDED} > ?",
                   arrayOf(generation.toString()),
                   "${MediaStore.Images.Media.GENERATION_ADDED} ASC, ${MediaStore.Images.Media._ID} ASC",
-                )?.use { cursor ->
+                )) { "MediaStore query returned no cursor" }.use { cursor ->
                   val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                   val generationColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.GENERATION_ADDED)
                   val capturedAtColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
@@ -108,7 +108,9 @@ class PhotoDetectionJob : JobService() {
                       if (!isCameraPhoto || (previousVersion != currentVersion &&
                           capturedAt < preferences.getLong("enrolled_at", Long.MAX_VALUE))) {
                         generation = mediaGeneration
-                        preferences.edit().putString("version", currentVersion).putLong("generation", generation).commit()
+                        if (previousVersion == currentVersion) {
+                          preferences.edit().putLong("generation", generation).commit()
+                        }
                         continue
                       }
                       val alreadyProcessed = database.rawQuery(
@@ -141,7 +143,9 @@ class PhotoDetectionJob : JobService() {
                         Log.w("PhotoDetectionJob", "camera photo has no capture time")
                       }
                       generation = mediaGeneration
-                      preferences.edit().putString("version", currentVersion).putLong("generation", generation).commit()
+                      if (previousVersion == currentVersion) {
+                        preferences.edit().putLong("generation", generation).commit()
+                      }
                     }
                   }
                 }
