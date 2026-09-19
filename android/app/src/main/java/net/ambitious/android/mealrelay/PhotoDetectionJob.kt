@@ -14,10 +14,10 @@ import android.provider.MediaStore
 import android.util.Log
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.roundToInt
 
 class PhotoDetectionJob : JobService() {
   private val stoppedJobs = ConcurrentHashMap<Int, AtomicBoolean>()
+  internal var foodClassifier: FoodClassifier? = null
 
   override fun onStartJob(params: JobParameters): Boolean {
     val isStopped = AtomicBoolean(false)
@@ -42,8 +42,38 @@ class PhotoDetectionJob : JobService() {
               val database = openOrCreateDatabase("photo_results.db", MODE_PRIVATE, null)
               try {
                 database.execSQL(
-                  "CREATE TABLE IF NOT EXISTS photo_results (uri TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, is_food INTEGER NOT NULL)",
+                  "CREATE TABLE IF NOT EXISTS photo_results (version TEXT NOT NULL, uri TEXT NOT NULL, " +
+                    "captured_at INTEGER NOT NULL, is_food INTEGER, PRIMARY KEY (version, uri))",
                 )
+                val hasVersion = database.rawQuery("PRAGMA table_info(photo_results)", null).use { columns ->
+                  val nameColumn = columns.getColumnIndexOrThrow("name")
+                  var found = false
+                  while (columns.moveToNext()) {
+                    if (columns.getString(nameColumn) == "version") {
+                      found = true
+                    }
+                  }
+                  found
+                }
+                if (!hasVersion) {
+                  database.beginTransaction()
+                  try {
+                    database.execSQL("ALTER TABLE photo_results RENAME TO photo_results_before_version")
+                    database.execSQL(
+                      "CREATE TABLE photo_results (version TEXT NOT NULL, uri TEXT NOT NULL, " +
+                        "captured_at INTEGER NOT NULL, is_food INTEGER, PRIMARY KEY (version, uri))",
+                    )
+                    database.execSQL(
+                      "INSERT INTO photo_results (version, uri, captured_at, is_food) " +
+                        "SELECT ?, uri, captured_at, is_food FROM photo_results_before_version",
+                      arrayOf(previousVersion ?: currentVersion),
+                    )
+                    database.execSQL("DROP TABLE photo_results_before_version")
+                    database.setTransactionSuccessful()
+                  } finally {
+                    database.endTransaction()
+                  }
+                }
                 val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 val cameraPackage = packageManager.resolveActivity(
                   Intent(MediaStore.ACTION_IMAGE_CAPTURE),
@@ -67,7 +97,7 @@ class PhotoDetectionJob : JobService() {
                   val capturedAtColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
                   val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
                   val ownerColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.OWNER_PACKAGE_NAME)
-                  FoodClassifier(this).use { classifier ->
+                  (foodClassifier ?: FoodClassifier(this)).use { classifier ->
                     while (!isStopped.get() && cursor.moveToNext()) {
                       val mediaGeneration = cursor.getLong(generationColumn)
                       val capturedAt = cursor.getLong(capturedAtColumn)
@@ -82,28 +112,30 @@ class PhotoDetectionJob : JobService() {
                         continue
                       }
                       val alreadyProcessed = database.rawQuery(
-                        "SELECT 1 FROM photo_results WHERE uri = ?",
-                        arrayOf(uri.toString()),
+                        "SELECT 1 FROM photo_results WHERE version = ? AND uri = ?",
+                        arrayOf(currentVersion, uri.toString()),
                       ).use { it.moveToFirst() }
                       if (!alreadyProcessed && capturedAt > 0) {
-                        val source = ImageDecoder.createSource(contentResolver, uri)
-                        val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
-                          val scale = minOf(1f, 224f / maxOf(info.size.width, info.size.height))
-                          decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
-                          decoder.setTargetSize(
-                            maxOf(1, (info.size.width * scale).roundToInt()),
-                            maxOf(1, (info.size.height * scale).roundToInt()),
-                          )
-                        }
+                        var isFood: Boolean? = null
                         try {
-                          val isFood = classifier.isFood(bitmap)
-                          database.execSQL(
-                            "INSERT OR IGNORE INTO photo_results (uri, captured_at, is_food) VALUES (?, ?, ?)",
-                            arrayOf<Any>(uri.toString(), capturedAt, if (isFood) 1 else 0),
-                          )
+                          val source = ImageDecoder.createSource(contentResolver, uri)
+                          val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                            decoder.allocator = ImageDecoder.ALLOCATOR_HARDWARE
+                          }
+                          try {
+                            isFood = classifier.isFood(bitmap)
+                          } finally {
+                            bitmap.recycle()
+                          }
+                        } catch (exception: Exception) {
+                          Log.w("PhotoDetectionJob", "camera photo classification failed", exception)
+                        }
+                        database.execSQL(
+                          "INSERT OR IGNORE INTO photo_results (version, uri, captured_at, is_food) VALUES (?, ?, ?, ?)",
+                          arrayOf<Any?>(currentVersion, uri.toString(), capturedAt, isFood?.let { if (it) 1 else 0 }),
+                        )
+                        if (isFood != null) {
                           Log.i("PhotoDetectionJob", "camera photo classified isFood=$isFood")
-                        } finally {
-                          bitmap.recycle()
                         }
                       } else if (capturedAt <= 0) {
                         Log.w("PhotoDetectionJob", "camera photo has no capture time")

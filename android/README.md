@@ -13,9 +13,9 @@ MealRelay の Android アプリです。
 
 Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを LiteRT で実行し、`Bitmap` を端末内だけで food / non-food に分類します。HARDWARE BitmapはソフトウェアBitmapへコピーしたうえで、縦横比を維持して224 × 224へ縮小し、余白を黒で補います。判定のための通信や外部API呼び出しはありません。
 
-写真検知には MediaStore の画像変更を契機とする JobScheduler のジョブを使います。端末の再起動後には監視ジョブを登録し直し、保存済みの世代番号より新しい写真を確認します。標準カメラが所有する画像を対象とし、所有元が不明な場合は `DCIM/Camera/` の画像を対象とします。撮影時刻には MediaStore の `DATE_TAKEN` を使用し、取得できない写真は分類しません。判定用画像は ImageDecoder で長辺224画素以下のソフトウェアBitmapとして読み込むため、フル解像度のソフトウェアBitmapコピーは作りません。
+写真検知には MediaStore の画像変更を契機とする JobScheduler のジョブを使います。端末の再起動後には監視ジョブを登録し直し、保存済みの世代番号より新しい写真を確認します。標準カメラが所有する画像を対象とし、所有元が不明な場合は `DCIM/Camera/` の画像を対象とします。撮影時刻には MediaStore の `DATE_TAKEN` を使用し、取得できない写真は分類しません。判定用画像は ImageDecoder で元の解像度のHARDWARE Bitmapとして読み込み、Issue #4 / PR #16で評価した `FoodClassifier` 内の前処理を通します。
 
-分類結果はアプリ内の `photo_results.db` の `photo_results` テーブルに、写真の MediaStore URI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。元画像の複製や外部送信は行いません。外部送信は Issue #18 の対象です。
+分類結果はアプリ内の `photo_results.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。元画像の複製や外部送信は行いません。外部送信は Issue #18 の対象です。
 
 16 KBページ向けZIPアラインメントを確認済みです。
 
@@ -33,6 +33,8 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 ```shell
 ./gradlew build
 ```
+
+画像単位の失敗とMediaStore再構築後の識別子再利用は、`PhotoDetectionJobTest` のJVM単体テストで確認します。テストでは画像decodeと分類器の応答を模擬します。
 
 ビルド後のデバッグ用 APK は `app/build/outputs/apk/debug/app-debug.apk` に生成されます。
 
