@@ -22,9 +22,9 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
     return try {
       val currentVersion: String? = MediaStore.getVersion(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY)
       if (currentVersion == null) return Result.retry()
-      val version = inputData.getString("version") ?: currentVersion
+      val version = inputData.getString("version")
       val generation = inputData.getLong("generation", -1).takeIf { it >= 0 }
-        ?: MediaStore.getGeneration(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        ?: 0
       val enrolledAt = inputData.getLong("enrolled_at", System.currentTimeMillis())
       PhotoProcessingDatabase.get(applicationContext).photoProcessingDao().insertScanState(
         PhotoScanStateEntity(version = version, generation = generation, enrolledAt = enrolledAt),

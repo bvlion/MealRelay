@@ -182,6 +182,32 @@ class PhotoScannerTest {
   }
 
   @Test
+  fun enrollmentWithoutVersionRescansFromZeroAfterVolumeReturns() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 2
+    provider.photos = listOf(Photo(1, 1, 1000), Photo(2, 2, 2000))
+    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = null, generation = 0, enrolledAt = 1500))
+      val classifiedIds = mutableListOf<Long>()
+      val classify: (Uri) -> Boolean = { uri ->
+        classifiedIds.add(ContentUris.parseId(uri))
+        true
+      }
+      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertEquals(listOf(2L), classifiedIds)
+      assertEquals(provider.version, dao.getScanState()?.version)
+      assertEquals(2L, dao.getScanState()?.generation)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
   fun noCandidateOrUnavailableVolumeOrPermissionDoesNotCreateClassifier() {
     val application = RuntimeEnvironment.getApplication() as Application
     Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)

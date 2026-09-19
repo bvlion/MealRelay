@@ -24,7 +24,7 @@ data class PhotoResultEntity(
 @Entity(tableName = "photo_scan_state")
 data class PhotoScanStateEntity(
   @PrimaryKey val id: Int = 1,
-  val version: String,
+  val version: String?,
   val generation: Long,
   @ColumnInfo(name = "enrolled_at") val enrolledAt: Long,
 )
