@@ -3,6 +3,7 @@ package net.ambitious.android.mealrelay
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.content.Intent
 import android.os.Bundle
 
 class PhotoPermissionActivity : Activity() {
@@ -10,7 +11,7 @@ class PhotoPermissionActivity : Activity() {
     super.onCreate(savedInstanceState)
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
       PhotoEnrollmentWorker.enqueue(this)
-      finish()
+      startAuthorization()
     } else if (savedInstanceState == null) {
       requestPermissions(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
@@ -30,6 +31,11 @@ class PhotoPermissionActivity : Activity() {
     ) {
       PhotoEnrollmentWorker.enqueue(this)
     }
+    if (requestCode == 1) startAuthorization()
+  }
+
+  private fun startAuthorization() {
+    startActivity(Intent(this, MealRelayAuthorizationActivity::class.java))
     finish()
   }
 }

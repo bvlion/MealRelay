@@ -15,4 +15,4 @@ MealRelay は、日常の食事記録をできるだけ操作を増やさずに�
 └── README.md
 ```
 
-各ディレクトリの詳細は、それぞれの README を参照してください。現時点で Android と Backend の具体的な技術選定や詳細構成は固定しません。food / non-food 判定のPoCについては [ml/README.md](./ml/README.md) を参照してください。
+各ディレクトリの詳細は、それぞれの README を参照してください。Backend は Cloud Functions Gen2 / Node.js 24 を使用します。food / non-food 判定のPoCについては [ml/README.md](./ml/README.md) を参照してください。

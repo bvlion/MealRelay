@@ -1,0 +1,10 @@
+'use strict';
+
+class AuthenticationError extends Error {
+  constructor(message, status = 401) {
+    super(message);
+    this.status = status;
+  }
+}
+
+module.exports = { AuthenticationError };
