@@ -12,6 +12,10 @@ android {
   namespace = "net.ambitious.android.mealrelay"
   compileSdk = 37
 
+  buildFeatures {
+    buildConfig = true
+  }
+
   defaultConfig {
     applicationId = "net.ambitious.android.mealrelay"
     minSdk = 37
@@ -19,6 +23,16 @@ android {
     versionCode = 1
     versionName = "1.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_OAUTH_CLIENT_ID",
+      "\"${providers.gradleProperty("mealRelayOauthClientId").orElse("").get()}\"",
+    )
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_AUTH_ENDPOINT",
+      "\"${providers.gradleProperty("mealRelayAuthEndpoint").orElse("").get()}\"",
+    )
   }
 
   testOptions.unitTests.isIncludeAndroidResources = true
@@ -28,10 +42,20 @@ dependencies {
   implementation(libs.litert)
   implementation(libs.work.runtime)
   implementation(libs.room.runtime)
+  implementation(libs.play.services.auth)
+  implementation(libs.activity.ktx)
+  implementation(libs.lifecycle.runtime.ktx)
+  implementation(libs.coroutines.play.services)
+  implementation(libs.retrofit)
+  implementation(libs.retrofit.converter.gson)
+  implementation(libs.okhttp)
+  implementation(libs.tink.android)
   ksp(libs.room.compiler)
 
   testImplementation(libs.junit)
   testImplementation(libs.robolectric)
+  testImplementation(libs.okhttp.mockwebserver)
+  testImplementation(libs.okhttp.tls)
 
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.androidx.test.runner)

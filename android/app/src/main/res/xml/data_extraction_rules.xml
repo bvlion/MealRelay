@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
+        <exclude domain="sharedpref" path="mealrelay_auth.xml" />
         <exclude domain="database" path="photo_detection.db" />
         <exclude domain="database" path="photo_detection.db-journal" />
         <exclude domain="database" path="photo_detection.db-shm" />
         <exclude domain="database" path="photo_detection.db-wal" />
     </cloud-backup>
     <device-transfer>
+        <exclude domain="sharedpref" path="mealrelay_auth.xml" />
         <exclude domain="database" path="photo_detection.db" />
         <exclude domain="database" path="photo_detection.db-journal" />
         <exclude domain="database" path="photo_detection.db-shm" />
