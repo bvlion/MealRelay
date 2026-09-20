@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8f2ccfe14b488ea7185fd7ab221772f1",
+    "identityHash": "9280e50891e495545812048d6a0c7d3b",
     "entities": [
       {
         "tableName": "photo_results",
@@ -42,7 +42,7 @@
       },
       {
         "tableName": "photo_scan_state",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `version` TEXT, `generation` INTEGER NOT NULL, `enrolled_at` INTEGER NOT NULL, `has_full_access` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `version` TEXT, `generation` INTEGER NOT NULL, `enrolled_at` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -66,12 +66,6 @@
             "columnName": "enrolled_at",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "hasFullAccess",
-            "columnName": "has_full_access",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -84,7 +78,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8f2ccfe14b488ea7185fd7ab221772f1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9280e50891e495545812048d6a0c7d3b')"
     ]
   }
 }
