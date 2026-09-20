@@ -13,7 +13,7 @@ MealRelay の Android アプリです。
 
 Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを LiteRT で実行し、`Bitmap` を端末内だけで food / non-food に分類します。HARDWARE BitmapはソフトウェアBitmapへコピーしたうえで、縦横比を維持して224 × 224へ縮小し、余白を黒で補います。判定のための通信や外部API呼び出しはありません。
 
-写真検知には WorkManager の MediaStore 変更監視と定期走査を使います。アプリを開いていない間も走査を継続し、端末再起動時はシステムの起動完了通知から既存のWorkManager監視と走査を再登録します。標準カメラが所有する画像を対象とし、所有元が不明な場合は `DCIM/Camera/` の画像を対象とします。通常走査は `GENERATION_MODIFIED` で公開後の写真を検出し、`GENERATION_ADDED` と自動検知開始時のgenerationを比較して、開始前写真の後日の編集・メタデータ更新を除外します。撮影時刻には MediaStore の `DATE_TAKEN` を使用し、取得できない写真は分類しません。判定用画像は ImageDecoder で元の解像度のHARDWARE Bitmapとして読み込み、Issue #4 / PR #16で評価した `FoodClassifier` 内の前処理を通します。
+写真検知には WorkManager の MediaStore 変更監視と定期走査を使います。WorkManager が永続化した作業から、アプリを開いていない間や端末の再起動後も走査を再開します。標準カメラが所有する画像を対象とし、所有元が不明な場合は `DCIM/Camera/` の画像を対象とします。通常走査は `GENERATION_MODIFIED` で公開後の写真を検出し、`GENERATION_ADDED` と自動検知開始時のgenerationを比較して、開始前写真の後日の編集・メタデータ更新を除外します。撮影時刻には MediaStore の `DATE_TAKEN` を使用し、取得できない写真は分類しません。判定用画像は ImageDecoder で元の解像度のHARDWARE Bitmapとして読み込み、Issue #4 / PR #16で評価した `FoodClassifier` 内の前処理を通します。
 
 `PhotoClassification` は走査中に所有し、最初の分類対象が見つかったときだけモデルを読み込み、走査終了時に閉じます。
 
