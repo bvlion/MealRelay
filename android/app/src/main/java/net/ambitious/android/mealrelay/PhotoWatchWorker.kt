@@ -18,9 +18,6 @@ class PhotoWatchWorker(context: Context, parameters: WorkerParameters) : Worker(
       if (applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) !=
         PackageManager.PERMISSION_GRANTED
       ) {
-        synchronized(PhotoScanner::class.java) {
-          PhotoProcessingDatabase.get(applicationContext).photoProcessingDao().markFullAccessLost()
-        }
         return Result.success()
       }
       enqueue(applicationContext, ExistingWorkPolicy.APPEND_OR_REPLACE).result.get()
