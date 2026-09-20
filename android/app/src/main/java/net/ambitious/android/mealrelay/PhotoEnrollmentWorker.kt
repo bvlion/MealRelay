@@ -18,9 +18,6 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       if (applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) !=
         PackageManager.PERMISSION_GRANTED
       ) {
-        synchronized(PhotoScanner::class.java) {
-          PhotoProcessingDatabase.get(applicationContext).photoProcessingDao().markFullAccessLost()
-        }
         return Result.success()
       }
       val currentVersion: String? = MediaStore.getVersion(applicationContext, MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -31,18 +28,14 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       val enrolledAt = inputData.getLong("enrolled_at", System.currentTimeMillis())
       val photoProcessingDao = PhotoProcessingDatabase.get(applicationContext).photoProcessingDao()
       synchronized(PhotoScanner::class.java) {
-        val scanState = photoProcessingDao.getScanState()
-        val newState = PhotoScanStateEntity(
-          version = version,
-          generation = generation,
-          enrolledGeneration = generation,
-          enrolledAt = enrolledAt,
+        photoProcessingDao.insertScanState(
+          PhotoScanStateEntity(
+            version = version,
+            generation = generation,
+            enrolledGeneration = generation,
+            enrolledAt = enrolledAt,
+          ),
         )
-        if (scanState == null) {
-          photoProcessingDao.insertScanState(newState)
-        } else if (inputData.getBoolean("should_reset", false) || !scanState.hasFullAccess) {
-          photoProcessingDao.updateScanState(newState)
-        }
       }
       PhotoWatchWorker.enqueue(applicationContext).result.get()
       PhotoScanWorker.enqueuePeriodic(applicationContext).result.get()
@@ -55,10 +48,9 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
   }
 
   companion object {
-    fun enqueue(context: Context, shouldReset: Boolean = false) {
+    fun enqueue(context: Context) {
       val data = Data.Builder()
         .putLong("enrolled_at", System.currentTimeMillis())
-        .putBoolean("should_reset", shouldReset)
       val version: String? = MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY)
       if (version != null) {
         data.putString("version", version)
@@ -66,7 +58,7 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       }
       WorkManager.getInstance(context).enqueueUniqueWork(
         "photo_enrollment",
-        if (shouldReset) ExistingWorkPolicy.REPLACE else ExistingWorkPolicy.KEEP,
+        ExistingWorkPolicy.KEEP,
         OneTimeWorkRequest.Builder(PhotoEnrollmentWorker::class.java)
           .setInputData(data.build())
           .build(),
