@@ -2,10 +2,43 @@
 
 const { AuthenticationError } = require('./errors');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
-const { ImageMealError, analyzeMealImage, parseImageMealRequest } = require('./imageMeal');
+const { analyzeMealImage } = require('./imageMealAnalysis');
+const { ImageMealError } = require('./imageMealError');
+const { parseImageMealRequest } = require('./imageMealRequest');
 const { GoogleHealthPendingError } = require('./googleHealthNutrition');
-const { MealRecordError } = require('./mealRecord');
-const { registerMeal } = require('./registerMeal');
+const { MealRecordError, validateImageMealRetry } = require('./mealRecord');
+const { completeMealRegistration, registerMeal } = require('./registerMeal');
+
+async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
+  analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
+  const savedMeal = await mealRepository.find(userId, mealId);
+  if (savedMeal) {
+    validateImageMealRetry({ record: savedMeal.record, userId, mealId, capturedAt });
+    return completeMealRegistration({
+      ...savedMeal,
+      authRepository,
+      clientId,
+      clientSecret,
+      healthClient,
+      mealRepository,
+    });
+  }
+
+  const analysis = await analyzeMealImage({ client: analysisClient, image });
+  return registerMeal({
+    route: 'image',
+    authorization,
+    authenticatedUserId: userId,
+    mealId,
+    occurredAt: capturedAt,
+    analysis,
+    authRepository,
+    mealRepository,
+    clientId,
+    clientSecret,
+    healthClient,
+  });
+}
 
 async function handleImageMealRequest({ request, response, analysisClient, authRepository,
   mealRepository, clientId, clientSecret, healthClient }) {
@@ -21,15 +54,15 @@ async function handleImageMealRequest({ request, response, analysisClient, authR
 
   try {
     const authorization = request.get('authorization');
-    await authenticateMealRelayRequest({ authorization, repository: authRepository });
+    const userId = await authenticateMealRelayRequest({ authorization, repository: authRepository });
     const { image, mealId, capturedAt } = await parseImageMealRequest(request);
-    const analysis = await analyzeMealImage({ client: analysisClient, image });
-    const result = await registerMeal({
-      route: 'image',
+    const result = await registerImageMeal({
       authorization,
+      userId,
+      image,
       mealId,
-      occurredAt: capturedAt,
-      analysis,
+      capturedAt,
+      analysisClient,
       authRepository,
       mealRepository,
       clientId,

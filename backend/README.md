@@ -4,15 +4,15 @@ Cloud Functions Gen2 / Node.js 24 を使用します。Issue #9 の認証入口�
 
 Issue #7 の食事登録処理は `src/registerMeal.js` の `registerMeal` です。後続の画像・テキスト解析エンドポイントは、認証ヘッダー、入力ごとに安定した `mealId`、`occurredAt`（画像は撮影時刻、テキストは入力時刻）、解析結果の `analysis`、`route`（`image` / `text`）を渡します。時刻は UTC offset を含む ISO 8601 形式で渡します。テキスト解析で食事日時を解釈できた場合は `analysis.eatenAt` を渡し、ない場合は入力時刻が使われます。`mealId` は同じ食事の再送で変えず、別の食事には別の ID を付けます。
 
-`imageMeal` は `multipart/form-data` の `image`、`capturedAt`、`mealId` を受け取ります。`image` は 7 MB 以下の `image/jpeg`、`image/png`、`image/webp`、`image/heic`、`image/heif` です。`capturedAt` は UTC offset を含む RFC 3339、`mealId` は同じ写真の再送で変わらない値にします。`Authorization: Bearer <MealRelay token>` を必須とし、画像を外部解析へ送る前に token を検証します。本文にユーザー ID は持たせません。成功時は新規登録を `201`、既に同じ内容が登録済みの場合を `200` で返します。
+`imageMeal` は `multipart/form-data` の `image`、`capturedAt`、`mealId` を受け取ります。画像形式は OpenAI API の画像入力仕様に従う `image/jpeg`、`image/png`、`image/webp`、`image/gif` です。`capturedAt` は UTC offset を含む RFC 3339、`mealId` は同じ写真の再送で変わらない値にします。`Authorization: Bearer <MealRelay token>` を必須とし、画像を外部解析へ送る前に token を検証します。本文にユーザー ID は持たせません。成功時は新規登録を `201`、既に同じ内容が登録済みの場合を `200` で返します。
 
-画像解析には Gemini Enterprise Agent Platform の GA モデル [`gemini-3.8-flash`](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/gemini/3-8-flash) と公式 [`@google/genai`](https://googleapis.github.io/js-genai/) を使用します。モデルが対応する画像理解と structured output を一度のリクエストで使用し、料理ごとの実摂取量を含む表示名と、1食全体のカロリー・たんぱく質・炭水化物・脂質を JSON schema に従って取得します。複数品は1食へ集約し、大皿・作り置き・複数人分は写真全量ではなく1人が実際に摂取したと考えられる量を推定するよう指示します。画像中の文字列は栄養情報としてだけ扱い、命令として扱いません。
+画像解析には OpenAI API の [`gpt-5.6-luna`](https://developers.openai.com/api/docs/models/gpt-5.6-luna) と公式 [`openai`](https://developers.openai.com/api/docs/libraries) SDK を使用します。Responses API の画像入力と Structured Outputs を一度のリクエストで使用し、料理ごとの実摂取量を含む表示名と、1食全体のカロリー・たんぱく質・炭水化物・脂質を取得します。複数品は1食へ集約し、大皿・作り置き・複数人分は写真全量ではなく1人が実際に摂取したと考えられる量を推定するよう指示します。画像中の文字列は栄養情報としてだけ扱い、命令として扱いません。モデルの reasoning 設定は API の既定値を使用します。
 
-栄養表示の値は、表示値と摂取した serving 数の両方が明確で、その値が食事全体を表す場合だけ `packageLabel` 由来の確定値にします。条件を満たさない場合は、確定値と一部推定値を混ぜて確定値とせず、食事全体を推定値として渡します。Issue #7 の共通モデルは項目ごとに確定値を優先し、Google Health へ1食1件で登録します。画像の inline data はモデルの公式上限に合わせて 7 MB とし、超過時は `413` を返します。画像圧縮、Cloud Storage への一時保存、端末側の送信処理はこの実装に含めません。
+栄養表示の値は、表示値と摂取した serving 数の両方が明確で、その値が食事全体を表す場合だけ `packageLabel` 由来の確定値にします。条件を満たさない場合は、確定値と一部推定値を混ぜて確定値とせず、食事全体を推定値として渡します。Issue #7 の共通モデルは項目ごとに確定値を優先し、Google Health へ1食1件で登録します。OpenAI API の画像入力上限は[公式仕様](https://developers.openai.com/api/docs/guides/images-vision)に従います。画像圧縮、Cloud Storage への一時保存、端末側の送信処理はこの実装に含めません。
 
 `analysis` は `foodDisplayName`、任意の `mealType`（`BREAKFAST` / `LUNCH` / `DINNER` / `SNACK`）、`estimated`、`confirmed` を持ちます。栄養項目は `energyKcal`、`proteinGrams`、`carbohydrateGrams`、`fatGrams` です。`estimated` には数値を、`confirmed` には `{ value, origin }` を指定し、`origin` は `packageLabel` または `userInput` とします。両方ある項目は確定値を Google Health へ送ります。共通モデルには両方の値と由来を保持します。認証済み token の `sub` をユーザー ID とし、本文のユーザー ID は受け付けません。
 
-共通モデルと送信時刻は Firestore の `meals/{SHA-256(sub + 区切り文字 + mealId)}` に保存します。Google Health には匿名食品の Nutrition Log を 1 食 1 件として登録し、食事時刻から 1 秒の interval、元の UTC offset、選ばれた栄養値、食品名を送ります。同じ `sub` と `mealId` から Google Health の data point ID を固定するため、送信結果を受け取れなかった場合の再試行でも同じ記録を参照します。同じ ID に異なる内容を再送すると競合エラーになります。Google Health の匿名食品ログは作成後に編集できないため、変更・削除はこの処理の対象外です。[Nutrition Log の公式仕様](https://developers.google.com/health/data-types/nutrition)と[DataPoint の識別子仕様](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints)に従います。
+共通モデルと送信時刻は Firestore の `meals/{SHA-256(sub + 区切り文字 + mealId)}` に保存します。Google Health には匿名食品の Nutrition Log を 1 食 1 件として登録し、食事時刻から 1 秒の interval、元の UTC offset、選ばれた栄養値、食品名を送ります。同じ `sub` と `mealId` の再送では、保存済みの解析結果を使って Google Health 登録を再開し、画像解析を再実行しません。同じ ID で撮影時刻が異なる再送は競合エラーになります。Google Health の匿名食品ログは作成後に編集できないため、変更・削除はこの処理の対象外です。[Nutrition Log の公式仕様](https://developers.google.com/health/data-types/nutrition)と[DataPoint の識別子仕様](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints)に従います。
 
 Google Health の `create` は Operation を返します。即時完了が確認できた場合のみ登録済みにします。処理中または応答を失った場合、再試行時に同じ data point ID を[公式の `get` API](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/get)で確認します。存在を確認できない場合は未登録状態のまま再試行可能なエラーにし、409 だけで成功と判断しません。Google Health の現行 REST 一覧と Discovery Document には Operation の取得メソッドがないため、Operation 自体の終端状態は照会しません。`get` には nutrition 読み取り権限が必要です。新しい認可では読み取り・書き込み両方を要求します。既存の書き込み専用 token から移行する端末は Google Health の再認可が必要です。
 
@@ -28,17 +28,7 @@ Google Cloud には Android アプリのパッケージ名と署名証明書を�
 
 ## `imageMeal` のデプロイ
 
-後述する Issue #9 の Firestore、OAuth client、Secret Manager、実行サービスアカウントを先に準備します。Vertex AI API を有効にし、関数の実行サービスアカウントへ予測実行権限を付与します。
-
-```sh
-gcloud services enable aiplatform.googleapis.com
-
-gcloud projects add-iam-policy-binding <PROJECT_ID> \
-  --member="serviceAccount:mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
-  --role="roles/aiplatform.user"
-```
-
-`GOOGLE_CLOUD_PROJECT` にはプロジェクト ID、`GOOGLE_CLOUD_LOCATION` には `gemini-3.8-flash` が GA で利用できる `global` を指定します。OAuth client secret は環境変数の平文ではなく、Issue #9 と同じ Secret Manager の secret をバインドします。
+後述する Issue #9 の Firestore、OAuth client、Secret Manager、実行サービスアカウントを先に準備します。OpenAI API key と OAuth client secret は環境変数の平文ではなく Secret Manager の secret をバインドします。
 
 ```sh
 gcloud functions deploy imageMeal \
@@ -50,11 +40,11 @@ gcloud functions deploy imageMeal \
   --trigger-http \
   --allow-unauthenticated \
   --service-account="mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=<PROJECT_ID>,GOOGLE_CLOUD_LOCATION=global,GOOGLE_OAUTH_CLIENT_ID=<WEB_OAUTH_CLIENT_ID>" \
-  --set-secrets="GOOGLE_OAUTH_CLIENT_SECRET=google-oauth-client-secret:latest"
+  --set-env-vars="GOOGLE_OAUTH_CLIENT_ID=<WEB_OAUTH_CLIENT_ID>" \
+  --set-secrets="GOOGLE_OAUTH_CLIENT_SECRET=google-oauth-client-secret:latest,OPENAI_API_KEY=openai-api-key:latest"
 ```
 
-HTTP trigger 自体は Android から到達できるよう未認証呼び出しを許可しますが、関数内では有効な MealRelay token がない要求を画像解析前に拒否します。実際の写真を用いた栄養推定精度、Vertex AI、Firestore、Google Health への一連の登録は実運用環境で確認が必要です。
+HTTP trigger 自体は Android から到達できるよう未認証呼び出しを許可しますが、関数内では有効な MealRelay token がない要求を画像解析前に拒否します。実際の写真を用いた栄養推定精度、OpenAI API、Firestore、Google Health への一連の登録は実運用環境で確認が必要です。
 
 ## Issue #9 の実環境確認
 
@@ -115,17 +105,28 @@ secret は作成後に標準入力から渡します。入力を終えたら EOF
    gcloud secrets versions add google-oauth-client-secret --data-file=-
    ```
 
-2. 初回登録を許可する2つのメールアドレスだけを、JSON 配列として `meal-relay-allowed-emails` に保存します。入力は `[` で始まり `]` で終わる有効な JSON とし、メールアドレスは二重引用符で囲みます。
+2. OpenAI API key を `openai-api-key` に保存します。
+
+   ```sh
+   gcloud secrets create openai-api-key --replication-policy=automatic
+   gcloud secrets versions add openai-api-key --data-file=-
+   ```
+
+3. 初回登録を許可する2つのメールアドレスだけを、JSON 配列として `meal-relay-allowed-emails` に保存します。入力は `[` で始まり `]` で終わる有効な JSON とし、メールアドレスは二重引用符で囲みます。
 
    ```sh
    gcloud secrets create meal-relay-allowed-emails --replication-policy=automatic
    gcloud secrets versions add meal-relay-allowed-emails --data-file=-
    ```
 
-3. 実行サービスアカウントだけに、各 secret の読み取りを許可します。
+4. 実行サービスアカウントだけに、各 secret の読み取りを許可します。
 
    ```sh
    gcloud secrets add-iam-policy-binding google-oauth-client-secret \
+     --member="serviceAccount:mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
+     --role="roles/secretmanager.secretAccessor"
+
+   gcloud secrets add-iam-policy-binding openai-api-key \
      --member="serviceAccount:mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
      --role="roles/secretmanager.secretAccessor"
 

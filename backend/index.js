@@ -2,7 +2,7 @@
 
 const functions = require('@google-cloud/functions-framework');
 const { Firestore } = require('@google-cloud/firestore');
-const { GoogleGenAI } = require('@google/genai');
+const OpenAI = require('openai');
 const { completeAuthorization } = require('./src/auth');
 const { loadAuthenticationConfig } = require('./src/config');
 const { AuthenticationError } = require('./src/errors');
@@ -45,18 +45,14 @@ functions.http('authExchange', async (request, response) => {
 
 functions.http('imageMeal', async (request, response) => {
   response.set('Cache-Control', 'no-store');
-  const project = process.env.GOOGLE_CLOUD_PROJECT;
   const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
   const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
-  if (!project || !clientId || !clientSecret) {
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  if (!openaiApiKey || !clientId || !clientSecret) {
     response.status(500).json({ error: 'Image analysis configuration is incomplete' });
     return;
   }
-  const analysisClient = new GoogleGenAI({
-    enterprise: true,
-    project,
-    location: process.env.GOOGLE_CLOUD_LOCATION || 'global',
-  });
+  const analysisClient = new OpenAI({ apiKey: openaiApiKey });
   await handleImageMealRequest({
     request,
     response,

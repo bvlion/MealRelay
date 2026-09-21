@@ -6,21 +6,12 @@ const { getGoogleHealthOAuthClient } = require('./healthCredentials');
 const { normalizeImageMeal, normalizeTextMeal } = require('./mealRecord');
 const { toGoogleHealthDataPoint, createNutritionLog } = require('./googleHealthNutrition');
 
-async function registerMeal({ route, authorization, mealId, occurredAt, analysis,
-  authRepository, mealRepository, clientId, clientSecret, createOAuthClient = createGoogleOAuth,
-  healthClient }) {
-  if (route !== 'image' && route !== 'text') {
-    throw new Error('Meal route is invalid');
-  }
-  const userId = await authenticateMealRelayRequest({ authorization, repository: authRepository });
-  const record = route === 'image'
-    ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
-    : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
-  const status = await mealRepository.saveIfAbsent(record);
+async function completeMealRegistration({ record, status, authRepository, clientId, clientSecret,
+  createOAuthClient = createGoogleOAuth, healthClient, mealRepository }) {
   if (status === 'registered') return { record, isAlreadyRegistered: true };
 
   const oauthClient = await getGoogleHealthOAuthClient({
-    sub: userId,
+    sub: record.userId,
     repository: authRepository,
     createOAuthClient: () => createOAuthClient(clientId, clientSecret),
   });
@@ -34,4 +25,30 @@ async function registerMeal({ route, authorization, mealId, occurredAt, analysis
   return { record, isAlreadyRegistered: false };
 }
 
-module.exports = { registerMeal };
+async function registerMeal({ route, authorization, authenticatedUserId, mealId, occurredAt, analysis,
+  authRepository, mealRepository, clientId, clientSecret, createOAuthClient = createGoogleOAuth,
+  healthClient }) {
+  if (route !== 'image' && route !== 'text') {
+    throw new Error('Meal route is invalid');
+  }
+  const userId = authenticatedUserId ?? await authenticateMealRelayRequest({
+    authorization,
+    repository: authRepository,
+  });
+  const record = route === 'image'
+    ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
+    : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
+  const status = await mealRepository.saveIfAbsent(record);
+  return completeMealRegistration({
+    record,
+    status,
+    authRepository,
+    clientId,
+    clientSecret,
+    createOAuthClient,
+    healthClient,
+    mealRepository,
+  });
+}
+
+module.exports = { completeMealRegistration, registerMeal };

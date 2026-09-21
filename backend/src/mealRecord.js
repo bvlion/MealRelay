@@ -86,4 +86,17 @@ function normalizeTextMeal({ userId, mealId, inputAt, analysis }) {
   return normalizeMeal({ route: 'text', userId, mealId, eatenAt: analysis?.eatenAt ?? inputAt, analysis });
 }
 
-module.exports = { MealRecordError, normalizeImageMeal, normalizeTextMeal };
+function validateImageMealRetry({ record, userId, mealId, capturedAt }) {
+  const capturedTime = normalizeMealTime(capturedAt);
+  if (record.route !== 'image' || record.userId !== userId || record.mealId !== mealId ||
+      record.eatenAt !== capturedTime.eatenAt || record.utcOffset !== capturedTime.utcOffset) {
+    throw new MealRecordError('Meal ID already has different content', 409);
+  }
+}
+
+module.exports = {
+  MealRecordError,
+  normalizeImageMeal,
+  normalizeTextMeal,
+  validateImageMealRetry,
+};
