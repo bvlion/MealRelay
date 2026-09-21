@@ -4,30 +4,33 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { analyzeTextMeal, TEXT_ANALYSIS_MODEL } = require('../src/textMealAnalysis');
 
+function parsedMeal(overrides = {}) {
+  return {
+    foodDisplayName: 'カップ麺',
+    eatenAt: '2026-09-20T20:00:00+09:00',
+    estimated: {
+      energyKcal: null,
+      proteinGrams: 9,
+      carbohydrateGrams: 55,
+      fatGrams: 14,
+    },
+    confirmed: {
+      energyKcal: { value: 351, origin: 'userInput' },
+      proteinGrams: null,
+      carbohydrateGrams: null,
+      fatGrams: null,
+    },
+    ...overrides,
+  };
+}
+
 test('GPT-5.6 Luna parses relative time and separates explicit nutrition from estimates', async () => {
   let request;
   const client = {
     responses: {
       parse: async (value) => {
         request = value;
-        return {
-          output_parsed: {
-            foodDisplayName: 'カップ麺',
-            eatenAt: '2026-09-20T20:00:00+09:00',
-            estimated: {
-              energyKcal: null,
-              proteinGrams: 9,
-              carbohydrateGrams: 55,
-              fatGrams: 14,
-            },
-            confirmed: {
-              energyKcal: { value: 351, origin: 'userInput' },
-              proteinGrams: null,
-              carbohydrateGrams: null,
-              fatGrams: null,
-            },
-          },
-        };
+        return { output_parsed: parsedMeal() };
       },
     },
   };
@@ -65,5 +68,56 @@ test('text analysis without structured output is rejected', async () => {
       inputAt: '2026-09-21T08:00:00+09:00',
     }),
     /invalid result/,
+  );
+});
+
+test('text analysis rejects a missing estimate for a nutrient not confirmed by the user', async () => {
+  const client = {
+    responses: {
+      parse: async () => ({
+        output_parsed: parsedMeal({
+          estimated: {
+            energyKcal: null,
+            proteinGrams: null,
+            carbohydrateGrams: 55,
+            fatGrams: 14,
+          },
+          confirmed: {
+            energyKcal: { value: 351, origin: 'userInput' },
+            proteinGrams: null,
+            carbohydrateGrams: null,
+            fatGrams: null,
+          },
+        }),
+      }),
+    },
+  };
+
+  await assert.rejects(
+    analyzeTextMeal({
+      client,
+      text: 'カップ麺 351kcal',
+      inputAt: '2026-09-21T08:00:00+09:00',
+    }),
+    (error) => error.status === 502 && /incomplete result/.test(error.message),
+  );
+});
+
+test('text analysis treats a malformed model timestamp as an upstream failure', async () => {
+  const client = {
+    responses: {
+      parse: async () => ({
+        output_parsed: parsedMeal({ eatenAt: 'yesterday evening' }),
+      }),
+    },
+  };
+
+  await assert.rejects(
+    analyzeTextMeal({
+      client,
+      text: '昨日の夜 カップ麺 351kcal',
+      inputAt: '2026-09-21T08:00:00+09:00',
+    }),
+    (error) => error.status === 502 && /invalid time/.test(error.message),
   );
 });
