@@ -32,6 +32,10 @@ AIエージェントが判断してよいのは、ユーザーが決定済みの
 
 処理の意図を追うために複数の責務を読み解く必要がある長い関数、意味がコードから分からない数値リテラル、不要な独自validation、成熟したライブラリまたは現行の公式APIで扱える標準処理の自前実装が残っていないかを確認する。
 
+複数の責務を1ファイルや1クラスへ押し込めない。関連コードが増えた場合は、責務ごとに分離し、必要に応じてパッケージやモジュール内の配置も整理する。
+
+validationは永続化処理や外部I/Oの責務へ混在させず、独立した責務として分離する。Repository内で保存処理と入力・業務validationを一体化しない。
+
 可読性の改善は対象Issueの範囲内で必要なものに限り、将来用途だけを理由にした抽象化や過剰な一般化は行わない。
 
 ## Android
@@ -39,6 +43,14 @@ AIエージェントが判断してよいのは、ユーザーが決定済みの
 Androidの実装コードとテストコードはKotlinで統一する。Javaの実装コードは追加しない。
 
 依存関係とGradle pluginのバージョンはVersion Catalogで管理する。
+
+新しく実装するAndroid UIはJetpack Composeを使用する。Viewベースのレイアウトや `LinearLayout`、`TextView`、`Button` 等で新規UIを構築しない。
+
+ユーザーへ表示する文言はstring resourceで管理し、Composeから参照する。表示文言をKotlinコードへ直接記述しない。
+
+画面やUIの状態はComposeのstateまたはstate holderで扱い、Activity等のmutableなフィールド `var` でUI状態を直接管理しない。
+
+本番稼働前のため、既存インストールとの後方互換性だけを目的としたRoom migrationは追加しない。ユーザーが本番稼働開始またはデータ移行互換性の必要性を明示するまでは、開発中のスキーマ変更でmigration実装を増やさない。
 
 `src/test` と `src/androidTest` は別のsource setとして扱い、テストfixtureやresourceを相互参照しない。
 
