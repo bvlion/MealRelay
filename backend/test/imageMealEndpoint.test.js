@@ -5,11 +5,11 @@ const test = require('node:test');
 const { MealRecordError } = require('../src/mealRecord');
 const { handleImageMealRequest } = require('../src/imageMealEndpoint');
 
-function multipartRequest() {
+function multipartRequest({ capturedAt = '2026-09-21T12:30:00+09:00' } = {}) {
   const boundary = 'meal-relay-boundary';
   const body = Buffer.from(
     `--${boundary}\r\nContent-Disposition: form-data; name="mealId"\r\n\r\nphoto-1\r\n` +
-    `--${boundary}\r\nContent-Disposition: form-data; name="capturedAt"\r\n\r\n2026-09-21T12:30:00+09:00\r\n` +
+    `--${boundary}\r\nContent-Disposition: form-data; name="capturedAt"\r\n\r\n${capturedAt}\r\n` +
     `--${boundary}\r\nContent-Disposition: form-data; name="image"; filename="meal.jpg"\r\n` +
     'Content-Type: image/jpeg\r\n\r\nimage\r\n' +
     `--${boundary}--\r\n`,
@@ -129,6 +129,18 @@ test('an unauthenticated image is not sent to OpenAI', async () => {
   await handleImageMealRequest({ request, response, ...fixture.dependencies });
 
   assert.equal(response.statusCode, 401);
+  assert.equal(fixture.calls.analysis.length, 0);
+  assert.equal(fixture.calls.googleHealth.length, 0);
+});
+
+test('an invalid capture time is rejected before the image is sent to OpenAI', async () => {
+  const request = multipartRequest({ capturedAt: '2026-09-21T12:30:00' });
+  const response = responseFixture();
+  const fixture = endpointFixture();
+
+  await handleImageMealRequest({ request, response, ...fixture.dependencies });
+
+  assert.equal(response.statusCode, 400);
   assert.equal(fixture.calls.analysis.length, 0);
   assert.equal(fixture.calls.googleHealth.length, 0);
 });
