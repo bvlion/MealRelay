@@ -33,7 +33,7 @@ function responseFixture() {
 }
 
 function textAnalysis({ foodDisplayName = 'トーストとヨーグルト', eatenAt = null,
-  confirmedEnergyKcal = null, estimatedEnergyKcal = null, proteinGrams = 12,
+  confirmedEnergyKcal = null, estimatedEnergyKcal = 420, proteinGrams = 12,
   carbohydrateGrams = 35, fatGrams = 8 } = {}) {
   return {
     foodDisplayName,
@@ -146,7 +146,6 @@ test('natural text without a date uses input time and reaches the authenticated 
     analysisOutputs: [textAnalysis({
       foodDisplayName: 'トーストとヨーグルト',
       eatenAt: null,
-      estimatedEnergyKcal: null,
     })],
   });
 
@@ -158,7 +157,8 @@ test('natural text without a date uses input time and reaches the authenticated 
   assert.deepEqual(fixture.calls.tokenLookups, ['token-1']);
   assert.equal(response.body.record.userId, 'user1');
   assert.equal(response.body.record.eatenAt, '2026-09-20T23:00:00.000Z');
-  assert.equal(response.body.record.nutrition.energyKcal, undefined);
+  assert.deepEqual(response.body.record.nutrition.energyKcal.estimated,
+    { value: 420, origin: 'textAnalysis' });
   assert.deepEqual(response.body.record.nutrition.proteinGrams.estimated,
     { value: 12, origin: 'textAnalysis' });
   assert.equal(fixture.calls.googleHealth.length, 1);
@@ -170,7 +170,6 @@ test('relative date text is converted from the input time', async () => {
     analysisOutputs: [textAnalysis({
       foodDisplayName: 'カレー',
       eatenAt: '2026-09-20T20:00:00+09:00',
-      estimatedEnergyKcal: null,
     })],
   });
 
