@@ -33,6 +33,16 @@ android {
       "MEAL_RELAY_AUTH_ENDPOINT",
       "\"${providers.gradleProperty("mealRelayAuthEndpoint").orElse("").get()}\"",
     )
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_IMAGE_ENDPOINT",
+      "\"${providers.gradleProperty("mealRelayImageEndpoint").orElse("").get()}\"",
+    )
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_TEXT_ENDPOINT",
+      "\"${providers.gradleProperty("mealRelayTextEndpoint").orElse("").get()}\"",
+    )
   }
 
   testOptions.unitTests.isIncludeAndroidResources = true
@@ -41,6 +51,7 @@ android {
 dependencies {
   implementation(libs.litert)
   implementation(libs.work.runtime)
+  implementation(libs.work.runtime.ktx)
   implementation(libs.room.runtime)
   implementation(libs.play.services.auth)
   implementation(libs.activity.ktx)

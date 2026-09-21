@@ -28,6 +28,7 @@ class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(c
       PackageManager.PERMISSION_GRANTED
     ) {
       PhotoWatchWorker.enqueue(applicationContext).result.get()
+      MealSubmissionWorker.enqueue(applicationContext)
     }
     if (isComplete) Result.success() else Result.retry()
   } catch (exception: Exception) {

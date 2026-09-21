@@ -1,5 +1,6 @@
 'use strict';
 
+const { createHash } = require('node:crypto');
 const { AuthenticationError } = require('./errors');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const { analyzeMealImage } = require('./imageMealAnalysis');
@@ -12,7 +13,11 @@ const { completeMealRegistration, registerMeal } = require('./registerMeal');
 async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
   normalizeMealTime(capturedAt);
-  const savedMeal = await mealRepository.find(userId, mealId);
+  const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
+  const acquisition = mealRepository.acquire
+    ? await mealRepository.acquire(userId, mealId, requestHash)
+    : null;
+  const savedMeal = acquisition ? acquisition.savedMeal : await mealRepository.find(userId, mealId);
   if (savedMeal) {
     validateImageMealRetry({ record: savedMeal.record, userId, mealId, capturedAt });
     return completeMealRegistration({
@@ -25,7 +30,13 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
     });
   }
 
-  const analysis = await analyzeMealImage({ client: analysisClient, image });
+  let analysis;
+  try {
+    analysis = await analyzeMealImage({ client: analysisClient, image });
+  } catch (error) {
+    if (acquisition) await mealRepository.releaseReservation(userId, mealId, requestHash);
+    throw error;
+  }
   return registerMeal({
     route: 'image',
     authorization,
@@ -38,6 +49,7 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
     clientId,
     clientSecret,
     healthClient,
+    requestHash: acquisition ? requestHash : undefined,
   });
 }
 

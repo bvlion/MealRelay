@@ -23,6 +23,7 @@ litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 junit = { module = "junit:junit", version.ref = "junit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 work-runtime = { module = "androidx.work:work-runtime", version.ref = "workManager" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }

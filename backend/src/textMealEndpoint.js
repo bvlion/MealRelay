@@ -1,5 +1,6 @@
 'use strict';
 
+const { createHash } = require('node:crypto');
 const { AuthenticationError } = require('./errors');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const { GoogleHealthPendingError } = require('./googleHealthNutrition');
@@ -12,7 +13,11 @@ const { parseTextMealRequest } = require('./textMealRequest');
 async function registerTextMeal({ authorization, userId, text, inputAt, mealId,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
   normalizeMealTime(inputAt);
-  const savedMeal = await mealRepository.find(userId, mealId);
+  const requestHash = createHash('sha256').update(JSON.stringify({ text, inputAt })).digest('hex');
+  const acquisition = mealRepository.acquire
+    ? await mealRepository.acquire(userId, mealId, requestHash)
+    : null;
+  const savedMeal = acquisition ? acquisition.savedMeal : await mealRepository.find(userId, mealId);
   if (savedMeal) {
     validateTextMealRetry({ record: savedMeal.record, userId, mealId });
     return completeMealRegistration({
@@ -25,7 +30,13 @@ async function registerTextMeal({ authorization, userId, text, inputAt, mealId,
     });
   }
 
-  const analysis = await analyzeTextMeal({ client: analysisClient, text, inputAt });
+  let analysis;
+  try {
+    analysis = await analyzeTextMeal({ client: analysisClient, text, inputAt });
+  } catch (error) {
+    if (acquisition) await mealRepository.releaseReservation(userId, mealId, requestHash);
+    throw error;
+  }
   return registerMeal({
     route: 'text',
     authorization,
@@ -38,6 +49,7 @@ async function registerTextMeal({ authorization, userId, text, inputAt, mealId,
     clientId,
     clientSecret,
     healthClient,
+    requestHash: acquisition ? requestHash : undefined,
   });
 }
 

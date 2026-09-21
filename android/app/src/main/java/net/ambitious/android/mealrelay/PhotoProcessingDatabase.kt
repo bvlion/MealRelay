@@ -12,6 +12,9 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
+import androidx.room.Transaction
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Entity(tableName = "photo_results", primaryKeys = ["version", "uri"])
 data class PhotoResultEntity(
@@ -30,6 +33,25 @@ data class PhotoScanStateEntity(
   @ColumnInfo(name = "enrolled_at") val enrolledAt: Long,
 )
 
+@Entity(tableName = "meal_submission_queue")
+data class MealSubmissionEntity(
+  @PrimaryKey @ColumnInfo(name = "meal_id") val mealId: String,
+  val type: String,
+  @ColumnInfo(name = "image_uri") val imageUri: String?,
+  val text: String?,
+  @ColumnInfo(name = "occurred_at") val occurredAt: Long,
+  @ColumnInfo(name = "automatic_attempt_count") val automaticAttemptCount: Int = 0,
+  val state: String = STATE_PENDING,
+  @ColumnInfo(name = "created_at") val createdAt: Long,
+) {
+  companion object {
+    const val TYPE_IMAGE = "image"
+    const val TYPE_TEXT = "text"
+    const val STATE_PENDING = "pending"
+    const val STATE_FAILED = "failed"
+  }
+}
+
 @Dao
 interface PhotoProcessingDao {
   @Query("SELECT * FROM photo_scan_state WHERE id = 1")
@@ -47,11 +69,41 @@ interface PhotoProcessingDao {
   @Insert(onConflict = OnConflictStrategy.IGNORE)
   fun insertResult(result: PhotoResultEntity)
 
+  @Insert(onConflict = OnConflictStrategy.ABORT)
+  fun insertMealSubmission(submission: MealSubmissionEntity)
+
+  @Query("SELECT * FROM meal_submission_queue WHERE state = :state ORDER BY created_at")
+  fun getMealSubmissionsWithState(state: String): List<MealSubmissionEntity>
+
+  @Query("SELECT * FROM meal_submission_queue WHERE meal_id = :mealId")
+  fun getMealSubmission(mealId: String): MealSubmissionEntity?
+
+  @Query("UPDATE meal_submission_queue SET automatic_attempt_count = automatic_attempt_count + 1 WHERE meal_id = :mealId")
+  fun incrementAutomaticAttemptCount(mealId: String)
+
+  @Query("UPDATE meal_submission_queue SET state = :state WHERE meal_id = :mealId")
+  fun updateMealSubmissionState(mealId: String, state: String)
+
+  @Query("DELETE FROM meal_submission_queue WHERE meal_id = :mealId")
+  fun deleteMealSubmission(mealId: String)
+
+  @Transaction
+  fun insertResultAndFoodSubmission(result: PhotoResultEntity, submission: MealSubmissionEntity?) {
+    insertResult(result)
+    if (submission != null) {
+      insertMealSubmission(submission)
+    }
+  }
+
   @Query("SELECT * FROM photo_results ORDER BY version, uri")
   fun getResults(): List<PhotoResultEntity>
 }
 
-@Database(entities = [PhotoResultEntity::class, PhotoScanStateEntity::class], version = 2, exportSchema = true)
+@Database(
+  entities = [PhotoResultEntity::class, PhotoScanStateEntity::class, MealSubmissionEntity::class],
+  version = 3,
+  exportSchema = true,
+)
 abstract class PhotoProcessingDatabase : RoomDatabase() {
   abstract fun photoProcessingDao(): PhotoProcessingDao
 
@@ -63,7 +115,18 @@ abstract class PhotoProcessingDatabase : RoomDatabase() {
         context.applicationContext,
         PhotoProcessingDatabase::class.java,
         "photo_detection.db",
-      ).build().also { instance = it }
+      ).addMigrations(MIGRATION_2_3).build().also { instance = it }
+    }
+
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+          "CREATE TABLE IF NOT EXISTS meal_submission_queue " +
+            "(meal_id TEXT NOT NULL, type TEXT NOT NULL, image_uri TEXT, text TEXT, " +
+            "occurred_at INTEGER NOT NULL, automatic_attempt_count INTEGER NOT NULL, " +
+            "state TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(meal_id))",
+        )
+      }
     }
   }
 }

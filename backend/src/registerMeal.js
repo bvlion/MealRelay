@@ -27,7 +27,7 @@ async function completeMealRegistration({ record, status, authRepository, client
 
 async function registerMeal({ route, authorization, authenticatedUserId, mealId, occurredAt, analysis,
   authRepository, mealRepository, clientId, clientSecret, createOAuthClient = createGoogleOAuth,
-  healthClient }) {
+  healthClient, requestHash }) {
   if (route !== 'image' && route !== 'text') {
     throw new Error('Meal route is invalid');
   }
@@ -38,7 +38,9 @@ async function registerMeal({ route, authorization, authenticatedUserId, mealId,
   const record = route === 'image'
     ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
     : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
-  const status = await mealRepository.saveIfAbsent(record);
+  const status = requestHash
+    ? await mealRepository.saveReserved(record, requestHash)
+    : await mealRepository.saveIfAbsent(record);
   return completeMealRegistration({
     record,
     status,

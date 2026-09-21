@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import java.util.UUID
 
 class PhotoScanner(
   private val context: Context,
@@ -79,7 +80,21 @@ class PhotoScanner(
           Log.w("PhotoScanner", "camera photo classification failed", exception)
           null
         }
-        photoProcessingDao.insertResult(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood))
+        photoProcessingDao.insertResultAndFoodSubmission(
+          PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood),
+          if (isFood == true) {
+            MealSubmissionEntity(
+              mealId = UUID.randomUUID().toString(),
+              type = MealSubmissionEntity.TYPE_IMAGE,
+              imageUri = uri.toString(),
+              text = null,
+              occurredAt = capturedAt,
+              createdAt = System.currentTimeMillis(),
+            )
+          } else {
+            null
+          },
+        )
         if (isFood != null) {
           Log.i("PhotoScanner", "camera photo classified isFood=$isFood")
         }

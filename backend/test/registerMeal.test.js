@@ -29,6 +29,8 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
         get: (field) => documents.get(reference.id)?.[field],
       }),
       create: (reference, fields) => { documents.set(reference.id, fields); },
+      update: (reference, fields) => { documents.set(reference.id, { ...documents.get(reference.id), ...fields }); },
+      delete: (reference) => { documents.delete(reference.id); },
     }),
   };
   const calls = { create: [], get: [], credentials: [] };
@@ -55,6 +57,29 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
   };
   return { args, calls, documents };
 }
+
+test('a same meal ID has one active analysis reservation', async () => {
+  const { args } = registrationFixture();
+  const repository = args.mealRepository;
+
+  assert.deepEqual(await repository.acquire('user1', 'photo-1', 'request-1'), { isNew: true });
+  await assert.rejects(
+    repository.acquire('user1', 'photo-1', 'request-1'),
+    (error) => error.status === 503,
+  );
+  await assert.rejects(
+    repository.acquire('user1', 'photo-1', 'request-2'),
+    (error) => error.status === 409,
+  );
+  await repository.releaseReservation('user1', 'photo-1', 'request-1');
+
+  assert.deepEqual(await repository.acquire('user1', 'photo-1', 'request-1'), { isNew: true });
+  await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, 'request-1');
+  await assert.rejects(
+    repository.acquire('user1', 'photo-1', 'request-2'),
+    (error) => error.status === 409,
+  );
+});
 
 function savedMeal(documents) {
   return [...documents.values()][0];
