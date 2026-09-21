@@ -97,6 +97,7 @@ function validateImageMealRetry({ record, userId, mealId, capturedAt }) {
 module.exports = {
   MealRecordError,
   normalizeImageMeal,
+  normalizeMealTime,
   normalizeTextMeal,
   validateImageMealRetry,
 };
