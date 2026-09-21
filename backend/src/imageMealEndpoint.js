@@ -6,11 +6,12 @@ const { analyzeMealImage } = require('./imageMealAnalysis');
 const { ImageMealError } = require('./imageMealError');
 const { parseImageMealRequest } = require('./imageMealRequest');
 const { GoogleHealthPendingError } = require('./googleHealthNutrition');
-const { MealRecordError, validateImageMealRetry } = require('./mealRecord');
+const { MealRecordError, normalizeMealTime, validateImageMealRetry } = require('./mealRecord');
 const { completeMealRegistration, registerMeal } = require('./registerMeal');
 
 async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
+  normalizeMealTime(capturedAt);
   const savedMeal = await mealRepository.find(userId, mealId);
   if (savedMeal) {
     validateImageMealRetry({ record: savedMeal.record, userId, mealId, capturedAt });
