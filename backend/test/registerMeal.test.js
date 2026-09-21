@@ -58,27 +58,24 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
   return { args, calls, documents };
 }
 
-test('a same meal ID has one active analysis reservation', async () => {
-  const { args } = registrationFixture();
+test('a reservation owner cannot release or finalize a newer reservation', async () => {
+  const { args, documents } = registrationFixture();
   const repository = args.mealRepository;
 
-  assert.deepEqual(await repository.acquire('user1', 'photo-1', 'request-1'), { isNew: true });
-  await assert.rejects(
-    repository.acquire('user1', 'photo-1', 'request-1'),
-    (error) => error.status === 503,
-  );
-  await assert.rejects(
-    repository.acquire('user1', 'photo-1', 'request-2'),
-    (error) => error.status === 409,
-  );
-  await repository.releaseReservation('user1', 'photo-1', 'request-1');
+  const first = await repository.reserve('user1', 'photo-1', 'request-1');
+  assert.equal(first.type, 'acquired');
+  assert.deepEqual(await repository.reserve('user1', 'photo-1', 'request-1'), { type: 'active' });
+  assert.deepEqual(await repository.reserve('user1', 'photo-1', 'request-2'), { type: 'different' });
 
-  assert.deepEqual(await repository.acquire('user1', 'photo-1', 'request-1'), { isNew: true });
-  await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, 'request-1');
-  await assert.rejects(
-    repository.acquire('user1', 'photo-1', 'request-2'),
-    (error) => error.status === 409,
-  );
+  const [documentId, document] = documents.entries().next().value;
+  documents.set(documentId, { ...document, analysisStartedAt: new Date(0).toISOString() });
+  const second = await repository.reserve('user1', 'photo-1', 'request-1');
+  assert.equal(second.type, 'acquired');
+  assert.notEqual(second.reservationId, first.reservationId);
+
+  await repository.releaseReservation(first);
+  assert.equal(await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, first), false);
+  assert.equal(await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, second), true);
 });
 
 function savedMeal(documents) {

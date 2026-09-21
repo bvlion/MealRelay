@@ -92,6 +92,7 @@ class MealRelayAuthorizationActivity : ComponentActivity() {
     val code = checkNotNull(result.serverAuthCode)
     val tokenStore = MealRelayTokenStore(this)
     MealRelayAuthorizationRepository(MealRelayBackendClient(tokenStore::read), tokenStore).complete(code)
+    (application as MealRelayApplication).resumePendingMealSubmissions()
     finish()
   }
 

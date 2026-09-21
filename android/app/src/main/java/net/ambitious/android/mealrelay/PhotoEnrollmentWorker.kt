@@ -11,6 +11,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
+import net.ambitious.android.mealrelay.data.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.PhotoScanStateEntity
 
 class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
   override fun doWork(): Result {
@@ -26,7 +28,7 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       val generation = inputData.getLong("generation", -1).takeIf { it >= 0 }
         ?: 0
       val enrolledAt = inputData.getLong("enrolled_at", System.currentTimeMillis())
-      val photoProcessingDao = PhotoProcessingDatabase.get(applicationContext).photoProcessingDao()
+      val photoProcessingDao = MealRelayDatabase.get(applicationContext).photoProcessingDao()
       synchronized(PhotoScanner::class.java) {
         photoProcessingDao.insertScanState(
           PhotoScanStateEntity(

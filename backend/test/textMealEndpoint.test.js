@@ -53,9 +53,37 @@ function textAnalysis({ foodDisplayName = 'トーストとヨーグルト', eate
 function endpointFixture({ analysisOutputs = [textAnalysis()], healthOutcomes = ['success'] } = {}) {
   const calls = { analysis: [], googleHealth: [], tokenLookups: [] };
   const meals = new Map();
+  const reservations = new Map();
   const mealKey = (userId, mealId) => `${userId}:${mealId}`;
   const mealRepository = {
     find: async (userId, mealId) => meals.get(mealKey(userId, mealId)) ?? null,
+    reserve: async (userId, mealId, requestHash) => {
+      const key = mealKey(userId, mealId);
+      const savedMeal = meals.get(key);
+      if (savedMeal) {
+        return savedMeal.requestHash && savedMeal.requestHash !== requestHash
+          ? { type: 'different' }
+          : { type: 'saved', savedMeal };
+      }
+      const activeReservation = reservations.get(key);
+      if (activeReservation) {
+        return activeReservation.requestHash === requestHash ? { type: 'active' } : { type: 'different' };
+      }
+      const reservation = { type: 'acquired', userId, mealId, requestHash, reservationId: `reservation-${key}` };
+      reservations.set(key, reservation);
+      return reservation;
+    },
+    saveReserved: async (record, reservation) => {
+      const key = mealKey(record.userId, record.mealId);
+      if (reservations.get(key)?.reservationId !== reservation.reservationId) return false;
+      reservations.delete(key);
+      meals.set(key, { record, status: 'pending', requestHash: reservation.requestHash });
+      return true;
+    },
+    releaseReservation: async (reservation) => {
+      const key = mealKey(reservation.userId, reservation.mealId);
+      if (reservations.get(key)?.reservationId === reservation.reservationId) reservations.delete(key);
+    },
     saveIfAbsent: async (record) => {
       const key = mealKey(record.userId, record.mealId);
       const savedMeal = meals.get(key);
@@ -70,6 +98,7 @@ function endpointFixture({ analysisOutputs = [textAnalysis()], healthOutcomes = 
     },
     markRegistered: async (record, googleHealthName) => {
       meals.set(mealKey(record.userId, record.mealId), {
+        ...meals.get(mealKey(record.userId, record.mealId)),
         record,
         status: 'registered',
         googleHealthName,
@@ -229,4 +258,21 @@ test('a registered text retry reuses the first analysis', async () => {
   assert.equal(fixture.calls.analysis.length, 1);
   assert.equal(fixture.meal().record.foodDisplayName, '初回の食事');
   assert.equal(fixture.calls.googleHealth.length, 1);
+});
+
+test('a saved meal ID rejects a retry with different text before analysis', async () => {
+  const fixture = endpointFixture();
+  const firstResponse = responseFixture();
+  const changedResponse = responseFixture();
+
+  await handleTextMealRequest({ request: requestFixture(), response: firstResponse, ...fixture.dependencies });
+  await handleTextMealRequest({
+    request: requestFixture({ text: '別の食事' }),
+    response: changedResponse,
+    ...fixture.dependencies,
+  });
+
+  assert.equal(firstResponse.statusCode, 201);
+  assert.equal(changedResponse.statusCode, 409);
+  assert.equal(fixture.calls.analysis.length, 1);
 });

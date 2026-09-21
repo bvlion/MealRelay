@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 3,
-    "identityHash": "53c9d15a9324c84ee5a6db8b32343226",
+    "version": 1,
+    "identityHash": "e914240cb82965db3f6b7335db3d978e",
     "entities": [
       {
         "tableName": "photo_results",
@@ -83,7 +83,7 @@
       },
       {
         "tableName": "meal_submission_queue",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meal_id` TEXT NOT NULL, `type` TEXT NOT NULL, `image_uri` TEXT, `text` TEXT, `occurred_at` INTEGER NOT NULL, `automatic_attempt_count` INTEGER NOT NULL, `state` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`meal_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`meal_id` TEXT NOT NULL, `type` TEXT NOT NULL, `image_uri` TEXT, `text` TEXT, `occurred_at` TEXT NOT NULL, `automatic_attempt_count` INTEGER NOT NULL, `state` TEXT NOT NULL, `next_automatic_attempt_at` INTEGER, `created_at` INTEGER NOT NULL, PRIMARY KEY(`meal_id`))",
         "fields": [
           {
             "fieldPath": "mealId",
@@ -110,7 +110,7 @@
           {
             "fieldPath": "occurredAt",
             "columnName": "occurred_at",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -124,6 +124,11 @@
             "columnName": "state",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "nextAutomaticAttemptAt",
+            "columnName": "next_automatic_attempt_at",
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "createdAt",
@@ -142,7 +147,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '53c9d15a9324c84ee5a6db8b32343226')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e914240cb82965db3f6b7335db3d978e')"
     ]
   }
 }

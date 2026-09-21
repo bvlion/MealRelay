@@ -1,25 +1,23 @@
-package net.ambitious.android.mealrelay
+package net.ambitious.android.mealrelay.submission
 
 import android.Manifest
-import android.app.NotificationChannel
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import net.ambitious.android.mealrelay.MealRelayMainActivity
+import net.ambitious.android.mealrelay.R
 
-object MealSubmissionFailureNotifier {
-  private const val CHANNEL_ID = "meal_submission_failures"
-
-  fun notify(context: Context) {
-    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-      return
-    }
+class MealSubmissionFailureNotifier(private val context: Context) {
+  fun notifyFailure() {
+    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
     val notificationManager = context.getSystemService(NotificationManager::class.java)
     notificationManager.createNotificationChannel(NotificationChannel(
       CHANNEL_ID,
-      "食事送信の失敗",
+      context.getString(R.string.meal_submission_failure_channel),
       NotificationManager.IMPORTANCE_DEFAULT,
     ))
     val pendingIntent = PendingIntent.getActivity(
@@ -29,14 +27,19 @@ object MealSubmissionFailureNotifier {
       PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
     )
     notificationManager.notify(
-      8,
+      NOTIFICATION_ID,
       Notification.Builder(context, CHANNEL_ID)
         .setSmallIcon(android.R.drawable.stat_sys_warning)
-        .setContentTitle("食事を送信できませんでした")
-        .setContentText("メイン画面から再送できます。")
+        .setContentTitle(context.getString(R.string.meal_submission_failure_title))
+        .setContentText(context.getString(R.string.meal_submission_failure_text))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
         .build(),
     )
+  }
+
+  companion object {
+    private const val CHANNEL_ID = "meal_submission_failures"
+    private const val NOTIFICATION_ID = 8
   }
 }

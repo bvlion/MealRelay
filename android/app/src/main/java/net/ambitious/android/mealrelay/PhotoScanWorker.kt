@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
+import net.ambitious.android.mealrelay.data.MealRelayDatabase
 import java.util.concurrent.TimeUnit
 
 class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
@@ -19,7 +20,7 @@ class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(c
       PhotoClassification(applicationContext).use { classification ->
         PhotoScanner(
           applicationContext,
-          PhotoProcessingDatabase.get(applicationContext).photoProcessingDao(),
+          MealRelayDatabase.get(applicationContext).photoProcessingDao(),
           classification::prepareClassifier,
         ).scan { isStopped }
       }
@@ -28,7 +29,6 @@ class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(c
       PackageManager.PERMISSION_GRANTED
     ) {
       PhotoWatchWorker.enqueue(applicationContext).result.get()
-      MealSubmissionWorker.enqueue(applicationContext)
     }
     if (isComplete) Result.success() else Result.retry()
   } catch (exception: Exception) {

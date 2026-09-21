@@ -2,6 +2,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.ksp)
   alias(libs.plugins.room)
+  alias(libs.plugins.compose.compiler)
 }
 
 room {
@@ -14,6 +15,7 @@ android {
 
   buildFeatures {
     buildConfig = true
+    compose = true
   }
 
   defaultConfig {
@@ -35,11 +37,6 @@ android {
     )
     buildConfigField(
       "String",
-      "MEAL_RELAY_IMAGE_ENDPOINT",
-      "\"${providers.gradleProperty("mealRelayImageEndpoint").orElse("").get()}\"",
-    )
-    buildConfigField(
-      "String",
       "MEAL_RELAY_TEXT_ENDPOINT",
       "\"${providers.gradleProperty("mealRelayTextEndpoint").orElse("").get()}\"",
     )
@@ -55,7 +52,13 @@ dependencies {
   implementation(libs.room.runtime)
   implementation(libs.play.services.auth)
   implementation(libs.activity.ktx)
+  implementation(libs.activity.compose)
   implementation(libs.lifecycle.runtime.ktx)
+  implementation(libs.lifecycle.viewmodel.compose)
+  implementation(platform(libs.compose.bom))
+  implementation(libs.compose.ui)
+  implementation(libs.compose.material3)
+  implementation(libs.compose.ui.tooling.preview)
   implementation(libs.coroutines.play.services)
   implementation(libs.retrofit)
   implementation(libs.retrofit.converter.gson)

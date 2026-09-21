@@ -19,13 +19,13 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 
 初回利用時には Google Health の OAuth 認可を求めます。`MealRelayAuthorizationActivity` が Activity Result API で認可画面と結果を扱い、ライフサイクルに連動したコルーチンで認可コード交換を進めます。`MealRelayAuthorizationRepository` が Backend から返された MealRelay トークンを保存します。`MealRelayBackendClient` は Retrofit の型付き API と OkHttp の認証付き通信を提供し、後続の画像・テキスト送信も同じ通信基盤を利用できます。トークンは `MealRelayTokenStore` が Tink で暗号化し、鍵の保護には利用可能な場合に Android Keystore を使用します。トークンが失われた場合は次の起動時に再認可します。トークンとユーザーを APK に埋め込まず、2台の Pixel に同じ APK を使用します。バックアップと端末移行から認証情報を除外します。
 
-ビルド時には、両端末で共通の公開設定 `mealRelayOauthClientId`（Web OAuth client ID）、`mealRelayAuthEndpoint`、`mealRelayImageEndpoint`、`mealRelayTextEndpoint`（各 Backend HTTPS 関数 URL）を Gradle プロパティで指定します。これらは秘密情報ではありません。Google Health OAuth client secret と許可メールアドレスは Backend の Secret Manager に置きます。
+ビルド時には、両端末で共通の公開設定 `mealRelayOauthClientId`（Web OAuth client ID）、`mealRelayAuthEndpoint`、`mealRelayTextEndpoint`（Backend HTTPS 関数 URL）を Gradle プロパティで指定します。これらは秘密情報ではありません。Google Health OAuth client secret と許可メールアドレスは Backend の Secret Manager に置きます。
 
-分類結果は Room の `photo_detection.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。MediaStore version、generation、登録時刻も同じデータベースの `photo_scan_state` テーブルに保持します。`meal_submission_queue` は画像URIまたはテキスト、元の時刻、UUID の `mealId`、自動送信回数、送信状態を保持します。MediaStore versionが変わった場合は、再同期が完了するまで旧versionの走査状態を維持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。`photo_detection.db` とSQLiteの付随ファイルはcloud backupとdevice transferから除外します。
+分類結果は Room の `meal_relay.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。MediaStore version、generation、登録時刻も同じデータベースの `photo_scan_state` テーブルに保持します。`meal_submission_queue` は画像URIまたはテキスト、元のRFC 3339時刻、UUID の `mealId`、自動送信回数、送信状態を保持します。MediaStore versionが変わった場合は、再同期が完了するまで旧versionの走査状態を維持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。`meal_relay.db` とSQLiteの付随ファイルはcloud backupとdevice transferから除外します。
 
-送信キューはネットワーク接続を条件に WorkManager で実行します。初回を含め最大3回まで自動送信し、通信例外、タイムアウト、HTTP 408・429・5xx のみを5分、10分の指数バックオフで再送します。最終失敗または再送しない4xxはキューに残し、通知とメイン画面から手動再送できます。手動再送はタップごとに1回だけ送信し、回数制限はありません。成功した項目は削除します。
+送信キューはネットワーク接続を条件に、項目ごとに独立した WorkManager の作業として実行します。初回を含め最大3回まで自動送信し、通信例外、タイムアウト、HTTP 408・429・5xx のみを5分、10分のバックオフで再送します。最終失敗または再送しない4xxはキューに残し、通知とメイン画面から手動再送できます。手動再送はタップごとに1回だけ送信し、回数制限はありません。成功した項目は削除します。食事入力と写真検知からのキュー追加はそれぞれ Issue #3 と Issue #18 で接続します。
 
-Room のschemaは `app/schemas/` に保存し、version 1以降の履歴を管理します。
+Room のschemaは `app/schemas/` に保存します。
 
 16 KBページ向けZIPアラインメントを確認済みです。
 

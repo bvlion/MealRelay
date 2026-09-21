@@ -1,7 +1,6 @@
 'use strict';
 
-const { createHash } = require('node:crypto');
-const { MealRecordError } = require('./mealRecord');
+const { createHash, randomUUID } = require('node:crypto');
 const { mealDocumentId } = require('./googleHealthNutrition');
 
 const ANALYSIS_RESERVATION_DURATION_MILLIS = 5 * 60 * 1000;
@@ -18,62 +17,50 @@ class FirestoreMealRepository {
     return { record: snapshot.get('record'), status: snapshot.get('status') };
   }
 
-  async acquire(userId, mealId, requestHash) {
+  async reserve(userId, mealId, requestHash) {
     const reference = this.firestore.collection('meals').doc(mealDocumentId({ userId, mealId }));
+    const reservationId = randomUUID();
     return this.firestore.runTransaction(async (transaction) => {
       const snapshot = await transaction.get(reference);
       if (snapshot.exists && snapshot.get('record')) {
-        if (snapshot.get('requestHash') && snapshot.get('requestHash') !== requestHash) {
-          throw new MealRecordError('Meal ID already has different content', 409);
-        }
-        return { isNew: false, savedMeal: { record: snapshot.get('record'), status: snapshot.get('status') } };
-      }
-      if (snapshot.exists) {
         if (snapshot.get('requestHash') !== requestHash) {
-          throw new MealRecordError('Meal ID already has different content', 409);
+          return { type: 'different' };
         }
-        const analysisStartedAt = Date.parse(snapshot.get('analysisStartedAt'));
-        if (Number.isFinite(analysisStartedAt) &&
-            Date.now() - analysisStartedAt < ANALYSIS_RESERVATION_DURATION_MILLIS) {
-          throw new MealRecordError('Meal is already being analyzed', 503);
-        }
-        transaction.update(reference, { analysisStartedAt: new Date().toISOString() });
-        return { isNew: true };
+        return { type: 'saved', savedMeal: { record: snapshot.get('record'), status: snapshot.get('status') } };
       }
-      transaction.create(reference, {
-        requestHash,
-        status: 'analyzing',
-        analysisStartedAt: new Date().toISOString(),
-      });
-      return { isNew: true };
+      if (snapshot.exists && snapshot.get('requestHash') !== requestHash) return { type: 'different' };
+      if (snapshot.exists && isReservationActive(snapshot.get('analysisStartedAt'))) return { type: 'active' };
+      const reservation = { type: 'acquired', userId, mealId, requestHash, reservationId };
+      if (snapshot.exists) {
+        transaction.update(reference, reservationFields(reservation));
+      } else {
+        transaction.create(reference, { ...reservationFields(reservation), status: 'analyzing' });
+      }
+      return reservation;
     });
   }
 
-  async saveReserved(record, requestHash) {
+  async saveReserved(record, reservation) {
     const reference = this.firestore.collection('meals').doc(mealDocumentId(record));
     const contentHash = createHash('sha256').update(JSON.stringify(record)).digest('hex');
     return this.firestore.runTransaction(async (transaction) => {
       const snapshot = await transaction.get(reference);
-      if (!snapshot.exists || snapshot.get('record') || snapshot.get('requestHash') !== requestHash) {
-        throw new MealRecordError('Meal reservation is invalid', 409);
-      }
+      if (!isReservationOwner(snapshot, reservation)) return false;
       transaction.update(reference, {
         record,
         contentHash,
         status: 'pending',
         submittedAt: new Date().toISOString(),
       });
-      return 'new';
+      return true;
     });
   }
 
-  async releaseReservation(userId, mealId, requestHash) {
-    const reference = this.firestore.collection('meals').doc(mealDocumentId({ userId, mealId }));
+  async releaseReservation(reservation) {
+    const reference = this.firestore.collection('meals').doc(mealDocumentId(reservation));
     await this.firestore.runTransaction(async (transaction) => {
       const snapshot = await transaction.get(reference);
-      if (snapshot.exists && !snapshot.get('record') && snapshot.get('requestHash') === requestHash) {
-        transaction.delete(reference);
-      }
+      if (isReservationOwner(snapshot, reservation)) transaction.delete(reference);
     });
   }
 
@@ -82,15 +69,7 @@ class FirestoreMealRepository {
     const contentHash = createHash('sha256').update(JSON.stringify(record)).digest('hex');
     return this.firestore.runTransaction(async (transaction) => {
       const snapshot = await transaction.get(reference);
-      if (snapshot.exists) {
-        if (!snapshot.get('record')) {
-          throw new MealRecordError('Meal is already being analyzed', 503);
-        }
-        if (snapshot.get('contentHash') !== contentHash) {
-          throw new MealRecordError('Meal ID already has different content', 409);
-        }
-        return snapshot.get('status');
-      }
+      if (snapshot.exists) return snapshot.get('contentHash') === contentHash ? snapshot.get('status') : 'different';
       transaction.create(reference, {
         record,
         contentHash,
@@ -109,6 +88,25 @@ class FirestoreMealRepository {
       registeredAt: new Date().toISOString(),
     });
   }
+}
+
+function isReservationActive(analysisStartedAt) {
+  const startedAt = Date.parse(analysisStartedAt);
+  return Number.isFinite(startedAt) && Date.now() - startedAt < ANALYSIS_RESERVATION_DURATION_MILLIS;
+}
+
+function reservationFields(reservation) {
+  return {
+    requestHash: reservation.requestHash,
+    reservationId: reservation.reservationId,
+    analysisStartedAt: new Date().toISOString(),
+  };
+}
+
+function isReservationOwner(snapshot, reservation) {
+  return snapshot.exists && !snapshot.get('record') &&
+    snapshot.get('requestHash') === reservation.requestHash &&
+    snapshot.get('reservationId') === reservation.reservationId;
 }
 
 module.exports = { FirestoreMealRepository };

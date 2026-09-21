@@ -14,14 +14,11 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
   normalizeMealTime(capturedAt);
   const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
-  const acquisition = mealRepository.acquire
-    ? await mealRepository.acquire(userId, mealId, requestHash)
-    : null;
-  const savedMeal = acquisition ? acquisition.savedMeal : await mealRepository.find(userId, mealId);
-  if (savedMeal) {
-    validateImageMealRetry({ record: savedMeal.record, userId, mealId, capturedAt });
+  const reservation = await mealRepository.reserve(userId, mealId, requestHash);
+  if (reservation.type === 'saved') {
+    validateImageMealRetry({ record: reservation.savedMeal.record, userId, mealId, capturedAt });
     return completeMealRegistration({
-      ...savedMeal,
+      ...reservation.savedMeal,
       authRepository,
       clientId,
       clientSecret,
@@ -29,12 +26,14 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
       mealRepository,
     });
   }
+  if (reservation.type === 'different') throw new MealRecordError('Meal ID already has different content', 409);
+  if (reservation.type === 'active') throw new MealRecordError('Meal is already being analyzed', 503);
 
   let analysis;
   try {
     analysis = await analyzeMealImage({ client: analysisClient, image });
   } catch (error) {
-    if (acquisition) await mealRepository.releaseReservation(userId, mealId, requestHash);
+    await mealRepository.releaseReservation(reservation);
     throw error;
   }
   return registerMeal({
@@ -49,7 +48,7 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
     clientId,
     clientSecret,
     healthClient,
-    requestHash: acquisition ? requestHash : undefined,
+    reservation,
   });
 }
 
