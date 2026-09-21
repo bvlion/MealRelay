@@ -4,6 +4,7 @@ const { OAuth2Client } = require('google-auth-library');
 const { AuthenticationError } = require('./errors');
 
 const GOOGLE_HEALTH_WRITE_SCOPE = 'https://www.googleapis.com/auth/googlehealth.nutrition.writeonly';
+const GOOGLE_HEALTH_READ_SCOPE = 'https://www.googleapis.com/auth/googlehealth.nutrition.readonly';
 
 function createGoogleOAuth(clientId, clientSecret) {
   const client = new OAuth2Client({ clientId, clientSecret });
@@ -40,7 +41,8 @@ async function exchangeGoogleAuthorizationCode({ code, oauthClient, clientId }) 
   } catch {
     throw new AuthenticationError('Google access token verification failed');
   }
-  if (!tokenInfo.scopes.includes(GOOGLE_HEALTH_WRITE_SCOPE)) {
+  if (!tokenInfo.scopes.includes(GOOGLE_HEALTH_WRITE_SCOPE) ||
+      !tokenInfo.scopes.includes(GOOGLE_HEALTH_READ_SCOPE)) {
     throw new AuthenticationError('Required Google Health scopes were not granted', 403);
   }
 
@@ -66,6 +68,7 @@ async function exchangeGoogleAuthorizationCode({ code, oauthClient, clientId }) 
 
 module.exports = {
   GOOGLE_HEALTH_WRITE_SCOPE,
+  GOOGLE_HEALTH_READ_SCOPE,
   createGoogleAuthorizationService,
   createGoogleOAuth,
   exchangeGoogleAuthorizationCode,

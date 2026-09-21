@@ -2,6 +2,14 @@
 
 Cloud Functions Gen2 / Node.js 24 を使用します。Issue #9 の認証入口は `authExchange` です。画像・テキストのエンドポイントは未実装で、それらを追加する際は `src/apiAuthentication.js` の `authenticateMealRelayRequest` で `sub` を識別し、`src/healthCredentials.js` の `getGoogleHealthOAuthClient` でそのユーザー専用の OAuth クライアントを取得します。リクエスト本文のユーザー ID で記録先を選びません。
 
+Issue #7 の食事登録処理は `src/registerMeal.js` の `registerMeal` です。後続の画像・テキスト解析エンドポイントは、認証ヘッダー、入力ごとに安定した `mealId`、`occurredAt`（画像は撮影時刻、テキストは入力時刻）、解析結果の `analysis`、`route`（`image` / `text`）を渡します。時刻は UTC offset を含む ISO 8601 形式で渡します。テキスト解析で食事日時を解釈できた場合は `analysis.eatenAt` を渡し、ない場合は入力時刻が使われます。`mealId` は同じ食事の再送で変えず、別の食事には別の ID を付けます。
+
+`analysis` は `foodDisplayName`、任意の `mealType`（`BREAKFAST` / `LUNCH` / `DINNER` / `SNACK`）、`estimated`、`confirmed` を持ちます。栄養項目は `energyKcal`、`proteinGrams`、`carbohydrateGrams`、`fatGrams` です。`estimated` には数値を、`confirmed` には `{ value, origin }` を指定し、`origin` は `packageLabel` または `userInput` とします。両方ある項目は確定値を Google Health へ送ります。共通モデルには両方の値と由来を保持します。認証済み token の `sub` をユーザー ID とし、本文のユーザー ID は受け付けません。
+
+共通モデルと送信時刻は Firestore の `meals/{SHA-256(sub + 区切り文字 + mealId)}` に保存します。Google Health には匿名食品の Nutrition Log を 1 食 1 件として登録し、食事時刻から 1 秒の interval、元の UTC offset、選ばれた栄養値、食品名を送ります。同じ `sub` と `mealId` から Google Health の data point ID を固定するため、送信結果を受け取れなかった場合の再試行でも同じ記録を参照します。同じ ID に異なる内容を再送すると競合エラーになります。Google Health の匿名食品ログは作成後に編集できないため、変更・削除はこの処理の対象外です。[Nutrition Log の公式仕様](https://developers.google.com/health/data-types/nutrition)と[DataPoint の識別子仕様](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints)に従います。
+
+Google Health の `create` は Operation を返します。即時完了が確認できた場合のみ登録済みにします。処理中または応答を失った場合、再試行時に同じ data point ID を[公式の `get` API](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/get)で確認します。存在を確認できない場合は未登録状態のまま再試行可能なエラーにし、409 だけで成功と判断しません。Google Health の現行 REST 一覧と Discovery Document には Operation の取得メソッドがないため、Operation 自体の終端状態は照会しません。`get` には nutrition 読み取り権限が必要です。新しい認可では読み取り・書き込み両方を要求します。既存の書き込み専用 token から移行する端末は Google Health の再認可が必要です。
+
 `index.js` は HTTP 入口、`src/config.js` は環境設定の読み込み、`src/googleOAuth.js` は Google 認可コード交換と ID token 検証、`src/auth.js` は MealRelay token と登録規則、`src/firestoreAuthRepository.js` は Firestore の読み書きを担当します。MealRelay token による API 認証は `src/apiAuthentication.js`、Google Health 用 OAuth クライアントの取得は `src/healthCredentials.js` が担当します。
 
 初回利用または端末のトークン喪失時、Android は Google の認可コードを `authExchange` に HTTPS で送ります。Backend はコードを Google に交換し、Google Auth Library で access token の権限と ID token の署名・audience・issuer・有効期限を検証します。初回登録時のみ、検証済みメールアドレスを Secret Manager に置いた許可メールアドレスと比較します。登録後は OpenID Connect の `sub` でユーザーを識別します。Google Health の refresh token は `users/{sub の SHA-256 ハッシュ}`、MealRelay トークンの SHA-256 ハッシュと `sub` の対応は `deviceTokens/{token の SHA-256 ハッシュ}` として Firestore に保存します。MealRelay トークンの生値は発行時の応答以外に保持しません。
@@ -35,7 +43,7 @@ Google Cloud には Android アプリのパッケージ名と署名証明書を�
 
 ### 2. OAuth consent screen と OAuth client を作成する
 
-1. Console の **Google Auth Platform** で consent screen を設定します。通常の Google アカウント2件で確認する場合は Audience を **External** にし、Branding の必須項目を入力します。Data Access で Google Health の nutrition 書き込み scope を追加します。公開状態を **In production** にします。Testing のままでは refresh token が7日で失効するため、Issue #9 の確認条件を満たしません。
+1. Console の **Google Auth Platform** で consent screen を設定します。通常の Google アカウント2件で確認する場合は Audience を **External** にし、Branding の必須項目を入力します。Data Access で Google Health の nutrition 読み取り・書き込み scope を追加します。公開状態を **In production** にします。Testing のままでは refresh token が7日で失効するため、Issue #9 の確認条件を満たしません。
 2. **Clients** → **Create client** から Android client を作成します。パッケージ名には `net.ambitious.android.mealrelay` を、署名証明書 SHA-1 には確認に使う APK の署名を指定します。debug APK なら、リポジトリの `android` ディレクトリで次を実行し、`debug` variant の SHA-1 を使用します。
 
    ```sh
@@ -141,7 +149,7 @@ Android のリポジトリの `android` ディレクトリで、公開設定を 
 
 ### 7. 初回認可と再認可を確認する
 
-1. 1台目でアプリを開き、写真権限を許可して Google の認可画面へ進みます。手順4の許可メールアドレスに含めた1つ目の Google アカウントを選び、Google Health の nutrition 書き込み権限を許可します。認可画面の完了後に `MealRelayAuthorizationActivity` が終了し、認可エラーのダイアログが表示されなければ、手順8の Firestore 確認へ進みます。`users` と `deviceTokens` の追加を確認して、`authExchange` が MealRelay token を発行したことを判断します。
+1. 1台目でアプリを開き、写真権限を許可して Google の認可画面へ進みます。手順4の許可メールアドレスに含めた1つ目の Google アカウントを選び、Google Health の nutrition 読み取り・書き込み権限を許可します。認可画面の完了後に `MealRelayAuthorizationActivity` が終了し、認可エラーのダイアログが表示されなければ、手順8の Firestore 確認へ進みます。`users` と `deviceTokens` の追加を確認して、`authExchange` が MealRelay token を発行したことを判断します。
 2. 2台目で同じ手順を実施し、もう一方の Google アカウントを選びます。端末ごとに別の Google アカウントを選ぶ以外は、APK と公開設定を変えません。
 3. 1台目で Android の設定から MealRelay アプリのストレージを消去し、再度アプリを開きます。1台目で使ったものと同じ Google アカウントを選んで認可します。これは端末 token を失った場合の再認可を再現します。
 

@@ -66,6 +66,7 @@ class MealRelayAuthorizationActivity : ComponentActivity() {
               Scope("openid"),
               Scope("email"),
               Scope("https://www.googleapis.com/auth/googlehealth.nutrition.writeonly"),
+              Scope("https://www.googleapis.com/auth/googlehealth.nutrition.readonly"),
             ),
           )
           .requestOfflineAccess(BuildConfig.MEAL_RELAY_OAUTH_CLIENT_ID)
