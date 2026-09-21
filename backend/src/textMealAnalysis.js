@@ -2,9 +2,11 @@
 
 const { z } = require('zod');
 const { zodTextFormat } = require('openai/helpers/zod');
+const { normalizeMealTime } = require('./mealRecord');
 const { TextMealError } = require('./textMealError');
 
 const TEXT_ANALYSIS_MODEL = 'gpt-5.6-luna';
+const NUTRITION_FIELDS = ['energyKcal', 'proteinGrams', 'carbohydrateGrams', 'fatGrams'];
 const nutritionEstimateSchema = z.number().nonnegative().nullable();
 const confirmedNutritionSchema = z.object({
   value: z.number().nonnegative(),
@@ -40,20 +42,36 @@ as one meal. The input time is the reference for interpreting relative expressio
 date or relative date. Return null when it does not specify a date or time, including a meal label such as
 朝 that only identifies a meal period; the caller will then use the input time. Treat a number as an exact
 userInput nutrition value only when the note explicitly labels it as kcal, calories, protein, carbohydrate,
-or fat. Do not replace such a value with an estimate. Estimate only omitted nutrition fields and use null
-for their estimated value when the user supplied an exact value for that field.
+or fat. Do not replace such a value with an estimate. Estimate every omitted nutrition field and use null
+for its estimated value only when the user supplied an exact value for that field.
 `.trim();
 
 function toMealAnalysis(parsedOutput) {
-  const withoutNulls = (values) => Object.fromEntries(
-    Object.entries(values).filter(([, value]) => value !== null),
-  );
+  const estimated = {};
+  const confirmed = {};
+  for (const field of NUTRITION_FIELDS) {
+    const estimatedValue = parsedOutput.estimated[field];
+    const confirmedValue = parsedOutput.confirmed[field];
+    if (estimatedValue === null && confirmedValue === null) {
+      throw new TextMealError('Meal text analysis returned an incomplete result', 502);
+    }
+    if (estimatedValue !== null) estimated[field] = estimatedValue;
+    if (confirmedValue !== null) confirmed[field] = confirmedValue;
+  }
+
   const analysis = {
     foodDisplayName: parsedOutput.foodDisplayName,
-    estimated: withoutNulls(parsedOutput.estimated),
-    confirmed: withoutNulls(parsedOutput.confirmed),
+    estimated,
+    confirmed,
   };
-  if (parsedOutput.eatenAt !== null) analysis.eatenAt = parsedOutput.eatenAt;
+  if (parsedOutput.eatenAt !== null) {
+    try {
+      normalizeMealTime(parsedOutput.eatenAt);
+    } catch {
+      throw new TextMealError('Meal text analysis returned an invalid time', 502);
+    }
+    analysis.eatenAt = parsedOutput.eatenAt;
+  }
   return analysis;
 }
 
