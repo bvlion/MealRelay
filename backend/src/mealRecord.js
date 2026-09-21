@@ -94,10 +94,17 @@ function validateImageMealRetry({ record, userId, mealId, capturedAt }) {
   }
 }
 
+function validateTextMealRetry({ record, userId, mealId }) {
+  if (record.route !== 'text' || record.userId !== userId || record.mealId !== mealId) {
+    throw new MealRecordError('Meal ID already has different content', 409);
+  }
+}
+
 module.exports = {
   MealRecordError,
   normalizeImageMeal,
   normalizeMealTime,
   normalizeTextMeal,
   validateImageMealRetry,
+  validateTextMealRetry,
 };

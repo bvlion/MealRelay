@@ -10,6 +10,7 @@ const { FirestoreAuthRepository } = require('./src/firestoreAuthRepository');
 const { FirestoreMealRepository } = require('./src/firestoreMealRepository');
 const { createGoogleAuthorizationService } = require('./src/googleOAuth');
 const { handleImageMealRequest } = require('./src/imageMealEndpoint');
+const { handleTextMealRequest } = require('./src/textMealEndpoint');
 
 const firestore = new Firestore();
 const repository = new FirestoreAuthRepository(firestore);
@@ -54,6 +55,27 @@ functions.http('imageMeal', async (request, response) => {
   }
   const analysisClient = new OpenAI({ apiKey: openaiApiKey });
   await handleImageMealRequest({
+    request,
+    response,
+    analysisClient,
+    authRepository: repository,
+    mealRepository,
+    clientId,
+    clientSecret,
+  });
+});
+
+functions.http('textMeal', async (request, response) => {
+  response.set('Cache-Control', 'no-store');
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  if (!openaiApiKey || !clientId || !clientSecret) {
+    response.status(500).json({ error: 'Text analysis configuration is incomplete' });
+    return;
+  }
+  const analysisClient = new OpenAI({ apiKey: openaiApiKey });
+  await handleTextMealRequest({
     request,
     response,
     analysisClient,
