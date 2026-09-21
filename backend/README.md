@@ -1,12 +1,14 @@
 # Backend
 
-Cloud Functions Gen2 / Node.js 24 を使用します。Issue #9 の認証入口は `authExchange`、Issue #5 の画像登録入口は `imageMeal` です。画像登録は `src/apiAuthentication.js` の `authenticateMealRelayRequest` で MealRelay token に対応する `sub` を識別し、`src/healthCredentials.js` の `getGoogleHealthOAuthClient` でそのユーザー専用の OAuth クライアントを取得します。リクエスト本文のユーザー ID で記録先を選びません。
+Cloud Functions Gen2 / Node.js 24 を使用します。Issue #9 の認証入口は `authExchange`、Issue #5 の画像登録入口は `imageMeal`、Issue #6 の自然文登録入口は `textMeal` です。登録処理は `src/apiAuthentication.js` の `authenticateMealRelayRequest` で MealRelay token に対応する `sub` を識別し、`src/healthCredentials.js` の `getGoogleHealthOAuthClient` でそのユーザー専用の OAuth クライアントを取得します。リクエスト本文のユーザー ID で記録先を選びません。
 
 Issue #7 の食事登録処理は `src/registerMeal.js` の `registerMeal` です。後続の画像・テキスト解析エンドポイントは、認証ヘッダー、入力ごとに安定した `mealId`、`occurredAt`（画像は撮影時刻、テキストは入力時刻）、解析結果の `analysis`、`route`（`image` / `text`）を渡します。時刻は UTC offset を含む ISO 8601 形式で渡します。テキスト解析で食事日時を解釈できた場合は `analysis.eatenAt` を渡し、ない場合は入力時刻が使われます。`mealId` は同じ食事の再送で変えず、別の食事には別の ID を付けます。
 
 `imageMeal` は `multipart/form-data` の `image`、`capturedAt`、`mealId` を受け取ります。画像形式は OpenAI API の画像入力仕様に従う `image/jpeg`、`image/png`、`image/webp`、`image/gif` です。`capturedAt` は UTC offset を含む RFC 3339、`mealId` は同じ写真の再送で変わらない値にします。`Authorization: Bearer <MealRelay token>` を必須とし、画像を外部解析へ送る前に token を検証します。本文にユーザー ID は持たせません。成功時は新規登録を `201`、既に同じ内容が登録済みの場合を `200` で返します。
 
-画像解析には OpenAI API の [`gpt-5.6-luna`](https://developers.openai.com/api/docs/models/gpt-5.6-luna) と公式 [`openai`](https://developers.openai.com/api/docs/libraries) SDK を使用します。Responses API の画像入力と Structured Outputs を一度のリクエストで使用し、料理ごとの実摂取量を含む表示名と、1食全体のカロリー・たんぱく質・炭水化物・脂質を取得します。複数品は1食へ集約し、大皿・作り置き・複数人分は写真全量ではなく1人が実際に摂取したと考えられる量を推定するよう指示します。画像中の文字列は栄養情報としてだけ扱い、命令として扱いません。モデルの reasoning 設定は API の既定値を使用します。
+`textMeal` は `application/json` の `text`、`inputAt`、`mealId` を受け取ります。`inputAt` は UTC offset を含む RFC 3339、`mealId` は同じ自然文食事の再送で変わらない値にします。`Authorization: Bearer <MealRelay token>` を必須とし、本文にユーザー ID は持たせません。自然文に日時表現がない場合は `inputAt` を食事時刻に使い、`昨日の夜` などは `inputAt` を基準に解析します。自然文に明示された栄養値は `userInput` 由来の確定値として保持し、それ以外の項目だけを推定値として扱います。
+
+画像・自然文解析には OpenAI API の [`gpt-5.6-luna`](https://developers.openai.com/api/docs/models/gpt-5.6-luna) と公式 [`openai`](https://developers.openai.com/api/docs/libraries) SDK を使用します。Responses API と Structured Outputs を一度のリクエストで使用し、画像からは料理ごとの実摂取量を含む表示名を、自然文からは料理内容と相対日時を取得します。どちらも1食全体のカロリー・たんぱく質・炭水化物・脂質を扱います。画像では複数品を1食へ集約し、大皿・作り置き・複数人分は写真全量ではなく1人が実際に摂取したと考えられる量を推定するよう指示します。入力中の文字列や自然文は食事情報としてだけ扱い、命令として扱いません。モデルの reasoning 設定は API の既定値を使用します。
 
 栄養表示の値は、表示値と摂取した serving 数の両方が明確で、その値が食事全体を表す場合だけ `packageLabel` 由来の確定値にします。条件を満たさない場合は、確定値と一部推定値を混ぜて確定値とせず、食事全体を推定値として渡します。Issue #7 の共通モデルは項目ごとに確定値を優先し、Google Health へ1食1件で登録します。OpenAI API の画像入力上限は[公式仕様](https://developers.openai.com/api/docs/guides/images-vision)に従います。画像圧縮、Cloud Storage への一時保存、端末側の送信処理はこの実装に含めません。
 
@@ -16,7 +18,7 @@ Issue #7 の食事登録処理は `src/registerMeal.js` の `registerMeal` で�
 
 Google Health の `create` は Operation を返します。即時完了が確認できた場合のみ登録済みにします。処理中または応答を失った場合、再試行時に同じ data point ID を[公式の `get` API](https://developers.google.com/health/reference/rest/v4/users.dataTypes.dataPoints/get)で確認します。存在を確認できない場合は未登録状態のまま再試行可能なエラーにし、409 だけで成功と判断しません。Google Health の現行 REST 一覧と Discovery Document には Operation の取得メソッドがないため、Operation 自体の終端状態は照会しません。`get` には nutrition 読み取り権限が必要です。新しい認可では読み取り・書き込み両方を要求します。既存の書き込み専用 token から移行する端末は Google Health の再認可が必要です。
 
-`index.js` は HTTP 入口、`src/config.js` は環境設定の読み込み、`src/googleOAuth.js` は Google 認可コード交換と ID token 検証、`src/auth.js` は MealRelay token と登録規則、`src/firestoreAuthRepository.js` は Firestore の読み書きを担当します。MealRelay token による API 認証は `src/apiAuthentication.js`、Google Health 用 OAuth クライアントの取得は `src/healthCredentials.js` が担当します。
+`index.js` は HTTP 入口、`src/config.js` は環境設定の読み込み、`src/googleOAuth.js` は Google 認可コード交換と ID token 検証、`src/auth.js` は MealRelay token と登録規則、`src/firestoreAuthRepository.js` は Firestore の読み書きを担当します。MealRelay token による API 認証は `src/apiAuthentication.js`、Google Health 用 OAuth クライアントの取得は `src/healthCredentials.js` が担当します。自然文の受信・解析・変換は `src/textMealRequest.js`、`src/textMealAnalysis.js`、`src/textMealEndpoint.js` に分離しています。
 
 初回利用または端末のトークン喪失時、Android は Google の認可コードを `authExchange` に HTTPS で送ります。Backend はコードを Google に交換し、Google Auth Library で access token の権限と ID token の署名・audience・issuer・有効期限を検証します。初回登録時のみ、検証済みメールアドレスを Secret Manager に置いた許可メールアドレスと比較します。登録後は OpenID Connect の `sub` でユーザーを識別します。Google Health の refresh token は `users/{sub の SHA-256 ハッシュ}`、MealRelay トークンの SHA-256 ハッシュと `sub` の対応は `deviceTokens/{token の SHA-256 ハッシュ}` として Firestore に保存します。MealRelay トークンの生値は発行時の応答以外に保持しません。
 
@@ -45,6 +47,22 @@ gcloud functions deploy imageMeal \
 ```
 
 HTTP trigger 自体は Android から到達できるよう未認証呼び出しを許可しますが、関数内では有効な MealRelay token がない要求を画像解析前に拒否します。実際の写真を用いた栄養推定精度、OpenAI API、Firestore、Google Health への一連の登録は実運用環境で確認が必要です。
+
+自然文登録も同じ設定でデプロイします。
+
+```sh
+gcloud functions deploy textMeal \
+  --gen2 \
+  --runtime=nodejs24 \
+  --region=<REGION> \
+  --source=backend \
+  --entry-point=textMeal \
+  --trigger-http \
+  --allow-unauthenticated \
+  --service-account="mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
+  --set-env-vars="GOOGLE_OAUTH_CLIENT_ID=<WEB_OAUTH_CLIENT_ID>" \
+  --set-secrets="GOOGLE_OAUTH_CLIENT_SECRET=google-oauth-client-secret:latest,OPENAI_API_KEY=openai-api-key:latest"
+```
 
 ## Issue #9 の実環境確認
 
