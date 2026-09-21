@@ -2,13 +2,18 @@
 
 const functions = require('@google-cloud/functions-framework');
 const { Firestore } = require('@google-cloud/firestore');
+const OpenAI = require('openai');
 const { completeAuthorization } = require('./src/auth');
 const { loadAuthenticationConfig } = require('./src/config');
 const { AuthenticationError } = require('./src/errors');
 const { FirestoreAuthRepository } = require('./src/firestoreAuthRepository');
+const { FirestoreMealRepository } = require('./src/firestoreMealRepository');
 const { createGoogleAuthorizationService } = require('./src/googleOAuth');
+const { handleImageMealRequest } = require('./src/imageMealEndpoint');
 
-const repository = new FirestoreAuthRepository(new Firestore());
+const firestore = new Firestore();
+const repository = new FirestoreAuthRepository(firestore);
+const mealRepository = new FirestoreMealRepository(firestore);
 
 functions.http('authExchange', async (request, response) => {
   response.set('Cache-Control', 'no-store');
@@ -36,4 +41,25 @@ functions.http('authExchange', async (request, response) => {
     }
     response.status(500).json({ error: 'Authorization could not be completed' });
   }
+});
+
+functions.http('imageMeal', async (request, response) => {
+  response.set('Cache-Control', 'no-store');
+  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  if (!openaiApiKey || !clientId || !clientSecret) {
+    response.status(500).json({ error: 'Image analysis configuration is incomplete' });
+    return;
+  }
+  const analysisClient = new OpenAI({ apiKey: openaiApiKey });
+  await handleImageMealRequest({
+    request,
+    response,
+    analysisClient,
+    authRepository: repository,
+    mealRepository,
+    clientId,
+    clientSecret,
+  });
 });

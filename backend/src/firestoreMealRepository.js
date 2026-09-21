@@ -9,6 +9,13 @@ class FirestoreMealRepository {
     this.firestore = firestore;
   }
 
+  async find(userId, mealId) {
+    const reference = this.firestore.collection('meals').doc(mealDocumentId({ userId, mealId }));
+    const snapshot = await reference.get();
+    if (!snapshot.exists) return null;
+    return { record: snapshot.get('record'), status: snapshot.get('status') };
+  }
+
   async saveIfAbsent(record) {
     const reference = this.firestore.collection('meals').doc(mealDocumentId(record));
     const contentHash = createHash('sha256').update(JSON.stringify(record)).digest('hex');

@@ -17,6 +17,10 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
   const firestore = {
     collection: () => ({ doc: (id) => ({
       id,
+      get: async () => ({
+        exists: documents.has(id),
+        get: (field) => documents.get(id)?.[field],
+      }),
       update: async (fields) => { documents.set(id, { ...documents.get(id), ...fields }); },
     }) }),
     runTransaction: async (callback) => callback({
@@ -72,6 +76,10 @@ test('registration uses token owner credentials and remains idempotent on retry'
   assert.equal(documents.size, 1);
   assert.equal(savedMeal(documents).status, 'registered');
   assert.notEqual(savedMeal(documents).submittedAt, first.record.eatenAt);
+  assert.deepEqual(await args.mealRepository.find('user1', 'photo-1'), {
+    record: first.record,
+    status: 'registered',
+  });
 
   await assert.rejects(registerMeal({ ...args, analysis: { foodDisplayName: 'Different meal' } }),
     /Meal ID already has different content/);
