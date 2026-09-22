@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,9 +33,7 @@ class MealRelayAuthorizationViewModel @Inject constructor(
       if (withContext(Dispatchers.IO) { tokenStore.read() } != null) {
         mutableState.value = AuthorizationUiState.Finished
       } else {
-        requestFactory.create()?.let { request ->
-          mutableState.value = AuthorizationUiState.RequestAuthorization(request)
-        } ?: run { mutableState.value = AuthorizationUiState.Failed }
+        mutableState.value = AuthorizationUiState.RequestAuthorization(requestFactory.create())
       }
     }
   }
@@ -53,6 +52,8 @@ class MealRelayAuthorizationViewModel @Inject constructor(
         authorizationRepository.complete(authorizationCode)
         mealSubmissionWorkScheduler.resumePendingSubmissions()
         mutableState.value = AuthorizationUiState.Finished
+      } catch (error: CancellationException) {
+        throw error
       } catch (_: Exception) {
         mutableState.value = AuthorizationUiState.Failed
       }

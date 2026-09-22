@@ -26,20 +26,29 @@ android {
     versionCode = 1
     versionName = "1.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    val mealRelayOauthClientId = requireNotNull(
+      providers.gradleProperty("mealRelayOauthClientId").orNull?.takeIf(String::isNotBlank),
+    ) { "mealRelayOauthClientId must be set" }
+    val mealRelayAuthEndpoint = requireNotNull(
+      providers.gradleProperty("mealRelayAuthEndpoint").orNull?.takeIf(String::isNotBlank),
+    ) { "mealRelayAuthEndpoint must be set" }
+    val mealRelayTextEndpoint = requireNotNull(
+      providers.gradleProperty("mealRelayTextEndpoint").orNull?.takeIf(String::isNotBlank),
+    ) { "mealRelayTextEndpoint must be set" }
     buildConfigField(
       "String",
       "MEAL_RELAY_OAUTH_CLIENT_ID",
-      "\"${providers.gradleProperty("mealRelayOauthClientId").orElse("").get()}\"",
+      "\"$mealRelayOauthClientId\"",
     )
     buildConfigField(
       "String",
       "MEAL_RELAY_AUTH_ENDPOINT",
-      "\"${providers.gradleProperty("mealRelayAuthEndpoint").orElse("").get()}\"",
+      "\"$mealRelayAuthEndpoint\"",
     )
     buildConfigField(
       "String",
       "MEAL_RELAY_TEXT_ENDPOINT",
-      "\"${providers.gradleProperty("mealRelayTextEndpoint").orElse("").get()}\"",
+      "\"$mealRelayTextEndpoint\"",
     )
   }
 

@@ -6,11 +6,10 @@ import net.ambitious.android.mealrelay.submission.MealSubmissionReadiness
 
 class TextMealSubmissionReadinessChecker(
   private val tokenStore: MealRelayTokenStore,
-  private val endpoint: String,
 ) {
   fun check(submission: MealSubmissionEntity): MealSubmissionReadiness = when {
     tokenStore.read() == null -> MealSubmissionReadiness.AwaitingAuthorization
-    submission.type != MealSubmissionEntity.TYPE_TEXT || endpoint.isBlank() -> MealSubmissionReadiness.Unavailable
+    submission.type != MealSubmissionEntity.TYPE_TEXT -> MealSubmissionReadiness.Unavailable
     else -> MealSubmissionReadiness.Ready
   }
 }

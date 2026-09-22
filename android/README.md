@@ -17,7 +17,7 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 
 `PhotoClassification` は走査中に所有し、最初の分類対象が見つかったときだけモデルを読み込み、走査終了時に閉じます。
 
-初回利用時には Google Health の OAuth 認可を求めます。`MealRelayAuthorizationActivity` が Activity Result API で認可画面と結果を扱い、ライフサイクルに連動したコルーチンで認可コード交換を進めます。`MealRelayAuthorizationRepository` が Backend から返された MealRelay トークンを保存します。`MealRelayBackendClient` は Retrofit の型付き API と OkHttp の認証付き通信を提供し、後続の画像・テキスト送信も同じ通信基盤を利用できます。トークンは `MealRelayTokenStore` が Tink で暗号化し、鍵の保護には利用可能な場合に Android Keystore を使用します。トークンが失われた場合は次の起動時に再認可します。トークンとユーザーを APK に埋め込まず、2台の Pixel に同じ APK を使用します。バックアップと端末移行から認証情報を除外します。
+初回利用時には Google Health の OAuth 認可を求めます。`MealRelayAuthorizationActivity` が Activity Result API で認可画面と結果を扱い、ライフサイクルに連動したコルーチンで認可コード交換を進めます。`MealRelayAuthorizationRepository` が `MealRelayAuthorizationTransport` を通じて Backend から返された MealRelay トークンを保存します。テキスト送信は `TextMealSubmissionTransport` が、テキスト送信用endpointだけを基準にRetrofitとOkHttpの認証付き通信を構成します。トークンは `MealRelayTokenStore` が Tink で暗号化し、鍵の保護には利用可能な場合に Android Keystore を使用します。トークンが失われた場合は次の起動時に再認可します。トークンとユーザーを APK に埋め込まず、2台の Pixel に同じ APK を使用します。バックアップと端末移行から認証情報を除外します。
 
 ビルド時には、両端末で共通の公開設定 `mealRelayOauthClientId`（Web OAuth client ID）、`mealRelayAuthEndpoint`、`mealRelayTextEndpoint`（Backend HTTPS 関数 URL）を Gradle プロパティで指定します。これらは秘密情報ではありません。Google Health OAuth client secret と許可メールアドレスは Backend の Secret Manager に置きます。
 
@@ -41,7 +41,10 @@ Room のschemaは `app/schemas/` に保存します。
 `android/` ディレクトリで次を実行します。
 
 ```shell
-./gradlew build
+./gradlew build \
+  -PmealRelayOauthClientId=<WEB_OAUTH_CLIENT_ID> \
+  -PmealRelayAuthEndpoint=<AUTH_EXCHANGE_URL> \
+  -PmealRelayTextEndpoint=<TEXT_MEAL_ENDPOINT_URL>
 ```
 
 画像単位の失敗、MediaStore再構築後の識別子再利用と中断後の再同期、開始前写真の後日更新の除外、公開後にgenerationが更新された写真の検出は、`PhotoScannerTest` のJVM単体テストで確認します。テストでは画像読み込み・分類の失敗を模擬し、テスト専用のMediaStore providerとRoomデータベースを使います。
