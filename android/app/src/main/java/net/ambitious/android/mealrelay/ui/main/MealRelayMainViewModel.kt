@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
 import net.ambitious.android.mealrelay.submission.MealSubmissionDraft
 import net.ambitious.android.mealrelay.submission.MealSubmissionQueue
 import net.ambitious.android.mealrelay.submission.MealSubmissionWorkScheduler
-import java.time.Instant
+import java.time.Clock
+import java.time.OffsetDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +24,7 @@ class MealRelayMainViewModel @Inject constructor(
   private val tokenStore: MealRelayTokenStore,
   private val mealSubmissionQueue: MealSubmissionQueue,
   private val mealSubmissionWorkScheduler: MealSubmissionWorkScheduler,
+  private val clock: Clock,
 ) : ViewModel() {
   private val mutableAuthorizationState = MutableStateFlow(MainAuthorizationState.Idle)
   val authorizationState: StateFlow<MainAuthorizationState> = mutableAuthorizationState.asStateFlow()
@@ -42,17 +45,15 @@ class MealRelayMainViewModel @Inject constructor(
     mutableAuthorizationState.value = MainAuthorizationState.Idle
   }
 
-  fun submitManualMeal(text: String) {
-    viewModelScope.launch(Dispatchers.IO) {
-      mealSubmissionQueue.enqueue(
-        MealSubmissionDraft(
-          type = MealSubmissionEntity.TYPE_TEXT,
-          imageUri = null,
-          text = text,
-          occurredAt = Instant.now().toString(),
-        ),
-      )
-    }
+  fun submitManualMeal(text: String): Job = viewModelScope.launch(Dispatchers.IO) {
+    mealSubmissionQueue.enqueue(
+      MealSubmissionDraft(
+        type = MealSubmissionEntity.TYPE_TEXT,
+        imageUri = null,
+        text = text,
+        occurredAt = OffsetDateTime.now(clock).toString(),
+      ),
+    )
   }
 }
 
