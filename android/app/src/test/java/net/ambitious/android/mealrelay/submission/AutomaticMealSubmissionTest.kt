@@ -2,12 +2,14 @@ package net.ambitious.android.mealrelay.submission
 
 import android.app.Application
 import androidx.room.Room
+import androidx.work.WorkManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
 import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
 import net.ambitious.android.mealrelay.ui.FailedMealSubmission
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionType
+import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionFailureClassifier
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -17,8 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import java.io.FileNotFoundException
-import java.net.SocketTimeoutException
+import java.io.IOException
 import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
@@ -105,9 +106,10 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
-  fun onlyNetworkIoExceptionsAreRetryable() {
-    assertEquals(true, isRetryableNetworkException(SocketTimeoutException()))
-    assertEquals(false, isRetryableNetworkException(FileNotFoundException()))
+  fun textTransportIoExceptionsAreRetryable() {
+    val result = TextMealSubmissionFailureClassifier().classify(IOException())
+
+    assertEquals(true, result is MealSubmissionSendResult.RetryableFailure)
   }
 
   @Test
@@ -122,6 +124,10 @@ class AutomaticMealSubmissionTest {
     assertThrows(CancellationException::class.java) { runBlocking { submission.submit("meal-1") } }
     assertEquals(1, repository.get("meal-1")?.automaticAttemptCount)
     assertEquals(MealSubmissionEntity.STATE_SENDING, repository.get("meal-1")?.state)
+    assertEquals(
+      now + AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS,
+      repository.get("meal-1")?.nextAutomaticAttemptAt,
+    )
   }
 
   @Test
@@ -136,6 +142,11 @@ class AutomaticMealSubmissionTest {
 
     val sender = FakeSender(MealSubmissionSendResult.RetryableFailure(IllegalStateException()))
     val resumed = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
+    assertEquals(
+      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS),
+      resumed.submit("meal-1"),
+    )
+    now += AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS
     assertEquals(
       AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS),
       resumed.submit("meal-1"),
@@ -227,6 +238,23 @@ class AutomaticMealSubmissionTest {
     assertEquals(mealId, UUID.fromString(mealId).toString())
     assertEquals("朝の食事", repository.get(mealId)?.text)
     assertEquals("2026-09-22T08:00:00+09:00", repository.get(mealId)?.occurredAt)
+  }
+
+  @Test
+  fun startupRecoverySchedulesAPersistedPendingSubmission() = runBlocking {
+    insert(textSubmission("meal-1"))
+    val application = RuntimeEnvironment.getApplication()
+    val scheduler = MealSubmissionWorkScheduler(application, repository)
+
+    scheduler.resumePendingSubmissions()
+
+    assertEquals(
+      1,
+      WorkManager.getInstance(application)
+        .getWorkInfosForUniqueWork(MealSubmissionWorkScheduler.workName("meal-1"))
+        .get()
+        .size,
+    )
   }
 
   @Test

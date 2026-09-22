@@ -16,8 +16,14 @@ interface MealSubmissionDao {
   @Query("SELECT * FROM meal_submission_queue WHERE state = :state ORDER BY created_at")
   fun getWithState(state: String): List<MealSubmissionEntity>
 
-  @Query("UPDATE meal_submission_queue SET automatic_attempt_count = automatic_attempt_count + 1, state = :sendingState, next_automatic_attempt_at = NULL WHERE meal_id = :mealId AND state = :pendingState AND automatic_attempt_count < :maximumAttempts")
-  fun beginAutomaticAttempt(mealId: String, pendingState: String, sendingState: String, maximumAttempts: Int): Int
+  @Query("UPDATE meal_submission_queue SET automatic_attempt_count = automatic_attempt_count + 1, state = :sendingState, next_automatic_attempt_at = :interruptedRetryAt WHERE meal_id = :mealId AND state = :pendingState AND automatic_attempt_count < :maximumAttempts")
+  fun beginAutomaticAttempt(
+    mealId: String,
+    pendingState: String,
+    sendingState: String,
+    maximumAttempts: Int,
+    interruptedRetryAt: Long,
+  ): Int
 
   @Query("UPDATE meal_submission_queue SET state = :pendingState WHERE meal_id = :mealId AND state = :sendingState")
   fun recoverInterruptedAutomaticAttempt(mealId: String, sendingState: String, pendingState: String): Int

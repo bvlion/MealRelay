@@ -8,21 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsScreen
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
-
-import javax.inject.Inject
+import net.ambitious.android.mealrelay.ui.main.MainAuthorizationState
+import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
 
 @AndroidEntryPoint
 class MealRelayMainActivity : ComponentActivity() {
-  @Inject lateinit var tokenStore: MealRelayTokenStore
-  private val viewModel by viewModels<FailedMealSubmissionsViewModel>()
+  private val failedMealSubmissionsViewModel by viewModels<FailedMealSubmissionsViewModel>()
+  private val mainViewModel by viewModels<MealRelayMainViewModel>()
   private val requestNotificationPermission = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
   ) { requestPhotoPermission() }
@@ -32,14 +30,27 @@ class MealRelayMainActivity : ComponentActivity() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
       PhotoEnrollmentWorker.enqueue(this)
     }
-    requestAuthorization()
+    mainViewModel.requestAuthorization()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      LaunchedEffect(Unit) { viewModel.load() }
-      FailedMealSubmissionsScreen(viewModel.state, viewModel::retry)
+      val authorizationState by mainViewModel.authorizationState.collectAsState()
+      LaunchedEffect(Unit) {
+        failedMealSubmissionsViewModel.load()
+        mainViewModel.recoverPendingSubmissions()
+      }
+      LaunchedEffect(authorizationState) {
+        if (authorizationState == MainAuthorizationState.Required) {
+          mainViewModel.consumeAuthorizationRequest()
+          startActivity(Intent(this@MealRelayMainActivity, MealRelayAuthorizationActivity::class.java))
+        }
+      }
+      FailedMealSubmissionsScreen(
+        failedMealSubmissionsViewModel.state,
+        failedMealSubmissionsViewModel::retry,
+      )
     }
     if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
       requestPhotoPermission()
@@ -50,13 +61,13 @@ class MealRelayMainActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
-    viewModel.load()
+    failedMealSubmissionsViewModel.load()
   }
 
   private fun requestPhotoPermission() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
       PhotoEnrollmentWorker.enqueue(this)
-      requestAuthorization()
+      mainViewModel.requestAuthorization()
     } else {
       requestPhotoPermissions.launch(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
@@ -64,10 +75,4 @@ class MealRelayMainActivity : ComponentActivity() {
     }
   }
 
-  private fun requestAuthorization() {
-    lifecycleScope.launch {
-      val hasToken = withContext(Dispatchers.IO) { tokenStore.read() != null }
-      if (!hasToken) startActivity(Intent(this@MealRelayMainActivity, MealRelayAuthorizationActivity::class.java))
-    }
-  }
 }

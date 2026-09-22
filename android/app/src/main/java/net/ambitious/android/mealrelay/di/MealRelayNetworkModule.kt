@@ -6,8 +6,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import net.ambitious.android.mealrelay.MealRelayBackendClient
 import net.ambitious.android.mealrelay.MealRelayTokenStore
+import net.ambitious.android.mealrelay.BuildConfig
 import net.ambitious.android.mealrelay.submission.MealSubmissionSender
+import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionFailureClassifier
+import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionReadinessChecker
 import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionSender
+import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionTransport
+import net.ambitious.android.mealrelay.submission.network.model.TextMealSubmissionRequestFactory
 import javax.inject.Singleton
 
 @Module
@@ -23,5 +28,10 @@ object MealRelayNetworkModule {
   fun provideMealSubmissionSender(
     tokenStore: MealRelayTokenStore,
     backendClient: MealRelayBackendClient,
-  ): MealSubmissionSender = TextMealSubmissionSender(tokenStore, backendClient)
+  ): MealSubmissionSender = TextMealSubmissionSender(
+    TextMealSubmissionReadinessChecker(tokenStore, BuildConfig.MEAL_RELAY_TEXT_ENDPOINT),
+    TextMealSubmissionRequestFactory(),
+    TextMealSubmissionTransport(backendClient, BuildConfig.MEAL_RELAY_TEXT_ENDPOINT),
+    TextMealSubmissionFailureClassifier(),
+  )
 }

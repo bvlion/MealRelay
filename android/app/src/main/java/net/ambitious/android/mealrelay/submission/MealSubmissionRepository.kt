@@ -15,12 +15,17 @@ class MealSubmissionRepository @Inject constructor(private val dao: MealSubmissi
 
   fun delete(mealId: String) = dao.delete(mealId)
 
-  fun beginAutomaticAttempt(mealId: String, maximumAttempts: Int): MealSubmissionEntity? {
+  fun beginAutomaticAttempt(
+    mealId: String,
+    maximumAttempts: Int,
+    interruptedRetryAt: Long,
+  ): MealSubmissionEntity? {
     if (dao.beginAutomaticAttempt(
         mealId,
         MealSubmissionEntity.STATE_PENDING,
         MealSubmissionEntity.STATE_SENDING,
         maximumAttempts,
+        interruptedRetryAt,
       ) == 0
     ) return null
     return dao.get(mealId)

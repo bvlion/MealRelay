@@ -10,43 +10,64 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
   private val clock: SubmissionClock,
 ) {
   suspend fun submit(mealId: String): AutomaticMealSubmissionResult {
-    val initialSubmission = repository.get(mealId) ?: return AutomaticMealSubmissionResult.Completed
-    if (initialSubmission.state == MealSubmissionEntity.STATE_FAILED) return AutomaticMealSubmissionResult.Completed
+    val submission = loadPendingSubmission(mealId) ?: return AutomaticMealSubmissionResult.Completed
+    retryResult(submission)?.let { return it }
+    when (sender.readiness(submission)) {
+      MealSubmissionReadiness.AwaitingAuthorization -> return AutomaticMealSubmissionResult.AwaitingAuthorization
+      MealSubmissionReadiness.Unavailable -> return failWithoutSending(submission)
+      MealSubmissionReadiness.Ready -> Unit
+    }
+    return sendAutomatically(submission)
+  }
+
+  private fun loadPendingSubmission(mealId: String): MealSubmissionEntity? {
+    val initialSubmission = repository.get(mealId) ?: return null
     if (initialSubmission.state == MealSubmissionEntity.STATE_SENDING) {
       repository.recoverInterruptedAutomaticAttempt(mealId)
     }
-    val submission = repository.get(mealId) ?: return AutomaticMealSubmissionResult.Completed
-    if (submission.state != MealSubmissionEntity.STATE_PENDING) return AutomaticMealSubmissionResult.Completed
+    return repository.get(mealId)?.takeIf { it.state == MealSubmissionEntity.STATE_PENDING }
+  }
+
+  private fun retryResult(submission: MealSubmissionEntity): AutomaticMealSubmissionResult? {
     if (submission.automaticAttemptCount >= MAXIMUM_AUTOMATIC_ATTEMPTS) {
-      repository.recordAutomaticFailure(mealId, submission.automaticAttemptCount)
-      return AutomaticMealSubmissionResult.Failed
+      return failWithoutSending(submission)
     }
-    if (submission.nextAutomaticAttemptAt?.let { it > clock.now() } == true) {
-      return AutomaticMealSubmissionResult.RetryAt(checkNotNull(submission.nextAutomaticAttemptAt))
+    return submission.nextAutomaticAttemptAt
+      ?.takeIf { it > clock.now() }
+      ?.let(AutomaticMealSubmissionResult::RetryAt)
+  }
+
+  private suspend fun sendAutomatically(submission: MealSubmissionEntity): AutomaticMealSubmissionResult {
+    val nextRetryAt = clock.now() + retryDelayFor(submission.automaticAttemptCount + 1)
+    val sendingSubmission = repository.beginAutomaticAttempt(
+      submission.mealId,
+      MAXIMUM_AUTOMATIC_ATTEMPTS,
+      nextRetryAt,
+    ) ?: return AutomaticMealSubmissionResult.Completed
+    return persistSendResult(sendingSubmission, send(sendingSubmission))
+  }
+
+  private suspend fun send(submission: MealSubmissionEntity): MealSubmissionSendResult = try {
+    sender.send(submission)
+  } catch (error: CancellationException) {
+    throw error
+  }
+
+  private fun persistSendResult(
+    submission: MealSubmissionEntity,
+    result: MealSubmissionSendResult,
+  ): AutomaticMealSubmissionResult = when (result) {
+    MealSubmissionSendResult.Succeeded -> {
+      repository.delete(submission.mealId)
+      AutomaticMealSubmissionResult.Completed
     }
-    when (sender.readiness(submission)) {
-      MealSubmissionReadiness.AwaitingAuthorization -> return AutomaticMealSubmissionResult.AwaitingAuthorization
-      MealSubmissionReadiness.Unavailable -> {
-        repository.recordAutomaticFailure(mealId, submission.automaticAttemptCount)
-        return AutomaticMealSubmissionResult.Failed
-      }
-      MealSubmissionReadiness.Ready -> Unit
-    }
-    val sendingSubmission = repository.beginAutomaticAttempt(mealId, MAXIMUM_AUTOMATIC_ATTEMPTS)
-      ?: return AutomaticMealSubmissionResult.Completed
-    val result = try {
-      sender.send(sendingSubmission)
-    } catch (error: CancellationException) {
-      throw error
-    }
-    return when (result) {
-      MealSubmissionSendResult.Succeeded -> {
-        repository.delete(mealId)
-        AutomaticMealSubmissionResult.Completed
-      }
-      is MealSubmissionSendResult.RetryableFailure -> recordFailure(sendingSubmission, true)
-      is MealSubmissionSendResult.PermanentFailure -> recordFailure(sendingSubmission, false)
-    }
+    is MealSubmissionSendResult.RetryableFailure -> recordFailure(submission, true)
+    is MealSubmissionSendResult.PermanentFailure -> recordFailure(submission, false)
+  }
+
+  private fun failWithoutSending(submission: MealSubmissionEntity): AutomaticMealSubmissionResult {
+    repository.recordAutomaticFailure(submission.mealId, submission.automaticAttemptCount)
+    return AutomaticMealSubmissionResult.Failed
   }
 
   private fun recordFailure(
@@ -58,12 +79,14 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
       repository.recordAutomaticFailure(submission.mealId, attemptCount)
       return AutomaticMealSubmissionResult.Failed
     }
-    val nextAttemptAt = clock.now() + when (attemptCount) {
-      1 -> FIRST_RETRY_DELAY_MILLIS
-      else -> SECOND_RETRY_DELAY_MILLIS
-    }
+    val nextAttemptAt = clock.now() + retryDelayFor(attemptCount)
     repository.recordAutomaticRetry(submission.mealId, attemptCount, nextAttemptAt)
     return AutomaticMealSubmissionResult.RetryAt(nextAttemptAt)
+  }
+
+  private fun retryDelayFor(attemptCount: Int): Long = when (attemptCount) {
+    1 -> FIRST_RETRY_DELAY_MILLIS
+    else -> SECOND_RETRY_DELAY_MILLIS
   }
 
   companion object {

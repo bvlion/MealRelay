@@ -7,6 +7,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -27,7 +29,7 @@ class MealSubmissionWorkScheduler @Inject constructor(
     )
   }
 
-  fun resumePendingSubmissions() {
+  suspend fun resumePendingSubmissions() = withContext(Dispatchers.IO) {
     repository.pendingSubmissions().forEach { submission ->
       schedule(submission.mealId, submission.nextAutomaticAttemptAt ?: System.currentTimeMillis(), ExistingWorkPolicy.REPLACE)
     }
