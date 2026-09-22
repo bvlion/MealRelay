@@ -31,7 +31,7 @@ class MealSubmissionWorkScheduler @Inject constructor(
 
   suspend fun resumePendingSubmissions() = withContext(Dispatchers.IO) {
     repository.pendingSubmissions().forEach { submission ->
-      schedule(submission.mealId, submission.nextAutomaticAttemptAt ?: System.currentTimeMillis(), ExistingWorkPolicy.REPLACE)
+      schedule(submission.mealId, submission.nextAutomaticAttemptAt ?: System.currentTimeMillis(), ExistingWorkPolicy.KEEP)
     }
   }
 

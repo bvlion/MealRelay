@@ -2,6 +2,7 @@ package net.ambitious.android.mealrelay.submission
 
 import android.app.Application
 import androidx.room.Room
+import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
@@ -268,6 +269,30 @@ class AutomaticMealSubmissionTest {
         .getWorkInfosForUniqueWork(MealSubmissionWorkScheduler.workName("meal-1"))
         .get()
         .size,
+    )
+  }
+
+  @Test
+  fun startupRecoveryKeepsExistingWorkForAQueuedMeal() = runBlocking {
+    val mealId = "meal-existing"
+    insert(textSubmission(mealId))
+    val application = RuntimeEnvironment.getApplication()
+    val scheduler = MealSubmissionWorkScheduler(application, repository)
+    scheduler.schedule(mealId, System.currentTimeMillis(), ExistingWorkPolicy.KEEP)
+    val existingWork = WorkManager.getInstance(application)
+      .getWorkInfosForUniqueWork(MealSubmissionWorkScheduler.workName(mealId))
+      .get()
+      .single()
+
+    scheduler.resumePendingSubmissions()
+
+    assertEquals(
+      existingWork.id,
+      WorkManager.getInstance(application)
+        .getWorkInfosForUniqueWork(MealSubmissionWorkScheduler.workName(mealId))
+        .get()
+        .single()
+        .id,
     )
   }
 

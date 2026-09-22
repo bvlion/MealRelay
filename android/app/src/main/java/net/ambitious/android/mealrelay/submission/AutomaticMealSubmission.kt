@@ -1,6 +1,5 @@
 package net.ambitious.android.mealrelay.submission
 
-import kotlinx.coroutines.CancellationException
 import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
 import javax.inject.Inject
 
@@ -44,13 +43,7 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
       MAXIMUM_AUTOMATIC_ATTEMPTS,
       nextRetryAt,
     ) ?: return AutomaticMealSubmissionResult.Completed
-    return persistSendResult(sendingSubmission, send(sendingSubmission))
-  }
-
-  private suspend fun send(submission: MealSubmissionEntity): MealSubmissionSendResult = try {
-    sender.send(submission)
-  } catch (error: CancellationException) {
-    throw error
+    return persistSendResult(sendingSubmission, sender.send(sendingSubmission))
   }
 
   private fun persistSendResult(
