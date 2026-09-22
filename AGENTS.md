@@ -60,6 +60,8 @@ Androidの実装コードとテストコードはKotlinで統一する。Javaの
 
 新しく実装するAndroid UIはJetpack Composeを使用する。Viewベースのレイアウトや `LinearLayout`、`TextView`、`Button` 等で新規UIを構築しない。
 
+すべてのActivityは縦向きに固定する。画面回転対応のためだけにActivity再生成時の状態復旧処理を追加しない。
+
 ユーザーへ表示する文言はstring resourceで管理し、Composeから参照する。表示文言をKotlinコードへ直接記述しない。
 
 画面やUIの状態はComposeのstateまたはstate holderで扱い、Activity等のmutableなフィールド `var` でUI状態を直接管理しない。ActivityやComposableからRoom、HTTP client、送信処理等を直接組み立てて実行せず、画面は状態表示とユーザー操作の委譲に集中させる。
@@ -67,6 +69,8 @@ Androidの実装コードとテストコードはKotlinで統一する。Javaの
 Android production codeの依存関係はDIで解決する。Activity、Composable、ViewModel、Worker等からApplicationをservice locatorとして参照して依存を取得しない。ViewModelへ依存を渡すための手書きの `ViewModelProvider.Factory` を設けず、DIの仕組みで依存を供給する。
 
 DIを利用すること自体は決定済みとする。具体的なDIの実装方式は、既存コード、依存関係、対象技術の一般的な実装慣行を踏まえて実装時に判断してよい。
+
+現在有効なproduction経路に必要な設定が不足している状態を、バックグラウンド処理や実際の送信時まで無言で持ち越さない。通常動作へ入る前に設定不足を検出し、クラッシュではなく明示的な設定エラーとして扱う。
 
 本番稼働前のため、既存インストールとの後方互換性だけを目的としたRoom migrationは追加しない。ユーザーが本番稼働開始またはデータ移行互換性の必要性を明示するまでは、開発中のスキーマ変更でmigration実装を増やさない。
 
