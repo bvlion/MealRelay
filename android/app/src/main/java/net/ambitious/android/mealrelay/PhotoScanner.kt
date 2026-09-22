@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import net.ambitious.android.mealrelay.data.photo.PhotoProcessingDao
+import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 
 class PhotoScanner(
   private val context: Context,

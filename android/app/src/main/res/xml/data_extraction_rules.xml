@@ -2,6 +2,10 @@
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="sharedpref" path="mealrelay_auth.xml" />
+        <exclude domain="database" path="meal_relay.db" />
+        <exclude domain="database" path="meal_relay.db-journal" />
+        <exclude domain="database" path="meal_relay.db-shm" />
+        <exclude domain="database" path="meal_relay.db-wal" />
         <exclude domain="database" path="photo_detection.db" />
         <exclude domain="database" path="photo_detection.db-journal" />
         <exclude domain="database" path="photo_detection.db-shm" />
@@ -9,6 +13,10 @@
     </cloud-backup>
     <device-transfer>
         <exclude domain="sharedpref" path="mealrelay_auth.xml" />
+        <exclude domain="database" path="meal_relay.db" />
+        <exclude domain="database" path="meal_relay.db-journal" />
+        <exclude domain="database" path="meal_relay.db-shm" />
+        <exclude domain="database" path="meal_relay.db-wal" />
         <exclude domain="database" path="photo_detection.db" />
         <exclude domain="database" path="photo_detection.db-journal" />
         <exclude domain="database" path="photo_detection.db-shm" />

@@ -30,7 +30,25 @@ AIエージェントが判断してよいのは、ユーザーが決定済みの
 
 レビューではコードの動作の妥当性だけでなく、可読性と責務分離も確認する。
 
+Pull Requestのレビューでは、botや既存review threadの指摘だけを確認して終えず、変更されたproduction codeを一通り読む。各ファイル、クラス、主要関数について、名前から期待される責務と実際の処理が一致しているか、別レイヤーの処理が混在していないかを確認する。
+
+対象Issueと関連Issueの責務境界も確認する。後続Issueで扱う機能や未確定事項を、現在のIssueのproduction codeが先取りして事実上固定していないかを確認する。現在のIssueの検証だけを目的に、後続Issueのproduction連携を追加しない。
+
+Activity、Worker、HTTP handler等のentry pointは、ライフサイクルや外部イベントを受けて処理を委譲する境界として扱う。永続化、通信、業務判断、validation、UI構築、再試行制御等をentry pointへ直接集約しない。
+
+Database層やAPI層についても、層ごとに1ファイルへ関連定義を集約しない。Entity、DAO、Database、API contract、request / response model、transport等、変更理由の異なる責務は別の定義として分離し、パッケージ構成から役割を追える状態にする。
+
 処理の意図を追うために複数の責務を読み解く必要がある長い関数、意味がコードから分からない数値リテラル、不要な独自validation、成熟したライブラリまたは現行の公式APIで扱える標準処理の自前実装が残っていないかを確認する。
+
+複数の責務を1ファイルや1クラスへ押し込めない。関連コードが増えた場合は、責務ごとに分離し、必要に応じてパッケージやモジュール内の配置も整理する。ルートパッケージや単一ファイルを、関連機能をまとめて置くための置き場として使わない。
+
+RepositoryとDAOは、名前から分かる永続化責務に集中させる。入力・業務validation、HTTP status等の外部応答方針、画面・Worker向けの制御をRepositoryやDAOへ混在させない。トランザクションの原子性を保つために永続化層で必要な整合性確認と、独立可能なvalidationを区別する。
+
+validationは永続化処理や外部I/Oの責務へ混在させず、独立した責務として分離する。
+
+テストfixtureやFakeの都合だけで、production codeに機能の有無を動的に判定する分岐や、保証を弱めるfallbackを追加しない。productionで必須の契約は必須として扱い、テスト側をその契約に合わせる。
+
+永続データを正とする状態と、WorkManager等のschedulerが持つ実行状態を区別する。同じ再試行・キュー状態を複数箇所で別々に管理して挙動を推測しないと理解できる構造にしない。複数のキュー項目を一つのWorkerで扱う場合も、ある項目のbackoffや実行状態が別項目の送信タイミングや試行回数を意図せず変えないか確認する。
 
 可読性の改善は対象Issueの範囲内で必要なものに限り、将来用途だけを理由にした抽象化や過剰な一般化は行わない。
 
@@ -39,6 +57,22 @@ AIエージェントが判断してよいのは、ユーザーが決定済みの
 Androidの実装コードとテストコードはKotlinで統一する。Javaの実装コードは追加しない。
 
 依存関係とGradle pluginのバージョンはVersion Catalogで管理する。
+
+新しく実装するAndroid UIはJetpack Composeを使用する。Viewベースのレイアウトや `LinearLayout`、`TextView`、`Button` 等で新規UIを構築しない。
+
+すべてのActivityは縦向きに固定する。画面回転対応のためだけにActivity再生成時の状態復旧処理を追加しない。
+
+ユーザーへ表示する文言はstring resourceで管理し、Composeから参照する。表示文言をKotlinコードへ直接記述しない。
+
+画面やUIの状態はComposeのstateまたはstate holderで扱い、Activity等のmutableなフィールド `var` でUI状態を直接管理しない。ActivityやComposableからRoom、HTTP client、送信処理等を直接組み立てて実行せず、画面は状態表示とユーザー操作の委譲に集中させる。
+
+Android production codeの依存関係はDIで解決する。Activity、Composable、ViewModel、Worker等からApplicationをservice locatorとして参照して依存を取得しない。ViewModelへ依存を渡すための手書きの `ViewModelProvider.Factory` を設けず、DIの仕組みで依存を供給する。
+
+DIを利用すること自体は決定済みとする。具体的なDIの実装方式は、既存コード、依存関係、対象技術の一般的な実装慣行を踏まえて実装時に判断してよい。
+
+現在有効なproduction経路に必要なビルド設定は必須とし、不足した状態のアプリを生成しない。必須設定に空文字等のfallbackを与えてビルドを成立させず、設定不足はビルド時に失敗させる。まだproduction経路へ接続していない後続Issueの設定まで先行して必須化しない。
+
+本番稼働前のため、既存インストールとの後方互換性だけを目的としたRoom migrationは追加しない。ユーザーが本番稼働開始またはデータ移行互換性の必要性を明示するまでは、開発中のスキーマ変更でmigration実装を増やさない。
 
 `src/test` と `src/androidTest` は別のsource setとして扱い、テストfixtureやresourceを相互参照しない。
 

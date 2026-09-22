@@ -3,7 +3,7 @@
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const { createGoogleOAuth } = require('./googleOAuth');
 const { getGoogleHealthOAuthClient } = require('./healthCredentials');
-const { normalizeImageMeal, normalizeTextMeal } = require('./mealRecord');
+const { MealRecordError, normalizeImageMeal, normalizeTextMeal } = require('./mealRecord');
 const { toGoogleHealthDataPoint, createNutritionLog } = require('./googleHealthNutrition');
 
 async function completeMealRegistration({ record, status, authRepository, clientId, clientSecret,
@@ -27,7 +27,7 @@ async function completeMealRegistration({ record, status, authRepository, client
 
 async function registerMeal({ route, authorization, authenticatedUserId, mealId, occurredAt, analysis,
   authRepository, mealRepository, clientId, clientSecret, createOAuthClient = createGoogleOAuth,
-  healthClient }) {
+  healthClient, reservation }) {
   if (route !== 'image' && route !== 'text') {
     throw new Error('Meal route is invalid');
   }
@@ -35,20 +35,33 @@ async function registerMeal({ route, authorization, authenticatedUserId, mealId,
     authorization,
     repository: authRepository,
   });
-  const record = route === 'image'
-    ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
-    : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
-  const status = await mealRepository.saveIfAbsent(record);
-  return completeMealRegistration({
-    record,
-    status,
-    authRepository,
-    clientId,
-    clientSecret,
-    createOAuthClient,
-    healthClient,
-    mealRepository,
-  });
+  if (!reservation) throw new Error('Meal reservation is required');
+  let isSaved = false;
+  try {
+    const record = route === 'image'
+      ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
+      : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
+    const status = await saveReservedMeal(mealRepository, record, reservation);
+    isSaved = true;
+    return completeMealRegistration({
+      record,
+      status,
+      authRepository,
+      clientId,
+      clientSecret,
+      createOAuthClient,
+      healthClient,
+      mealRepository,
+    });
+  } catch (error) {
+    if (!isSaved) await mealRepository.releaseReservation(reservation);
+    throw error;
+  }
+}
+
+async function saveReservedMeal(mealRepository, record, reservation) {
+  if (await mealRepository.saveReserved(record, reservation)) return 'new';
+  throw new MealRecordError('Meal is already being analyzed', 503);
 }
 
 module.exports = { completeMealRegistration, registerMeal };

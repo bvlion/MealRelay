@@ -12,6 +12,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.room.Room
+import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
+import net.ambitious.android.mealrelay.data.photo.PhotoScanStateEntity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -39,7 +42,7 @@ class PhotoScannerTest {
       Photo(3, 3, 3000),
     )
     provider.generation = 3
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -87,7 +90,7 @@ class PhotoScannerTest {
       Photo(8, 2, 1000),
       Photo(9, 3, 3000),
     )
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -142,7 +145,7 @@ class PhotoScannerTest {
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
     provider.generation = 2
     provider.photos = listOf(Photo(2, 2, 2000))
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -173,7 +176,7 @@ class PhotoScannerTest {
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
     provider.generation = 6
     provider.photos = listOf(Photo(4, 6, 1000))
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -202,7 +205,7 @@ class PhotoScannerTest {
       Photo(id = 1, addedGeneration = 1, modifiedGeneration = 6, capturedAt = 1000),
       Photo(id = 2, addedGeneration = 6, modifiedGeneration = 7, capturedAt = 1000),
     )
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -235,7 +238,7 @@ class PhotoScannerTest {
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
     provider.generation = 2
     provider.photos = listOf(Photo(1, 1, 1000), Photo(2, 2, 2000))
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -259,7 +262,7 @@ class PhotoScannerTest {
     val application = RuntimeEnvironment.getApplication() as Application
     Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
@@ -296,7 +299,7 @@ class PhotoScannerTest {
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
     provider.generation = 1
     provider.photos = listOf(Photo(1, 1, 1000))
-    val database = Room.inMemoryDatabaseBuilder(application, PhotoProcessingDatabase::class.java)
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()

@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { FirestoreMealRepository } = require('../src/firestoreMealRepository');
 const { GoogleHealthPendingError } = require('../src/googleHealthNutrition');
-const { registerMeal } = require('../src/registerMeal');
+const { completeMealRegistration, registerMeal } = require('../src/registerMeal');
 
 function registrationFixture({ route = 'image', mealId = 'photo-1',
   occurredAt = '2026-01-01T12:00:00Z', analysis = { foodDisplayName: 'Rice' },
@@ -29,6 +29,8 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
         get: (field) => documents.get(reference.id)?.[field],
       }),
       create: (reference, fields) => { documents.set(reference.id, fields); },
+      update: (reference, fields) => { documents.set(reference.id, { ...documents.get(reference.id), ...fields }); },
+      delete: (reference) => { documents.delete(reference.id); },
     }),
   };
   const calls = { create: [], get: [], credentials: [] };
@@ -56,8 +58,47 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
   return { args, calls, documents };
 }
 
+test('a reservation owner cannot release or finalize a newer reservation', async () => {
+  const { args, documents } = registrationFixture();
+  const repository = args.mealRepository;
+
+  const first = await repository.reserve('user1', 'photo-1', 'request-1');
+  assert.equal(first.type, 'acquired');
+  assert.deepEqual(await repository.reserve('user1', 'photo-1', 'request-1'), { type: 'active' });
+  assert.deepEqual(await repository.reserve('user1', 'photo-1', 'request-2'), { type: 'different' });
+
+  const [documentId, document] = documents.entries().next().value;
+  documents.set(documentId, { ...document, analysisStartedAt: new Date(0).toISOString() });
+  const second = await repository.reserve('user1', 'photo-1', 'request-1');
+  assert.equal(second.type, 'acquired');
+  assert.notEqual(second.reservationId, first.reservationId);
+
+  await repository.releaseReservation(first);
+  assert.equal(await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, first), false);
+  assert.equal(await repository.saveReserved({ userId: 'user1', mealId: 'photo-1' }, second), true);
+});
+
 function savedMeal(documents) {
   return [...documents.values()][0];
+}
+
+async function registerReserved(args, requestHash = 'request-1') {
+  const reservation = await args.mealRepository.reserve('user1', args.mealId, requestHash);
+  assert.equal(reservation.type, 'acquired');
+  return registerMeal({ ...args, reservation });
+}
+
+function completeSaved(args, record, status) {
+  return completeMealRegistration({
+    record,
+    status,
+    authRepository: args.authRepository,
+    clientId: args.clientId,
+    clientSecret: args.clientSecret,
+    createOAuthClient: args.createOAuthClient,
+    healthClient: args.healthClient,
+    mealRepository: args.mealRepository,
+  });
 }
 
 test('registration uses token owner credentials and remains idempotent on retry', async () => {
@@ -65,8 +106,8 @@ test('registration uses token owner credentials and remains idempotent on retry'
     analysis: { foodDisplayName: 'Rice', estimated: { energyKcal: 200 } },
   });
 
-  const first = await registerMeal(args);
-  const second = await registerMeal(args);
+  const first = await registerReserved(args);
+  const second = await completeSaved(args, first.record, 'registered');
 
   assert.equal(first.isAlreadyRegistered, false);
   assert.equal(second.isAlreadyRegistered, true);
@@ -81,9 +122,7 @@ test('registration uses token owner credentials and remains idempotent on retry'
     status: 'registered',
   });
 
-  await assert.rejects(registerMeal({ ...args, analysis: { foodDisplayName: 'Different meal' } }),
-    /Meal ID already has different content/);
-  await assert.rejects(registerMeal({ ...args, authorization: 'Bearer invalid' }),
+  await assert.rejects(registerMeal({ ...args, authorization: 'Bearer invalid', reservation: {} }),
     /authentication failed/);
   assert.equal(calls.create.length, 1);
 });
@@ -103,12 +142,12 @@ test('a pending operation becomes registered only after Google Health reports su
     }),
   });
 
-  const registration = registerMeal(args);
+  const registration = registerReserved(args);
   await new Promise(setImmediate);
   assert.equal(savedMeal(documents).status, 'pending');
   completeOperation();
   const result = await registration;
-  await registerMeal(args);
+  await completeSaved(args, result.record, 'registered');
 
   assert.equal(result.record.eatenAt, '2025-12-31T23:00:00.000Z');
   assert.equal(savedMeal(documents).status, 'registered');
@@ -123,7 +162,7 @@ test('a pending operation that does not create a point is not marked registered'
     }),
   });
 
-  await assert.rejects(registerMeal(args), /Creation failed/);
+  await assert.rejects(registerReserved(args), /Creation failed/);
 
   assert.equal(savedMeal(documents).status, 'pending');
   assert.equal(calls.create.length, 1);
@@ -142,11 +181,12 @@ test('a conflict without a readable point stays pending until the point exists',
     },
   });
 
-  await assert.rejects(registerMeal(args), /Response lost/);
-  await assert.rejects(registerMeal(args), GoogleHealthPendingError);
+  await assert.rejects(registerReserved(args), /Response lost/);
+  const record = savedMeal(documents).record;
+  await assert.rejects(completeSaved(args, record, 'pending'), GoogleHealthPendingError);
   assert.equal(savedMeal(documents).status, 'pending');
   isPointVisible = true;
-  await registerMeal(args);
+  await completeSaved(args, record, 'pending');
 
   assert.equal(savedMeal(documents).status, 'registered');
   assert.equal(calls.create.length, 2);

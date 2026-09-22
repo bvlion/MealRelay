@@ -5,102 +5,78 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.identity.AuthorizationRequest
-import com.google.android.gms.auth.api.identity.AuthorizationResult
+import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.common.api.Scope
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
+import net.ambitious.android.mealrelay.authorization.ui.AuthorizationUiState
+import net.ambitious.android.mealrelay.authorization.ui.MealRelayAuthorizationViewModel
 
+@AndroidEntryPoint
 class MealRelayAuthorizationActivity : ComponentActivity() {
+  private val viewModel by viewModels<MealRelayAuthorizationViewModel>()
   private val authorizationClient by lazy { Identity.getAuthorizationClient(this) }
-  private var isWaitingForResolution = false
   private val startAuthorizationIntent = registerForActivityResult(
     ActivityResultContracts.StartIntentSenderForResult(),
   ) { activityResult ->
-    isWaitingForResolution = false
     if (activityResult.resultCode != RESULT_OK || activityResult.data == null) {
-      showAuthorizationFailure()
+      viewModel.fail()
     } else {
-      lifecycleScope.launch {
-        try {
-          completeAuthorization(authorizationClient.getAuthorizationResultFromIntent(activityResult.data))
-        } catch (error: CancellationException) {
-          throw error
-        } catch (_: Exception) {
-          showAuthorizationFailure()
-        }
-      }
+      val code = runCatching {
+        authorizationClient.getAuthorizationResultFromIntent(activityResult.data).serverAuthCode
+      }.getOrNull()
+      viewModel.complete(code)
     }
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    isWaitingForResolution = savedInstanceState?.getBoolean("waitingForResolution") ?: false
-    if (!isWaitingForResolution) authorizeIfNeeded()
+    lifecycleScope.launch {
+      repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+        viewModel.state.collectLatest { state ->
+          when (state) {
+            is AuthorizationUiState.RequestAuthorization -> startAuthorization(state)
+            AuthorizationUiState.Failed -> showAuthorizationFailure()
+            AuthorizationUiState.Finished -> finish()
+            AuthorizationUiState.Idle,
+            AuthorizationUiState.AwaitingResult -> Unit
+          }
+        }
+      }
+    }
+    viewModel.begin()
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    outState.putBoolean("waitingForResolution", isWaitingForResolution)
-    super.onSaveInstanceState(outState)
-  }
-
-  private fun authorizeIfNeeded() {
+  private fun startAuthorization(state: AuthorizationUiState.RequestAuthorization) {
+    viewModel.requestLaunched()
     lifecycleScope.launch {
       try {
-        if (withContext(Dispatchers.IO) { MealRelayTokenStore(this@MealRelayAuthorizationActivity).read() } != null) {
-          finish()
-          return@launch
-        }
-        if (BuildConfig.MEAL_RELAY_OAUTH_CLIENT_ID.isBlank() || BuildConfig.MEAL_RELAY_AUTH_ENDPOINT.isBlank()) {
-          showAuthorizationFailure()
-          return@launch
-        }
-        val request = AuthorizationRequest.builder()
-          .setRequestedScopes(
-            listOf(
-              Scope("openid"),
-              Scope("email"),
-              Scope("https://www.googleapis.com/auth/googlehealth.nutrition.writeonly"),
-              Scope("https://www.googleapis.com/auth/googlehealth.nutrition.readonly"),
-            ),
-          )
-          .requestOfflineAccess(BuildConfig.MEAL_RELAY_OAUTH_CLIENT_ID)
-          .setPrompt(AuthorizationRequest.Prompt.CONSENT)
-          .build()
-        val result = authorizationClient.authorize(request).await()
+        val result = authorizationClient.authorize(state.request).await()
         if (result.hasResolution()) {
           val intentSender = checkNotNull(result.pendingIntent).intentSender
-          isWaitingForResolution = true
           startAuthorizationIntent.launch(IntentSenderRequest.Builder(intentSender).build())
         } else {
-          completeAuthorization(result)
+          viewModel.complete(result.serverAuthCode)
         }
       } catch (error: CancellationException) {
         throw error
       } catch (_: Exception) {
-        showAuthorizationFailure()
+        viewModel.fail()
       }
     }
-  }
-
-  private suspend fun completeAuthorization(result: AuthorizationResult) {
-    val code = checkNotNull(result.serverAuthCode)
-    val tokenStore = MealRelayTokenStore(this)
-    MealRelayAuthorizationRepository(MealRelayBackendClient(tokenStore::read), tokenStore).complete(code)
-    finish()
   }
 
   private fun showAuthorizationFailure() {
     if (isFinishing) return
     AlertDialog.Builder(this)
-      .setMessage("Google Health の認可を完了できませんでした。")
-      .setPositiveButton("再試行") { _, _ -> authorizeIfNeeded() }
-      .setNegativeButton("閉じる") { _, _ -> finish() }
+      .setMessage(R.string.authorization_failed)
+      .setPositiveButton(R.string.authorization_retry) { _, _ -> viewModel.begin() }
+      .setNegativeButton(R.string.authorization_close) { _, _ -> finish() }
       .show()
   }
 }

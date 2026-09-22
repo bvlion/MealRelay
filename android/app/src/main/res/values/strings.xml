@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MealRelay</string>
+    <string name="failed_meal_submissions_title">送信に失敗した食事</string>
+    <string name="failed_meal_submissions_empty">送信に失敗した食事はありません。</string>
+    <string name="meal_submission_type_image">写真</string>
+    <string name="meal_submission_type_text">テキスト</string>
+    <string name="meal_submission_retry">再送</string>
+    <string name="meal_submission_failure_channel">食事送信の失敗</string>
+    <string name="meal_submission_failure_title">食事を送信できませんでした</string>
+  <string name="meal_submission_failure_text">メイン画面から再送できます。</string>
+  <string name="authorization_failed">Google Health の認可を完了できませんでした。</string>
+  <string name="authorization_retry">再試行</string>
+  <string name="authorization_close">閉じる</string>
+</resources>

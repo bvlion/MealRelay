@@ -60,23 +60,40 @@ function mealAnalysis(foodDisplayName = 'ご飯 約150g、焼き鮭 約80g') {
 function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = ['success'] } = {}) {
   const calls = { analysis: [], googleHealth: [], tokenLookups: [] };
   const meals = new Map();
+  const reservations = new Map();
   const mealKey = (userId, mealId) => `${userId}:${mealId}`;
   const mealRepository = {
     find: async (userId, mealId) => meals.get(mealKey(userId, mealId)) ?? null,
-    saveIfAbsent: async (record) => {
-      const key = mealKey(record.userId, record.mealId);
+    reserve: async (userId, mealId, requestHash) => {
+      const key = mealKey(userId, mealId);
       const savedMeal = meals.get(key);
       if (savedMeal) {
-        if (JSON.stringify(savedMeal.record) !== JSON.stringify(record)) {
-          throw new MealRecordError('Meal ID already has different content', 409);
-        }
-        return savedMeal.status;
+        return savedMeal.requestHash && savedMeal.requestHash !== requestHash
+          ? { type: 'different' }
+          : { type: 'saved', savedMeal };
       }
-      meals.set(key, { record, status: 'pending' });
-      return 'new';
+      const activeReservation = reservations.get(key);
+      if (activeReservation) {
+        return activeReservation.requestHash === requestHash ? { type: 'active' } : { type: 'different' };
+      }
+      const reservation = { type: 'acquired', userId, mealId, requestHash, reservationId: `reservation-${key}` };
+      reservations.set(key, reservation);
+      return reservation;
+    },
+    saveReserved: async (record, reservation) => {
+      const key = mealKey(record.userId, record.mealId);
+      if (reservations.get(key)?.reservationId !== reservation.reservationId) return false;
+      reservations.delete(key);
+      meals.set(key, { record, status: 'pending', requestHash: reservation.requestHash });
+      return true;
+    },
+    releaseReservation: async (reservation) => {
+      const key = mealKey(reservation.userId, reservation.mealId);
+      if (reservations.get(key)?.reservationId === reservation.reservationId) reservations.delete(key);
     },
     markRegistered: async (record, googleHealthName) => {
       meals.set(mealKey(record.userId, record.mealId), {
+        ...meals.get(mealKey(record.userId, record.mealId)),
         record,
         status: 'registered',
         googleHealthName,
@@ -181,6 +198,23 @@ test('a pending retry reuses the first analysis even when a later model output w
   assert.equal(fixture.calls.analysis.length, 1);
   assert.equal(fixture.meal().record.foodDisplayName, '初回の食事 約1人前');
   assert.equal(fixture.calls.googleHealth.length, 2);
+});
+
+test('an image validation failure releases the reservation before a retry', async () => {
+  const fixture = endpointFixture({
+    analysisOutputs: [mealAnalysis('   '), mealAnalysis('有効な食事')],
+  });
+  const firstResponse = responseFixture();
+  const retryResponse = responseFixture();
+
+  await handleImageMealRequest({ request: multipartRequest(), response: firstResponse,
+    ...fixture.dependencies });
+  await handleImageMealRequest({ request: multipartRequest(), response: retryResponse,
+    ...fixture.dependencies });
+
+  assert.equal(firstResponse.statusCode, 400);
+  assert.equal(retryResponse.statusCode, 201);
+  assert.equal(fixture.calls.analysis.length, 2);
 });
 
 test('a registered retry does not invoke OpenAI again', async () => {

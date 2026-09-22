@@ -1,5 +1,6 @@
 'use strict';
 
+const { createHash } = require('node:crypto');
 const { AuthenticationError } = require('./errors');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const { analyzeMealImage } = require('./imageMealAnalysis');
@@ -12,11 +13,12 @@ const { completeMealRegistration, registerMeal } = require('./registerMeal');
 async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
   normalizeMealTime(capturedAt);
-  const savedMeal = await mealRepository.find(userId, mealId);
-  if (savedMeal) {
-    validateImageMealRetry({ record: savedMeal.record, userId, mealId, capturedAt });
+  const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
+  const reservation = await mealRepository.reserve(userId, mealId, requestHash);
+  if (reservation.type === 'saved') {
+    validateImageMealRetry({ record: reservation.savedMeal.record, userId, mealId, capturedAt });
     return completeMealRegistration({
-      ...savedMeal,
+      ...reservation.savedMeal,
       authRepository,
       clientId,
       clientSecret,
@@ -24,8 +26,16 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
       mealRepository,
     });
   }
+  if (reservation.type === 'different') throw new MealRecordError('Meal ID already has different content', 409);
+  if (reservation.type === 'active') throw new MealRecordError('Meal is already being analyzed', 503);
 
-  const analysis = await analyzeMealImage({ client: analysisClient, image });
+  let analysis;
+  try {
+    analysis = await analyzeMealImage({ client: analysisClient, image });
+  } catch (error) {
+    await mealRepository.releaseReservation(reservation);
+    throw error;
+  }
   return registerMeal({
     route: 'image',
     authorization,
@@ -38,6 +48,7 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
     clientId,
     clientSecret,
     healthClient,
+    reservation,
   });
 }
 
