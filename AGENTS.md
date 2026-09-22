@@ -36,6 +36,8 @@ Pull Requestのレビューでは、botや既存review threadの指摘だけを�
 
 Activity、Worker、HTTP handler等のentry pointは、ライフサイクルや外部イベントを受けて処理を委譲する境界として扱う。永続化、通信、業務判断、validation、UI構築、再試行制御等をentry pointへ直接集約しない。
 
+Database層やAPI層についても、層ごとに1ファイルへ関連定義を集約しない。Entity、DAO、Database、API contract、request / response model、transport等、変更理由の異なる責務は別の定義として分離し、パッケージ構成から役割を追える状態にする。
+
 処理の意図を追うために複数の責務を読み解く必要がある長い関数、意味がコードから分からない数値リテラル、不要な独自validation、成熟したライブラリまたは現行の公式APIで扱える標準処理の自前実装が残っていないかを確認する。
 
 複数の責務を1ファイルや1クラスへ押し込めない。関連コードが増えた場合は、責務ごとに分離し、必要に応じてパッケージやモジュール内の配置も整理する。ルートパッケージや単一ファイルを、関連機能をまとめて置くための置き場として使わない。
@@ -61,6 +63,10 @@ Androidの実装コードとテストコードはKotlinで統一する。Javaの
 ユーザーへ表示する文言はstring resourceで管理し、Composeから参照する。表示文言をKotlinコードへ直接記述しない。
 
 画面やUIの状態はComposeのstateまたはstate holderで扱い、Activity等のmutableなフィールド `var` でUI状態を直接管理しない。ActivityやComposableからRoom、HTTP client、送信処理等を直接組み立てて実行せず、画面は状態表示とユーザー操作の委譲に集中させる。
+
+Android production codeの依存関係はDIで解決する。Activity、Composable、ViewModel、Worker等からApplicationをservice locatorとして参照して依存を取得しない。ViewModelへ依存を渡すための手書きの `ViewModelProvider.Factory` を設けず、DIの仕組みで依存を供給する。
+
+DIを利用すること自体は決定済みとする。具体的なDIの実装方式は、既存コード、依存関係、対象技術の一般的な実装慣行を踏まえて実装時に判断してよい。
 
 本番稼働前のため、既存インストールとの後方互換性だけを目的としたRoom migrationは追加しない。ユーザーが本番稼働開始またはデータ移行互換性の必要性を明示するまでは、開発中のスキーマ変更でmigration実装を増やさない。
 
