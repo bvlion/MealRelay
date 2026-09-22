@@ -7,9 +7,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
 import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
 import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
+import net.ambitious.android.mealrelay.MealRelayTokenStore
 import net.ambitious.android.mealrelay.ui.FailedMealSubmission
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionType
 import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionFailureClassifier
+import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionReadinessChecker
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -110,6 +112,18 @@ class AutomaticMealSubmissionTest {
     val result = TextMealSubmissionFailureClassifier().classify(IOException())
 
     assertEquals(true, result is MealSubmissionSendResult.RetryableFailure)
+  }
+
+  @Test
+  fun textSubmissionIsUnavailableUntilTheTextEndpointIsConfigured() {
+    val tokenStore = MealRelayTokenStore(RuntimeEnvironment.getApplication())
+    tokenStore.write("test-device-token")
+    val checker = TextMealSubmissionReadinessChecker(
+      tokenStore,
+      "",
+    )
+
+    assertEquals(MealSubmissionReadiness.Unavailable, checker.check(textSubmission("meal-1")))
   }
 
   @Test
