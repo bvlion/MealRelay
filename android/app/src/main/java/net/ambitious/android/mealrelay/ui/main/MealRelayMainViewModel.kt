@@ -16,8 +16,12 @@ import net.ambitious.android.mealrelay.submission.MealSubmissionDraft
 import net.ambitious.android.mealrelay.submission.MealSubmissionQueue
 import net.ambitious.android.mealrelay.submission.MealSubmissionWorkScheduler
 import java.time.Clock
+import java.time.ZoneId
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+
+private val manualMealInputAtFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssXXX")
 
 @HiltViewModel
 class MealRelayMainViewModel @Inject constructor(
@@ -51,9 +55,13 @@ class MealRelayMainViewModel @Inject constructor(
         type = MealSubmissionEntity.TYPE_TEXT,
         imageUri = null,
         text = text,
-        occurredAt = OffsetDateTime.now(clock).toString(),
+        occurredAt = OffsetDateTime.ofInstant(clock.instant(), ZoneId.systemDefault())
+          .format(manualMealInputAtFormatter),
       ),
     )
+    if (tokenStore.read() == null) {
+      mutableAuthorizationState.value = MainAuthorizationState.Required
+    }
   }
 }
 
