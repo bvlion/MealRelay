@@ -8,10 +8,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import net.ambitious.android.mealrelay.MealRelayMainActivity
 import net.ambitious.android.mealrelay.R
+import javax.inject.Inject
 
-class MealSubmissionFailureNotifier(private val context: Context) {
+class MealSubmissionFailureNotifier @Inject constructor(@ApplicationContext private val context: Context) {
   fun notifyFailure() {
     if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
     val notificationManager = context.getSystemService(NotificationManager::class.java)

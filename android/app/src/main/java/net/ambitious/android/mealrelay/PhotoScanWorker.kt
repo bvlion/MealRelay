@@ -11,16 +11,24 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
-import net.ambitious.android.mealrelay.data.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.photo.PhotoProcessingDao
+import androidx.hilt.work.HiltWorker
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
-class PhotoScanWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
+@HiltWorker
+class PhotoScanWorker @AssistedInject constructor(
+  @Assisted context: Context,
+  @Assisted parameters: WorkerParameters,
+  private val photoProcessingDao: PhotoProcessingDao,
+) : Worker(context, parameters) {
   override fun doWork(): Result = try {
     val isComplete = synchronized(PhotoScanner::class.java) {
       PhotoClassification(applicationContext).use { classification ->
         PhotoScanner(
           applicationContext,
-          MealRelayDatabase.get(applicationContext).photoProcessingDao(),
+          photoProcessingDao,
           classification::prepareClassifier,
         ).scan { isStopped }
       }

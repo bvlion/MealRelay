@@ -12,9 +12,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.room.Room
-import net.ambitious.android.mealrelay.data.MealRelayDatabase
-import net.ambitious.android.mealrelay.data.PhotoResultEntity
-import net.ambitious.android.mealrelay.data.PhotoScanStateEntity
+import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
+import net.ambitious.android.mealrelay.data.photo.PhotoScanStateEntity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

@@ -6,10 +6,12 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class MealSubmissionWorkScheduler(
-  private val context: Context,
+class MealSubmissionWorkScheduler @Inject constructor(
+  @ApplicationContext private val context: Context,
   private val repository: MealSubmissionRepository,
 ) {
   fun schedule(mealId: String, runAt: Long, policy: ExistingWorkPolicy = ExistingWorkPolicy.APPEND_OR_REPLACE) {

@@ -2,19 +2,10 @@ package net.ambitious.android.mealrelay
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.Url
+import net.ambitious.android.mealrelay.authorization.model.AuthorizationCode
+import javax.inject.Inject
 
-data class AuthorizationCode(val code: String)
-data class DeviceToken(val token: String)
-
-interface MealRelayAuthorizationApi {
-  @POST
-  suspend fun exchange(@Url endpoint: String, @Body body: AuthorizationCode): DeviceToken
-}
-
-class MealRelayAuthorizationRepository(
+class MealRelayAuthorizationRepository @Inject constructor(
   private val backendClient: MealRelayBackendClient,
   private val tokenStore: MealRelayTokenStore,
 ) {

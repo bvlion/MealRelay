@@ -38,10 +38,8 @@ async function registerMeal({ route, authorization, authenticatedUserId, mealId,
   const record = route === 'image'
     ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
     : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
-  const status = reservation
-    ? await saveReservedMeal(mealRepository, record, reservation)
-    : await mealRepository.saveIfAbsent(record);
-  if (status === 'different') throw new MealRecordError('Meal ID already has different content', 409);
+  if (!reservation) throw new Error('Meal reservation is required');
+  const status = await saveReservedMeal(mealRepository, record, reservation);
   return completeMealRegistration({
     record,
     status,

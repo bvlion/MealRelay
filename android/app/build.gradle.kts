@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.room)
   alias(libs.plugins.compose.compiler)
+  alias(libs.plugins.hilt)
 }
 
 room {
@@ -64,7 +65,11 @@ dependencies {
   implementation(libs.retrofit.converter.gson)
   implementation(libs.okhttp)
   implementation(libs.tink.android)
+  implementation(libs.hilt.android)
+  implementation(libs.androidx.hilt.work)
   ksp(libs.room.compiler)
+  ksp(libs.hilt.compiler)
+  ksp(libs.androidx.hilt.compiler)
 
   testImplementation(libs.junit)
   testImplementation(libs.robolectric)

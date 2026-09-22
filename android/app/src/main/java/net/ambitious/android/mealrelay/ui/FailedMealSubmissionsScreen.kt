@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.ambitious.android.mealrelay.R
-import net.ambitious.android.mealrelay.data.MealSubmissionEntity
 
 @Composable
 fun FailedMealSubmissionsScreen(
@@ -42,14 +41,18 @@ fun FailedMealSubmissionsScreen(
 }
 
 @Composable
-private fun FailedMealSubmissionRow(submission: MealSubmissionEntity, onRetry: (String) -> Unit) {
+private fun FailedMealSubmissionRow(submission: FailedMealSubmission, onRetry: (String) -> Unit) {
   Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-    val type = if (submission.type == MealSubmissionEntity.TYPE_IMAGE) {
+    val type = if (submission.type == FailedMealSubmissionType.Image) {
       stringResource(R.string.meal_submission_type_image)
     } else {
       stringResource(R.string.meal_submission_type_text)
     }
-    Text(type, modifier = Modifier.weight(1f))
+    Column(modifier = Modifier.weight(1f)) {
+      Text(type)
+      submission.content?.let { Text(it) }
+      Text(submission.occurredAt)
+    }
     Button(onClick = { onRetry(submission.mealId) }) {
       Text(stringResource(R.string.meal_submission_retry))
     }

@@ -64,22 +64,6 @@ class FirestoreMealRepository {
     });
   }
 
-  async saveIfAbsent(record) {
-    const reference = this.firestore.collection('meals').doc(mealDocumentId(record));
-    const contentHash = createHash('sha256').update(JSON.stringify(record)).digest('hex');
-    return this.firestore.runTransaction(async (transaction) => {
-      const snapshot = await transaction.get(reference);
-      if (snapshot.exists) return snapshot.get('contentHash') === contentHash ? snapshot.get('status') : 'different';
-      transaction.create(reference, {
-        record,
-        contentHash,
-        status: 'pending',
-        submittedAt: new Date().toISOString(),
-      });
-      return 'new';
-    });
-  }
-
   async markRegistered(record, googleHealthName) {
     const reference = this.firestore.collection('meals').doc(mealDocumentId(record));
     await reference.update({

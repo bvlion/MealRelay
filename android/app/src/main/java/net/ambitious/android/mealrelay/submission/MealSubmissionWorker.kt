@@ -4,21 +4,29 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import net.ambitious.android.mealrelay.MealRelayApplication
+import androidx.hilt.work.HiltWorker
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class MealSubmissionWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
+@HiltWorker
+class MealSubmissionWorker @AssistedInject constructor(
+  @Assisted context: Context,
+  @Assisted parameters: WorkerParameters,
+  private val automaticMealSubmissionProcessor: AutomaticMealSubmissionProcessor,
+  private val mealSubmissionFailureNotifier: MealSubmissionFailureNotifier,
+  private val mealSubmissionWorkScheduler: MealSubmissionWorkScheduler,
+) : CoroutineWorker(context, parameters) {
   override suspend fun doWork(): Result {
     val mealId = inputData.getString(MEAL_ID) ?: return Result.failure()
-    val application = applicationContext as MealRelayApplication
-    return when (val result = application.automaticMealSubmission.submit(mealId)) {
+    return when (val result = automaticMealSubmissionProcessor.submit(mealId)) {
       AutomaticMealSubmissionResult.Completed -> Result.success()
-      AutomaticMealSubmissionResult.Deferred -> Result.retry()
+      AutomaticMealSubmissionResult.AwaitingAuthorization -> Result.success()
       AutomaticMealSubmissionResult.Failed -> {
-        application.mealSubmissionFailureNotifier.notifyFailure()
+        mealSubmissionFailureNotifier.notifyFailure()
         Result.success()
       }
       is AutomaticMealSubmissionResult.RetryAt -> {
-        application.mealSubmissionWorkScheduler.schedule(mealId, result.timeMillis)
+        mealSubmissionWorkScheduler.schedule(mealId, result.timeMillis)
         Result.success()
       }
     }

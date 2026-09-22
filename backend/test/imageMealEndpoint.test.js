@@ -91,18 +91,6 @@ function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = 
       const key = mealKey(reservation.userId, reservation.mealId);
       if (reservations.get(key)?.reservationId === reservation.reservationId) reservations.delete(key);
     },
-    saveIfAbsent: async (record) => {
-      const key = mealKey(record.userId, record.mealId);
-      const savedMeal = meals.get(key);
-      if (savedMeal) {
-        if (JSON.stringify(savedMeal.record) !== JSON.stringify(record)) {
-          throw new MealRecordError('Meal ID already has different content', 409);
-        }
-        return savedMeal.status;
-      }
-      meals.set(key, { record, status: 'pending' });
-      return 'new';
-    },
     markRegistered: async (record, googleHealthName) => {
       meals.set(mealKey(record.userId, record.mealId), {
         ...meals.get(mealKey(record.userId, record.mealId)),

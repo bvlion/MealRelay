@@ -1,6 +1,8 @@
 package net.ambitious.android.mealrelay
 
 import kotlinx.coroutines.runBlocking
+import net.ambitious.android.mealrelay.authorization.model.AuthorizationCode
+import net.ambitious.android.mealrelay.authorization.model.DeviceToken
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

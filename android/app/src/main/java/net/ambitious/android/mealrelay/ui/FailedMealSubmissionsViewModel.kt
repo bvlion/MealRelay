@@ -1,7 +1,6 @@
 package net.ambitious.android.mealrelay.ui
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,13 +8,16 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.ambitious.android.mealrelay.data.MealSubmissionEntity
-import net.ambitious.android.mealrelay.submission.AutomaticMealSubmission
+import dagger.hilt.android.lifecycle.HiltViewModel
+import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
+import net.ambitious.android.mealrelay.submission.ManualMealSubmission
 import net.ambitious.android.mealrelay.submission.MealSubmissionRepository
+import javax.inject.Inject
 
-class FailedMealSubmissionsViewModel(
+@HiltViewModel
+class FailedMealSubmissionsViewModel @Inject constructor(
   private val repository: MealSubmissionRepository,
-  private val automaticMealSubmission: AutomaticMealSubmission,
+  private val manualMealSubmission: ManualMealSubmission,
 ) : ViewModel() {
   var state by mutableStateOf(FailedMealSubmissionsState())
     private set
@@ -23,28 +25,41 @@ class FailedMealSubmissionsViewModel(
   fun load() {
     viewModelScope.launch {
       state = FailedMealSubmissionsState(
-        submissions = withContext(Dispatchers.IO) { repository.failedSubmissions() },
+        submissions = withContext(Dispatchers.IO) {
+          repository.failedSubmissions().map(FailedMealSubmission::from)
+        },
       )
     }
   }
 
   fun retry(mealId: String) {
     viewModelScope.launch {
-      withContext(Dispatchers.IO) { automaticMealSubmission.submitManually(mealId) }
+      withContext(Dispatchers.IO) { manualMealSubmission.submit(mealId) }
       load()
-    }
-  }
-
-  companion object {
-    fun factory(
-      repository: MealSubmissionRepository,
-      automaticMealSubmission: AutomaticMealSubmission,
-    ) = object : ViewModelProvider.Factory {
-      @Suppress("UNCHECKED_CAST")
-      override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        FailedMealSubmissionsViewModel(repository, automaticMealSubmission) as T
     }
   }
 }
 
-data class FailedMealSubmissionsState(val submissions: List<MealSubmissionEntity> = emptyList())
+data class FailedMealSubmissionsState(val submissions: List<FailedMealSubmission> = emptyList())
+
+data class FailedMealSubmission(
+  val mealId: String,
+  val type: FailedMealSubmissionType,
+  val content: String?,
+  val occurredAt: String,
+) {
+  companion object {
+    fun from(submission: MealSubmissionEntity) = FailedMealSubmission(
+      mealId = submission.mealId,
+      type = if (submission.type == MealSubmissionEntity.TYPE_IMAGE) {
+        FailedMealSubmissionType.Image
+      } else {
+        FailedMealSubmissionType.Text
+      },
+      content = submission.text,
+      occurredAt = submission.occurredAt,
+    )
+  }
+}
+
+enum class FailedMealSubmissionType { Image, Text }

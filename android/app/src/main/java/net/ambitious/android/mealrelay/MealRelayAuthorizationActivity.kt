@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.AuthorizationResult
 import com.google.android.gms.auth.api.identity.Identity
@@ -15,8 +16,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import net.ambitious.android.mealrelay.submission.MealSubmissionWorkScheduler
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MealRelayAuthorizationActivity : ComponentActivity() {
+  @Inject lateinit var authorizationRepository: MealRelayAuthorizationRepository
+  @Inject lateinit var tokenStore: MealRelayTokenStore
+  @Inject lateinit var mealSubmissionWorkScheduler: MealSubmissionWorkScheduler
   private val authorizationClient by lazy { Identity.getAuthorizationClient(this) }
   private var isWaitingForResolution = false
   private val startAuthorizationIntent = registerForActivityResult(
@@ -52,7 +59,7 @@ class MealRelayAuthorizationActivity : ComponentActivity() {
   private fun authorizeIfNeeded() {
     lifecycleScope.launch {
       try {
-        if (withContext(Dispatchers.IO) { MealRelayTokenStore(this@MealRelayAuthorizationActivity).read() } != null) {
+        if (withContext(Dispatchers.IO) { tokenStore.read() } != null) {
           finish()
           return@launch
         }
@@ -90,18 +97,17 @@ class MealRelayAuthorizationActivity : ComponentActivity() {
 
   private suspend fun completeAuthorization(result: AuthorizationResult) {
     val code = checkNotNull(result.serverAuthCode)
-    val tokenStore = MealRelayTokenStore(this)
-    MealRelayAuthorizationRepository(MealRelayBackendClient(tokenStore::read), tokenStore).complete(code)
-    (application as MealRelayApplication).resumePendingMealSubmissions()
+    authorizationRepository.complete(code)
+    mealSubmissionWorkScheduler.resumePendingSubmissions()
     finish()
   }
 
   private fun showAuthorizationFailure() {
     if (isFinishing) return
     AlertDialog.Builder(this)
-      .setMessage("Google Health の認可を完了できませんでした。")
-      .setPositiveButton("再試行") { _, _ -> authorizeIfNeeded() }
-      .setNegativeButton("閉じる") { _, _ -> finish() }
+      .setMessage(R.string.authorization_failed)
+      .setPositiveButton(R.string.authorization_retry) { _, _ -> authorizeIfNeeded() }
+      .setNegativeButton(R.string.authorization_close) { _, _ -> finish() }
       .show()
   }
 }

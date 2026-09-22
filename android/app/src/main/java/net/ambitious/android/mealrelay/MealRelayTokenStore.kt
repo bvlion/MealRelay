@@ -9,8 +9,10 @@ import com.google.crypto.tink.aead.AeadKeyTemplates
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import java.io.IOException
 import java.security.GeneralSecurityException
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class MealRelayTokenStore(context: Context) {
+class MealRelayTokenStore @Inject constructor(@ApplicationContext context: Context) {
   private val preferences = context.getSharedPreferences("mealrelay_auth", Context.MODE_PRIVATE)
   private val encryption by lazy {
     AeadConfig.register()

@@ -11,10 +11,18 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
-import net.ambitious.android.mealrelay.data.MealRelayDatabase
-import net.ambitious.android.mealrelay.data.PhotoScanStateEntity
+import net.ambitious.android.mealrelay.data.photo.PhotoScanStateEntity
+import net.ambitious.android.mealrelay.data.photo.PhotoProcessingDao
+import androidx.hilt.work.HiltWorker
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Worker(context, parameters) {
+@HiltWorker
+class PhotoEnrollmentWorker @AssistedInject constructor(
+  @Assisted context: Context,
+  @Assisted parameters: WorkerParameters,
+  private val photoProcessingDao: PhotoProcessingDao,
+) : Worker(context, parameters) {
   override fun doWork(): Result {
     return try {
       if (applicationContext.checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) !=
@@ -28,7 +36,6 @@ class PhotoEnrollmentWorker(context: Context, parameters: WorkerParameters) : Wo
       val generation = inputData.getLong("generation", -1).takeIf { it >= 0 }
         ?: 0
       val enrolledAt = inputData.getLong("enrolled_at", System.currentTimeMillis())
-      val photoProcessingDao = MealRelayDatabase.get(applicationContext).photoProcessingDao()
       synchronized(PhotoScanner::class.java) {
         photoProcessingDao.insertScanState(
           PhotoScanStateEntity(

@@ -2,6 +2,7 @@ package net.ambitious.android.mealrelay
 
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import net.ambitious.android.mealrelay.authorization.api.MealRelayAuthorizationApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -10,17 +11,15 @@ class MealRelayBackendClient(
   endpoint: String = BuildConfig.MEAL_RELAY_AUTH_ENDPOINT,
   httpClient: OkHttpClient = OkHttpClient(),
 ) {
-  private val endpointUrl = endpoint.toHttpUrl()
-
-  init {
+  private val retrofit by lazy {
+    val endpointUrl = endpoint.toHttpUrl()
     require(endpointUrl.isHttps)
+    Retrofit.Builder()
+      .baseUrl(endpointUrl.newBuilder().encodedPath("/").build())
+      .client(httpClient)
+      .addConverterFactory(GsonConverterFactory.create())
+      .build()
   }
-
-  private val retrofit = Retrofit.Builder()
-    .baseUrl(endpointUrl.newBuilder().encodedPath("/").build())
-    .client(httpClient)
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
 
   val authorization: MealRelayAuthorizationApi = retrofit.create(MealRelayAuthorizationApi::class.java)
 

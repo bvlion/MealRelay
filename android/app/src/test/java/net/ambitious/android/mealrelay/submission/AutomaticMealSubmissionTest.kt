@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.room.Room
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking
-import net.ambitious.android.mealrelay.data.MealRelayDatabase
-import net.ambitious.android.mealrelay.data.MealSubmissionEntity
+import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
+import net.ambitious.android.mealrelay.ui.FailedMealSubmission
+import net.ambitious.android.mealrelay.ui.FailedMealSubmissionType
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -39,21 +41,21 @@ class AutomaticMealSubmissionTest {
     insert(textSubmission("meal-1"))
     insert(textSubmission("meal-2"))
     val sender = FakeSender(MealSubmissionSendResult.RetryableFailure(IllegalStateException()))
-    val submission = AutomaticMealSubmission(repository, sender) { now }
+    val submission = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
 
     assertEquals(
-      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmission.FIRST_RETRY_DELAY_MILLIS),
+      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS),
       submission.submit("meal-1"),
     )
     assertEquals(1, repository.get("meal-1")?.automaticAttemptCount)
     assertEquals(0, repository.get("meal-2")?.automaticAttemptCount)
 
-    now += AutomaticMealSubmission.FIRST_RETRY_DELAY_MILLIS
+    now += AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS
     assertEquals(
-      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmission.SECOND_RETRY_DELAY_MILLIS),
+      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS),
       submission.submit("meal-1"),
     )
-    now += AutomaticMealSubmission.SECOND_RETRY_DELAY_MILLIS
+    now += AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS
     assertEquals(AutomaticMealSubmissionResult.Failed, submission.submit("meal-1"))
     assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
     assertEquals(3, repository.get("meal-1")?.automaticAttemptCount)
@@ -63,14 +65,17 @@ class AutomaticMealSubmissionTest {
   @Test
   fun authenticationWaitDoesNotFailOrConsumeAnAutomaticAttempt() = runBlocking {
     insert(textSubmission("meal-1"))
-    val sender = FakeSender(MealSubmissionSendResult.AuthenticationRequired)
-    val submission = AutomaticMealSubmission(repository, sender) { now }
+    val sender = FakeSender(
+      MealSubmissionSendResult.Succeeded,
+      MealSubmissionReadiness.AwaitingAuthorization,
+    )
+    val submission = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
 
-    assertEquals(AutomaticMealSubmissionResult.Deferred, submission.submit("meal-1"))
+    assertEquals(AutomaticMealSubmissionResult.AwaitingAuthorization, submission.submit("meal-1"))
     assertEquals(MealSubmissionEntity.STATE_PENDING, repository.get("meal-1")?.state)
     assertEquals(0, repository.get("meal-1")?.automaticAttemptCount)
 
-    sender.result = MealSubmissionSendResult.Succeeded
+    sender.readiness = MealSubmissionReadiness.Ready
     assertEquals(AutomaticMealSubmissionResult.Completed, submission.submit("meal-1"))
     assertNull(repository.get("meal-1"))
   }
@@ -78,10 +83,10 @@ class AutomaticMealSubmissionTest {
   @Test
   fun permanentFailureEndsAutomaticSubmissionAfterItsFirstAttempt() = runBlocking {
     insert(textSubmission("meal-1"))
-    val submission = AutomaticMealSubmission(
+    val submission = AutomaticMealSubmissionProcessor(
       repository,
       FakeSender(MealSubmissionSendResult.PermanentFailure(IllegalArgumentException())),
-      { now },
+      SubmissionClock { now },
     )
 
     assertEquals(AutomaticMealSubmissionResult.Failed, submission.submit("meal-1"))
@@ -106,27 +111,86 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
-  fun cancellationDoesNotPersistAnUncompletedAutomaticAttempt() = runBlocking {
+  fun cancellationPersistsAnAutomaticAttemptThatMayHaveStartedNetworkCommunication() = runBlocking {
     insert(textSubmission("meal-1"))
-    val submission = AutomaticMealSubmission(repository, MealSubmissionSender { throw CancellationException() }) { now }
+    val submission = AutomaticMealSubmissionProcessor(
+      repository,
+      FakeSender(sendBlock = { throw CancellationException() }),
+      SubmissionClock { now },
+    )
 
     assertThrows(CancellationException::class.java) { runBlocking { submission.submit("meal-1") } }
+    assertEquals(1, repository.get("meal-1")?.automaticAttemptCount)
+    assertEquals(MealSubmissionEntity.STATE_SENDING, repository.get("meal-1")?.state)
+  }
+
+  @Test
+  fun interruptedAttemptCountsTowardTheThreeAutomaticSendLimit() = runBlocking {
+    insert(textSubmission("meal-1"))
+    val interrupted = AutomaticMealSubmissionProcessor(
+      repository,
+      FakeSender(sendBlock = { throw CancellationException() }),
+      SubmissionClock { now },
+    )
+    assertThrows(CancellationException::class.java) { runBlocking { interrupted.submit("meal-1") } }
+
+    val sender = FakeSender(MealSubmissionSendResult.RetryableFailure(IllegalStateException()))
+    val resumed = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
+    assertEquals(
+      AutomaticMealSubmissionResult.RetryAt(now + AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS),
+      resumed.submit("meal-1"),
+    )
+    now += AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS
+    assertEquals(AutomaticMealSubmissionResult.Failed, resumed.submit("meal-1"))
+    assertEquals(2, sender.submissions.size)
+    assertEquals(3, repository.get("meal-1")?.automaticAttemptCount)
+  }
+
+  @Test
+  fun unavailableSenderFailsWithoutStartingAnAutomaticAttempt() = runBlocking {
+    insert(textSubmission("meal-1"))
+    val sender = FakeSender(
+      MealSubmissionSendResult.Succeeded,
+      MealSubmissionReadiness.Unavailable,
+    )
+
+    assertEquals(
+      AutomaticMealSubmissionResult.Failed,
+      AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now }).submit("meal-1"),
+    )
     assertEquals(0, repository.get("meal-1")?.automaticAttemptCount)
-    assertEquals(MealSubmissionEntity.STATE_PENDING, repository.get("meal-1")?.state)
+    assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
+    assertEquals(emptyList<MealSubmissionEntity>(), sender.submissions)
+  }
+
+  @Test
+  fun interruptedThirdAttemptEndsAsFailedWithoutStartingAFourthSend() = runBlocking {
+    insert(textSubmission("meal-1").copy(
+      automaticAttemptCount = 3,
+      state = MealSubmissionEntity.STATE_SENDING,
+    ))
+    val sender = FakeSender()
+
+    assertEquals(
+      AutomaticMealSubmissionResult.Failed,
+      AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now }).submit("meal-1"),
+    )
+    assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
+    assertEquals(emptyList<MealSubmissionEntity>(), sender.submissions)
   }
 
   @Test
   fun manualFailuresRemainRetryableWithoutChangingAutomaticCount() = runBlocking {
     insert(textSubmission("meal-1").copy(state = MealSubmissionEntity.STATE_FAILED, automaticAttemptCount = 3))
     val sender = FakeSender(MealSubmissionSendResult.PermanentFailure(IllegalStateException()))
-    val submission = AutomaticMealSubmission(repository, sender) { now }
+    val submission = ManualMealSubmission(repository, sender)
 
-    repeat(5) { assertEquals(ManualMealSubmissionResult.Failed, submission.submitManually("meal-1")) }
+    repeat(5) { assertEquals(ManualMealSubmissionResult.Failed, submission.submit("meal-1")) }
     assertEquals(3, repository.get("meal-1")?.automaticAttemptCount)
     assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
 
     sender.result = MealSubmissionSendResult.Succeeded
-    assertEquals(ManualMealSubmissionResult.Succeeded, submission.submitManually("meal-1"))
+    assertEquals(ManualMealSubmissionResult.Succeeded, submission.submit("meal-1"))
     assertNull(repository.get("meal-1"))
   }
 
@@ -135,10 +199,10 @@ class AutomaticMealSubmissionTest {
     val originalTime = "2026-09-22T08:00:00+09:00"
     insert(textSubmission("meal-1").copy(occurredAt = originalTime))
     val sender = FakeSender(MealSubmissionSendResult.RetryableFailure(IllegalStateException()))
-    val submission = AutomaticMealSubmission(repository, sender) { now }
+    val submission = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
 
     submission.submit("meal-1")
-    now += AutomaticMealSubmission.FIRST_RETRY_DELAY_MILLIS
+    now += AutomaticMealSubmissionProcessor.FIRST_RETRY_DELAY_MILLIS
     submission.submit("meal-1")
 
     assertEquals(listOf("meal-1", "meal-1"), sender.submissions.map { it.mealId })
@@ -147,19 +211,32 @@ class AutomaticMealSubmissionTest {
 
   @Test
   fun queueCreatesUuidMealIdAndPreservesTextAndInputTime() {
-    val mealId = repository.enqueue(
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+    )
+    val mealId = queue.enqueue(
       MealSubmissionDraft(
         type = MealSubmissionEntity.TYPE_TEXT,
         imageUri = null,
         text = "朝の食事",
         occurredAt = "2026-09-22T08:00:00+09:00",
       ),
-      now,
     )
 
     assertEquals(mealId, UUID.fromString(mealId).toString())
     assertEquals("朝の食事", repository.get(mealId)?.text)
     assertEquals("2026-09-22T08:00:00+09:00", repository.get(mealId)?.occurredAt)
+  }
+
+  @Test
+  fun failedSubmissionPresentationKeepsTheInformationNeededToChooseATextRetry() {
+    val item = FailedMealSubmission.from(textSubmission("meal-1"))
+
+    assertEquals("meal-1", item.mealId)
+    assertEquals(FailedMealSubmissionType.Text, item.type)
+    assertEquals("朝の食事", item.content)
+    assertEquals("2026-09-22T08:00:00+09:00", item.occurredAt)
   }
 
   private fun insert(submission: MealSubmissionEntity) {
@@ -175,13 +252,20 @@ class AutomaticMealSubmissionTest {
     createdAt = now,
   )
 
-  private class FakeSender(initialResult: MealSubmissionSendResult) : MealSubmissionSender {
+  private class FakeSender(
+    initialResult: MealSubmissionSendResult = MealSubmissionSendResult.Succeeded,
+    initialReadiness: MealSubmissionReadiness = MealSubmissionReadiness.Ready,
+    private val sendBlock: (suspend (MealSubmissionEntity) -> MealSubmissionSendResult)? = null,
+  ) : MealSubmissionSender {
     var result = initialResult
+    var readiness = initialReadiness
     val submissions = mutableListOf<MealSubmissionEntity>()
+
+    override suspend fun readiness(submission: MealSubmissionEntity): MealSubmissionReadiness = readiness
 
     override suspend fun send(submission: MealSubmissionEntity): MealSubmissionSendResult {
       submissions.add(submission)
-      return result
+      return sendBlock?.invoke(submission) ?: result
     }
   }
 }

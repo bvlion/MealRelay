@@ -10,20 +10,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsScreen
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
 
+import javax.inject.Inject
+
+@AndroidEntryPoint
 class MealRelayMainActivity : ComponentActivity() {
-  private val applicationDependencies get() = application as MealRelayApplication
-  private val viewModel by viewModels<FailedMealSubmissionsViewModel> {
-    FailedMealSubmissionsViewModel.factory(
-      applicationDependencies.mealSubmissionRepository,
-      applicationDependencies.automaticMealSubmission,
-    )
-  }
+  @Inject lateinit var tokenStore: MealRelayTokenStore
+  private val viewModel by viewModels<FailedMealSubmissionsViewModel>()
   private val requestNotificationPermission = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
   ) { requestPhotoPermission() }
@@ -67,7 +66,7 @@ class MealRelayMainActivity : ComponentActivity() {
 
   private fun requestAuthorization() {
     lifecycleScope.launch {
-      val hasToken = withContext(Dispatchers.IO) { MealRelayTokenStore(this@MealRelayMainActivity).read() != null }
+      val hasToken = withContext(Dispatchers.IO) { tokenStore.read() != null }
       if (!hasToken) startActivity(Intent(this@MealRelayMainActivity, MealRelayAuthorizationActivity::class.java))
     }
   }
