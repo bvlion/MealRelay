@@ -200,6 +200,23 @@ test('a pending retry reuses the first analysis even when a later model output w
   assert.equal(fixture.calls.googleHealth.length, 2);
 });
 
+test('an image validation failure releases the reservation before a retry', async () => {
+  const fixture = endpointFixture({
+    analysisOutputs: [mealAnalysis('   '), mealAnalysis('有効な食事')],
+  });
+  const firstResponse = responseFixture();
+  const retryResponse = responseFixture();
+
+  await handleImageMealRequest({ request: multipartRequest(), response: firstResponse,
+    ...fixture.dependencies });
+  await handleImageMealRequest({ request: multipartRequest(), response: retryResponse,
+    ...fixture.dependencies });
+
+  assert.equal(firstResponse.statusCode, 400);
+  assert.equal(retryResponse.statusCode, 201);
+  assert.equal(fixture.calls.analysis.length, 2);
+});
+
 test('a registered retry does not invoke OpenAI again', async () => {
   const fixture = endpointFixture({ analysisOutputs: [mealAnalysis(), mealAnalysis('別の出力')] });
   const firstResponse = responseFixture();

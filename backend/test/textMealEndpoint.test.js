@@ -229,6 +229,23 @@ test('explicit nutrition remains confirmed and omitted values remain estimates',
   assert.deepEqual(fixture.calls.googleHealth[0].dataPoint.nutritionLog.energy, { kcal: 351 });
 });
 
+test('a text validation failure releases the reservation before a retry', async () => {
+  const fixture = endpointFixture({
+    analysisOutputs: [textAnalysis({ foodDisplayName: '   ' }), textAnalysis({ foodDisplayName: '有効な食事' })],
+  });
+  const firstResponse = responseFixture();
+  const retryResponse = responseFixture();
+
+  await handleTextMealRequest({ request: requestFixture(), response: firstResponse,
+    ...fixture.dependencies });
+  await handleTextMealRequest({ request: requestFixture(), response: retryResponse,
+    ...fixture.dependencies });
+
+  assert.equal(firstResponse.statusCode, 400);
+  assert.equal(retryResponse.statusCode, 201);
+  assert.equal(fixture.calls.analysis.length, 2);
+});
+
 test('a registered text retry reuses the first analysis', async () => {
   const fixture = endpointFixture({
     analysisOutputs: [textAnalysis({ foodDisplayName: '初回の食事' }), textAnalysis({ foodDisplayName: '別の出力' })],

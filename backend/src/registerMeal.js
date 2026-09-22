@@ -35,21 +35,28 @@ async function registerMeal({ route, authorization, authenticatedUserId, mealId,
     authorization,
     repository: authRepository,
   });
-  const record = route === 'image'
-    ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
-    : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
   if (!reservation) throw new Error('Meal reservation is required');
-  const status = await saveReservedMeal(mealRepository, record, reservation);
-  return completeMealRegistration({
-    record,
-    status,
-    authRepository,
-    clientId,
-    clientSecret,
-    createOAuthClient,
-    healthClient,
-    mealRepository,
-  });
+  let isSaved = false;
+  try {
+    const record = route === 'image'
+      ? normalizeImageMeal({ userId, mealId, capturedAt: occurredAt, analysis })
+      : normalizeTextMeal({ userId, mealId, inputAt: occurredAt, analysis });
+    const status = await saveReservedMeal(mealRepository, record, reservation);
+    isSaved = true;
+    return completeMealRegistration({
+      record,
+      status,
+      authRepository,
+      clientId,
+      clientSecret,
+      createOAuthClient,
+      healthClient,
+      mealRepository,
+    });
+  } catch (error) {
+    if (!isSaved) await mealRepository.releaseReservation(reservation);
+    throw error;
+  }
 }
 
 async function saveReservedMeal(mealRepository, record, reservation) {
