@@ -197,8 +197,7 @@ Android のリポジトリの `android` ディレクトリで、公開設定を 
 ```sh
 ./gradlew :app:assembleDebug \
   -PmealRelayOauthClientId=<WEB_OAUTH_CLIENT_ID> \
-  -PmealRelayAuthEndpoint=<AUTH_EXCHANGE_URL> \
-  -PmealRelayTextEndpoint=<TEXT_MEAL_ENDPOINT_URL>
+  -PmealRelayAuthEndpoint=<AUTH_EXCHANGE_URL>
 ```
 
 生成される `app/build/outputs/apk/debug/app-debug.apk` を、同じ署名のまま2台の Android 端末へインストールします。実機へのインストールと UI 操作は、この確認を行う利用者が実施します。

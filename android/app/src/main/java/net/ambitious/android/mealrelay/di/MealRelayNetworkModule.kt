@@ -34,7 +34,7 @@ object MealRelayNetworkModule {
     tokenStore: MealRelayTokenStore,
     textMealSubmissionTransport: TextMealSubmissionTransport,
   ): MealSubmissionSender = TextMealSubmissionSender(
-    TextMealSubmissionReadinessChecker(tokenStore),
+    TextMealSubmissionReadinessChecker(tokenStore, BuildConfig.MEAL_RELAY_TEXT_ENDPOINT),
     TextMealSubmissionRequestFactory(),
     textMealSubmissionTransport,
     TextMealSubmissionFailureClassifier(),

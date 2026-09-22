@@ -32,9 +32,7 @@ android {
     val mealRelayAuthEndpoint = requireNotNull(
       providers.gradleProperty("mealRelayAuthEndpoint").orNull?.takeIf(String::isNotBlank),
     ) { "mealRelayAuthEndpoint must be set" }
-    val mealRelayTextEndpoint = requireNotNull(
-      providers.gradleProperty("mealRelayTextEndpoint").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayTextEndpoint must be set" }
+    val mealRelayTextEndpoint = providers.gradleProperty("mealRelayTextEndpoint").orElse("").get()
     buildConfigField(
       "String",
       "MEAL_RELAY_OAUTH_CLIENT_ID",
