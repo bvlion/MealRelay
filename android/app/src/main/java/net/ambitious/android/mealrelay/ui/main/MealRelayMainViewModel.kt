@@ -10,12 +10,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.ambitious.android.mealrelay.MealRelayTokenStore
+import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
+import net.ambitious.android.mealrelay.submission.MealSubmissionDraft
+import net.ambitious.android.mealrelay.submission.MealSubmissionQueue
 import net.ambitious.android.mealrelay.submission.MealSubmissionWorkScheduler
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
 class MealRelayMainViewModel @Inject constructor(
   private val tokenStore: MealRelayTokenStore,
+  private val mealSubmissionQueue: MealSubmissionQueue,
   private val mealSubmissionWorkScheduler: MealSubmissionWorkScheduler,
 ) : ViewModel() {
   private val mutableAuthorizationState = MutableStateFlow(MainAuthorizationState.Idle)
@@ -35,6 +40,19 @@ class MealRelayMainViewModel @Inject constructor(
 
   fun consumeAuthorizationRequest() {
     mutableAuthorizationState.value = MainAuthorizationState.Idle
+  }
+
+  fun submitManualMeal(text: String) {
+    viewModelScope.launch(Dispatchers.IO) {
+      mealSubmissionQueue.enqueue(
+        MealSubmissionDraft(
+          type = MealSubmissionEntity.TYPE_TEXT,
+          imageUri = null,
+          text = text,
+          occurredAt = Instant.now().toString(),
+        ),
+      )
+    }
   }
 }
 

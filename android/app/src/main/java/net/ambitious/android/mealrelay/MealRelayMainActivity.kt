@@ -11,10 +11,14 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import dagger.hilt.android.AndroidEntryPoint
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsScreen
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
 import net.ambitious.android.mealrelay.ui.main.MainAuthorizationState
+import net.ambitious.android.mealrelay.ui.main.ManualMealEntryDialog
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
 
 @AndroidEntryPoint
@@ -37,6 +41,7 @@ class MealRelayMainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     setContent {
       val authorizationState by mainViewModel.authorizationState.collectAsState()
+      var isManualMealEntryDialogVisible by remember { mutableStateOf(false) }
       LaunchedEffect(Unit) {
         failedMealSubmissionsViewModel.load()
         mainViewModel.recoverPendingSubmissions()
@@ -50,7 +55,14 @@ class MealRelayMainActivity : ComponentActivity() {
       FailedMealSubmissionsScreen(
         failedMealSubmissionsViewModel.state,
         failedMealSubmissionsViewModel::retry,
+        { isManualMealEntryDialogVisible = true },
       )
+      if (isManualMealEntryDialogVisible) {
+        ManualMealEntryDialog(
+          onDismiss = { isManualMealEntryDialogVisible = false },
+          onSubmit = mainViewModel::submitManualMeal,
+        )
+      }
     }
     if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
       requestPhotoPermission()
