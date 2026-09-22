@@ -39,24 +39,27 @@ class MealRelayMainViewModelTest {
 
   @Test
   fun manualSubmissionUsesTheDeviceOffsetInInputTime() = runBlocking {
-    val scheduler = MealSubmissionWorkScheduler(application, repository)
-    val viewModel = MealRelayMainViewModel(
-      MealRelayTokenStore(application),
-      MealSubmissionQueue(repository, scheduler),
-      scheduler,
-      Clock.fixed(
-        Instant.parse("2026-09-21T23:30:00Z"),
-        ZoneId.of("Asia/Tokyo"),
-      ),
-    )
+    val originalTimezone = TimeZone.getDefault()
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone("Asia/Tokyo"))
+      val scheduler = MealSubmissionWorkScheduler(application, repository)
+      val viewModel = MealRelayMainViewModel(
+        MealRelayTokenStore(application),
+        MealSubmissionQueue(repository, scheduler),
+        scheduler,
+        Clock.fixed(Instant.parse("2026-09-21T23:30:00Z"), ZoneId.of("UTC")),
+      )
 
-    viewModel.submitManualMeal("昨日の夜 カレー").join()
+      viewModel.submitManualMeal("昨日の夜 カレー").join()
 
-    val submission = repository.pendingSubmissions().singleOrNull()
-    assertNotNull(submission)
-    assertEquals("昨日の夜 カレー", submission?.text)
-    assertEquals("2026-09-22T08:30:00+09:00", submission?.occurredAt)
-    assertEquals(MainAuthorizationState.Required, viewModel.authorizationState.value)
+      val submission = repository.pendingSubmissions().singleOrNull()
+      assertNotNull(submission)
+      assertEquals("昨日の夜 カレー", submission?.text)
+      assertEquals("2026-09-22T08:30:00+09:00", submission?.occurredAt)
+      assertEquals(MainAuthorizationState.Required, viewModel.authorizationState.value)
+    } finally {
+      TimeZone.setDefault(originalTimezone)
+    }
   }
 
   @Test
