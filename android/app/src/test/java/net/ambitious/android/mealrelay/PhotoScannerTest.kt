@@ -315,6 +315,39 @@ class PhotoScannerTest {
     }
   }
 
+  @Test
+  fun onlyFoodPhotosAreSubmittedWithTheirOriginalUriAndCaptureTime() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 2
+    provider.photos = listOf(Photo(1, 1, 1000), Photo(2, 2, 2000))
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
+      val submissions = mutableListOf<Pair<Uri, Long>>()
+      val scanner = PhotoScanner(
+        application,
+        dao,
+        submitFoodPhoto = { uri, capturedAt -> submissions.add(uri to capturedAt) },
+        createClassifier = { { uri -> ContentUris.parseId(uri) == 1L } },
+      )
+
+      assertTrue(scanner.scan { false })
+      assertEquals(
+        listOf(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 1L) to 1000L),
+        submissions,
+      )
+
+      assertTrue(scanner.scan { false })
+      assertEquals(1, submissions.size)
+    } finally {
+      database.close()
+    }
+  }
+
   data class Photo(
     val id: Long,
     val modifiedGeneration: Long,

@@ -14,6 +14,7 @@ import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 class PhotoScanner(
   private val context: Context,
   private val photoProcessingDao: PhotoProcessingDao,
+  private val submitFoodPhoto: (Uri, Long) -> Unit = { _, _ -> },
   private val createClassifier: () -> (Uri) -> Boolean,
 ) {
   fun scan(shouldStop: () -> Boolean): Boolean {
@@ -80,6 +81,9 @@ class PhotoScanner(
         } catch (exception: Exception) {
           Log.w("PhotoScanner", "camera photo classification failed", exception)
           null
+        }
+        if (isFood == true) {
+          submitFoodPhoto(uri, capturedAt)
         }
         photoProcessingDao.insertResult(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood))
         if (isFood != null) {

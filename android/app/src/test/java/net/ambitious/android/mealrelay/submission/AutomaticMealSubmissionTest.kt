@@ -13,6 +13,7 @@ import net.ambitious.android.mealrelay.ui.FailedMealSubmission
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionType
 import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionFailureClassifier
 import net.ambitious.android.mealrelay.submission.network.TextMealSubmissionReadinessChecker
+import net.ambitious.android.mealrelay.submission.network.ImageMealSubmissionFailureClassifier
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 import java.util.UUID
 
@@ -113,6 +115,26 @@ class AutomaticMealSubmissionTest {
     val result = TextMealSubmissionFailureClassifier().classify(IOException())
 
     assertEquals(true, result is MealSubmissionSendResult.RetryableFailure)
+  }
+
+  @Test
+  fun rejectedImageSubmissionCannotBeManuallyRetried() = runBlocking {
+    insert(textSubmission("meal-1"))
+    val rejection = ImageMealSubmissionFailureClassifier().classify(
+      retrofit2.HttpException(retrofit2.Response.error<Any>(415, "".toResponseBody())),
+    )
+    val automaticSubmission = AutomaticMealSubmissionProcessor(
+      repository,
+      FakeSender(rejection),
+      SubmissionClock { now },
+    )
+
+    assertEquals(AutomaticMealSubmissionResult.Failed, automaticSubmission.submit("meal-1"))
+    assertEquals(false, repository.get("meal-1")?.isManualRetryAvailable)
+    assertEquals(
+      ManualMealSubmissionResult.NotRetryable,
+      ManualMealSubmission(repository, FakeSender()).submit("meal-1"),
+    )
   }
 
   @Test

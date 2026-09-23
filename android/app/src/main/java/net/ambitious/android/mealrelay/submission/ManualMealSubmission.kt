@@ -8,6 +8,7 @@ class ManualMealSubmission @Inject constructor(
 ) {
   suspend fun submit(mealId: String): ManualMealSubmissionResult {
     val submission = repository.get(mealId) ?: return ManualMealSubmissionResult.NotFound
+    if (!submission.isManualRetryAvailable) return ManualMealSubmissionResult.NotRetryable
     if (sender.readiness(submission) != MealSubmissionReadiness.Ready) return ManualMealSubmissionResult.Failed
     return when (sender.send(submission)) {
       MealSubmissionSendResult.Succeeded -> {
@@ -19,4 +20,4 @@ class ManualMealSubmission @Inject constructor(
   }
 }
 
-enum class ManualMealSubmissionResult { Succeeded, Failed, NotFound }
+enum class ManualMealSubmissionResult { Succeeded, Failed, NotFound, NotRetryable }

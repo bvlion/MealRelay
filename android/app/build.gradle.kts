@@ -35,6 +35,9 @@ android {
     val mealRelayTextEndpoint = requireNotNull(
       providers.gradleProperty("mealRelayTextEndpoint").orNull?.takeIf(String::isNotBlank),
     ) { "mealRelayTextEndpoint must be set" }
+    val mealRelayImageEndpoint = requireNotNull(
+      providers.gradleProperty("mealRelayImageEndpoint").orNull?.takeIf(String::isNotBlank),
+    ) { "mealRelayImageEndpoint must be set" }
     buildConfigField(
       "String",
       "MEAL_RELAY_OAUTH_CLIENT_ID",
@@ -49,6 +52,11 @@ android {
       "String",
       "MEAL_RELAY_TEXT_ENDPOINT",
       "\"$mealRelayTextEndpoint\"",
+    )
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_IMAGE_ENDPOINT",
+      "\"$mealRelayImageEndpoint\"",
     )
   }
 

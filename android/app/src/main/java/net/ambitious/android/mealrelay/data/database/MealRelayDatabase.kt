@@ -10,7 +10,7 @@ import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
 
 @Database(
   entities = [PhotoResultEntity::class, PhotoScanStateEntity::class, MealSubmissionEntity::class],
-  version = 1,
+  version = 2,
   exportSchema = true,
 )
 abstract class MealRelayDatabase : RoomDatabase() {
