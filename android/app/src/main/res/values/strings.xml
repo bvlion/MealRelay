@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MealRelay</string>
+    <string name="manual_meal_entry_start">食事を入力</string>
+    <string name="manual_meal_entry_title">食事を入力</string>
+    <string name="manual_meal_entry_placeholder">例: 朝 トーストとヨーグルト</string>
+    <string name="manual_meal_entry_cancel">キャンセル</string>
+    <string name="manual_meal_entry_submit">登録</string>
     <string name="failed_meal_submissions_title">送信に失敗した食事</string>
     <string name="failed_meal_submissions_empty">送信に失敗した食事はありません。</string>
     <string name="meal_submission_type_image">写真</string>

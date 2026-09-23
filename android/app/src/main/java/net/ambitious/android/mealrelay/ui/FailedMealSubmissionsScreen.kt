@@ -22,8 +22,9 @@ import net.ambitious.android.mealrelay.R
 fun FailedMealSubmissionsScreen(
   state: FailedMealSubmissionsState,
   onRetry: (String) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-  Column(modifier = Modifier.fillMaxSize().padding(24.dp)) {
+  Column(modifier = modifier.fillMaxSize().padding(24.dp)) {
     Text(stringResource(R.string.failed_meal_submissions_title), style = MaterialTheme.typography.headlineSmall)
     if (state.submissions.isEmpty()) {
       Text(

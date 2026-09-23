@@ -12,9 +12,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import dagger.hilt.android.AndroidEntryPoint
-import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsScreen
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
 import net.ambitious.android.mealrelay.ui.main.MainAuthorizationState
+import net.ambitious.android.mealrelay.ui.main.MealRelayMainScreen
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
 
 @AndroidEntryPoint
@@ -47,9 +47,10 @@ class MealRelayMainActivity : ComponentActivity() {
           startActivity(Intent(this@MealRelayMainActivity, MealRelayAuthorizationActivity::class.java))
         }
       }
-      FailedMealSubmissionsScreen(
+      MealRelayMainScreen(
         failedMealSubmissionsViewModel.state,
         failedMealSubmissionsViewModel::retry,
+        { text -> mainViewModel.submitManualMeal(text) },
       )
     }
     if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
