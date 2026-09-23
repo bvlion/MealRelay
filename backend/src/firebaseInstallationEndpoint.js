@@ -2,6 +2,10 @@
 
 const { AuthenticationError } = require('./errors');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
+const {
+  InvalidFirebaseInstallationRequestError,
+  parseFirebaseInstallationRequest,
+} = require('./firebaseInstallationRequest');
 
 async function handleFirebaseInstallationRequest({ request, response, authRepository, installationRepository }) {
   response.set('Cache-Control', 'no-store');
@@ -17,14 +21,14 @@ async function handleFirebaseInstallationRequest({ request, response, authReposi
     const sub = await authenticateMealRelayRequest({
       authorization: request.get('authorization'), repository: authRepository,
     });
-    const { fid } = request.body ?? {};
-    if (typeof fid !== 'string' || !fid.trim()) {
-      response.status(400).json({ error: 'Firebase Installation ID is invalid' });
-      return;
-    }
+    const { fid } = parseFirebaseInstallationRequest(request.body);
     await installationRepository.register({ sub, fid });
     response.status(204).end();
   } catch (error) {
+    if (error instanceof InvalidFirebaseInstallationRequestError) {
+      response.status(400).json({ error: error.message });
+      return;
+    }
     if (error instanceof AuthenticationError) {
       response.status(error.status).json({ error: error.message });
       return;

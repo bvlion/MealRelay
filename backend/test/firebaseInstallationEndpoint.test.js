@@ -45,3 +45,16 @@ test('rejects Firebase installation registration without MealRelay authenticatio
 
   assert.equal(response.statusCode, 401);
 });
+
+test('rejects an invalid Firebase Installation request before persistence', async () => {
+  const response = responseFixture();
+  await handleFirebaseInstallationRequest({
+    request: { method: 'PUT', is: () => true, get: () => 'Bearer valid', body: { fid: '  ' } },
+    response,
+    authRepository: { findSubByToken: async () => 'user1' },
+    installationRepository: { register: async () => assert.fail('Invalid request is rejected') },
+  });
+
+  assert.equal(response.statusCode, 400);
+  assert.deepEqual(response.body, { error: 'Firebase Installation ID is invalid' });
+});
