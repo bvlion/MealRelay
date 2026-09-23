@@ -46,6 +46,31 @@ gcloud functions deploy imageMeal \
   --set-secrets="GOOGLE_OAUTH_CLIENT_SECRET=google-oauth-client-secret:latest,OPENAI_API_KEY=openai-api-key:latest"
 ```
 
+Firebase Cloud Messaging を有効にするには、同じ Google Cloud プロジェクトで Firebase プロジェクトを作成し、Android アプリ `net.ambitious.android.mealrelay` を登録します。Android では取得した `google-services.json` を `android/app/` に配置します。このファイルはリポジトリへ追加しません。Cloud Functions の実行サービスアカウントには `roles/firebasecloudmessaging.admin` を付与し、Firebase Cloud Messaging API を有効にします。秘密鍵ファイルは作成せず、Cloud Functions の Application Default Credentials を使用します。
+
+```sh
+gcloud services enable fcm.googleapis.com
+gcloud projects add-iam-policy-binding <PROJECT_ID> \
+  --member="serviceAccount:mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com" \
+  --role="roles/firebasecloudmessaging.admin"
+```
+
+`firebaseInstallation` 関数は MealRelay bearer token からユーザーを特定し、Firebase Installation ID をFirestoreに関連付けます。
+
+```sh
+gcloud functions deploy firebaseInstallation \
+  --gen2 \
+  --runtime=nodejs24 \
+  --region=<REGION> \
+  --source=backend \
+  --entry-point=firebaseInstallation \
+  --trigger-http \
+  --allow-unauthenticated \
+  --service-account="mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com"
+```
+
+この関数の URL をAndroidビルドの `mealRelayFirebaseInstallationEndpoint` に渡します。`firebaseInstallations` コレクションにはFIDとユーザー識別子が保存されます。無効と応答されたFIDは非アクティブ化され、次回以降の成功通知では対象外になります。
+
 HTTP trigger 自体は Android から到達できるよう未認証呼び出しを許可しますが、関数内では有効な MealRelay token がない要求を画像解析前に拒否します。実際の写真を用いた栄養推定精度、OpenAI API、Firestore、Google Health への一連の登録は実運用環境で確認が必要です。
 
 自然文登録も同じ設定でデプロイします。
@@ -213,7 +238,8 @@ gcloud functions describe imageMeal \
   -PmealRelayOauthClientId=<WEB_OAUTH_CLIENT_ID> \
   -PmealRelayAuthEndpoint=<AUTH_EXCHANGE_URL> \
   -PmealRelayTextEndpoint=<TEXT_MEAL_URL> \
-  -PmealRelayImageEndpoint=<IMAGE_MEAL_URL>
+  -PmealRelayImageEndpoint=<IMAGE_MEAL_URL> \
+  -PmealRelayFirebaseInstallationEndpoint=<FIREBASE_INSTALLATION_URL>
 ```
 
 生成される `app/build/outputs/apk/debug/app-debug.apk` を、同じ署名のまま2台の Android 端末へインストールします。実機へのインストールと UI 操作は、この確認を行う利用者が実施します。

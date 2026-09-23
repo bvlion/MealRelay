@@ -13,7 +13,10 @@
     <string name="meal_submission_retry">再送</string>
     <string name="meal_submission_failure_channel">食事送信の失敗</string>
     <string name="meal_submission_failure_title">食事を送信できませんでした</string>
-  <string name="meal_submission_failure_text">メイン画面から再送できます。</string>
+  <string name="meal_submission_failure_retry_available">メイン画面から再送できます。</string>
+  <string name="meal_submission_failure_retry_unavailable">この食事は再送できません。メイン画面で内容を確認してください。</string>
+  <string name="firebase_meal_recorded_title">食事を記録しました</string>
+  <string name="meal_recorded_channel">食事の記録</string>
   <string name="authorization_failed">Google Health の認可を完了できませんでした。</string>
   <string name="authorization_retry">再試行</string>
   <string name="authorization_close">閉じる</string>

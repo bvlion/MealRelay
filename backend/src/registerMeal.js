@@ -7,7 +7,8 @@ const { MealRecordError, normalizeImageMeal, normalizeTextMeal } = require('./me
 const { toGoogleHealthDataPoint, createNutritionLog } = require('./googleHealthNutrition');
 
 async function completeMealRegistration({ record, status, authRepository, clientId, clientSecret,
-  createOAuthClient = createGoogleOAuth, healthClient, mealRepository }) {
+  createOAuthClient = createGoogleOAuth, healthClient, mealRepository,
+  mealNotifier = { notifyRegistration: async () => {} } }) {
   if (status === 'registered') return { record, isAlreadyRegistered: true };
 
   const oauthClient = await getGoogleHealthOAuthClient({
@@ -22,12 +23,19 @@ async function completeMealRegistration({ record, status, authRepository, client
     isRetry: status !== 'new',
   });
   await mealRepository.markRegistered(record, googleHealthName);
+  if (record.route === 'image') {
+    try {
+      await mealNotifier.notifyRegistration(record);
+    } catch {
+      // Notification failure must not change the completed Google Health registration.
+    }
+  }
   return { record, isAlreadyRegistered: false };
 }
 
 async function registerMeal({ route, authorization, authenticatedUserId, mealId, occurredAt, analysis,
   authRepository, mealRepository, clientId, clientSecret, createOAuthClient = createGoogleOAuth,
-  healthClient, reservation }) {
+  healthClient, reservation, mealNotifier }) {
   if (route !== 'image' && route !== 'text') {
     throw new Error('Meal route is invalid');
   }
@@ -52,6 +60,7 @@ async function registerMeal({ route, authorization, authenticatedUserId, mealId,
       createOAuthClient,
       healthClient,
       mealRepository,
+      mealNotifier,
     });
   } catch (error) {
     if (!isSaved) await mealRepository.releaseReservation(reservation);

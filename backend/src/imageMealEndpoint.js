@@ -11,7 +11,7 @@ const { MealRecordError, normalizeMealTime, validateImageMealRetry } = require('
 const { completeMealRegistration, registerMeal } = require('./registerMeal');
 
 async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
-  analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient }) {
+  analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient, mealNotifier }) {
   normalizeMealTime(capturedAt);
   const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
   const reservation = await mealRepository.reserve(userId, mealId, requestHash);
@@ -24,6 +24,7 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
       clientSecret,
       healthClient,
       mealRepository,
+      mealNotifier,
     });
   }
   if (reservation.type === 'different') throw new MealRecordError('Meal ID already has different content', 409);
@@ -49,11 +50,12 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
     clientSecret,
     healthClient,
     reservation,
+    mealNotifier,
   });
 }
 
 async function handleImageMealRequest({ request, response, analysisClient, authRepository,
-  mealRepository, clientId, clientSecret, healthClient }) {
+  mealRepository, clientId, clientSecret, healthClient, mealNotifier }) {
   response.set('Cache-Control', 'no-store');
   if (request.method !== 'POST') {
     response.status(405).end();
@@ -80,6 +82,7 @@ async function handleImageMealRequest({ request, response, analysisClient, authR
       clientId,
       clientSecret,
       healthClient,
+      mealNotifier,
     });
     response.status(result.isAlreadyRegistered ? 200 : 201).json(result);
   } catch (error) {

@@ -2,4 +2,5 @@
 .idea/
 build/
 local.properties
+app/google-services.json
 **/build/

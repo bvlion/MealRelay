@@ -33,7 +33,7 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
       delete: (reference) => { documents.delete(reference.id); },
     }),
   };
-  const calls = { create: [], get: [], credentials: [] };
+  const calls = { create: [], get: [], credentials: [], notifications: [] };
   const healthClient = {
     createDataPoint: async (request) => {
       calls.create.push(request);
@@ -54,6 +54,7 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
     clientId: 'client', clientSecret: 'secret',
     createOAuthClient: () => ({ setCredentials: (credentials) => calls.credentials.push(credentials) }),
     healthClient,
+    mealNotifier: { notifyRegistration: async (record) => calls.notifications.push(record) },
   };
   return { args, calls, documents };
 }
@@ -98,6 +99,7 @@ function completeSaved(args, record, status) {
     createOAuthClient: args.createOAuthClient,
     healthClient: args.healthClient,
     mealRepository: args.mealRepository,
+    mealNotifier: args.mealNotifier,
   });
 }
 
@@ -112,6 +114,8 @@ test('registration uses token owner credentials and remains idempotent on retry'
   assert.equal(first.isAlreadyRegistered, false);
   assert.equal(second.isAlreadyRegistered, true);
   assert.equal(calls.create.length, 1);
+  assert.equal(calls.notifications.length, 1);
+  assert.equal(savedMeal(documents).status, 'registered');
   assert.deepEqual(calls.credentials, [{ refresh_token: 'refresh-1' }]);
   assert.equal(first.record.userId, 'user1');
   assert.equal(documents.size, 1);
@@ -125,6 +129,17 @@ test('registration uses token owner credentials and remains idempotent on retry'
   await assert.rejects(registerMeal({ ...args, authorization: 'Bearer invalid', reservation: {} }),
     /authentication failed/);
   assert.equal(calls.create.length, 1);
+  assert.equal(calls.notifications.length, 1);
+});
+
+test('a failed image notification does not undo a completed health registration', async () => {
+  const { args, documents } = registrationFixture();
+  args.mealNotifier = { notifyRegistration: async () => { throw new Error('FCM unavailable'); } };
+
+  const result = await registerReserved(args);
+
+  assert.equal(result.isAlreadyRegistered, false);
+  assert.equal(savedMeal(documents).status, 'registered');
 });
 
 test('a pending operation becomes registered only after Google Health reports success', async () => {
@@ -152,6 +167,7 @@ test('a pending operation becomes registered only after Google Health reports su
   assert.equal(result.record.eatenAt, '2025-12-31T23:00:00.000Z');
   assert.equal(savedMeal(documents).status, 'registered');
   assert.equal(calls.create.length, 1);
+  assert.equal(calls.notifications.length, 0);
 });
 
 test('a pending operation that does not create a point is not marked registered', async () => {

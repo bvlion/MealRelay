@@ -64,7 +64,7 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
 
   private fun failWithoutSending(submission: MealSubmissionEntity): AutomaticMealSubmissionResult {
     repository.recordAutomaticFailure(submission.mealId, submission.automaticAttemptCount)
-    return AutomaticMealSubmissionResult.Failed
+    return AutomaticMealSubmissionResult.Failed(submission.isManualRetryAvailable)
   }
 
   private fun recordFailure(
@@ -75,7 +75,7 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
     val attemptCount = submission.automaticAttemptCount
     if (!isRetryable || attemptCount == MAXIMUM_AUTOMATIC_ATTEMPTS) {
       repository.recordAutomaticFailure(submission.mealId, attemptCount, isManualRetryAvailable)
-      return AutomaticMealSubmissionResult.Failed
+      return AutomaticMealSubmissionResult.Failed(isManualRetryAvailable)
     }
     val nextAttemptAt = clock.now() + retryDelayFor(attemptCount)
     repository.recordAutomaticRetry(submission.mealId, attemptCount, nextAttemptAt)
@@ -97,6 +97,6 @@ class AutomaticMealSubmissionProcessor @Inject constructor(
 sealed interface AutomaticMealSubmissionResult {
   data object Completed : AutomaticMealSubmissionResult
   data object AwaitingAuthorization : AutomaticMealSubmissionResult
-  data object Failed : AutomaticMealSubmissionResult
+  data class Failed(val isManualRetryAvailable: Boolean) : AutomaticMealSubmissionResult
   data class RetryAt(val timeMillis: Long) : AutomaticMealSubmissionResult
 }
