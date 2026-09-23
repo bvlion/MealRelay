@@ -7,13 +7,16 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FirebaseInstallationTransport(private val endpoint: String) {
+class FirebaseInstallationTransport(
+  private val endpoint: String,
+  private val httpClient: OkHttpClient = OkHttpClient(),
+) {
   private val service by lazy {
     val endpointUrl = endpoint.toHttpUrl()
     require(endpointUrl.isHttps)
     Retrofit.Builder()
       .baseUrl(endpointUrl.newBuilder().encodedPath("/").build())
-      .client(OkHttpClient())
+      .client(httpClient)
       .addConverterFactory(GsonConverterFactory.create())
       .build()
       .create(FirebaseInstallationApi::class.java)
@@ -25,6 +28,16 @@ class FirebaseInstallationTransport(private val endpoint: String) {
       "Bearer $token",
       FirebaseInstallationRequest(fid),
     )
-    check(response.isSuccessful)
+    if (!response.isSuccessful) {
+      throw FirebaseInstallationRegistrationException(
+        response.code(),
+        response.code() == 408 || response.code() == 429 || response.code() >= 500,
+      )
+    }
   }
 }
+
+class FirebaseInstallationRegistrationException(
+  val statusCode: Int,
+  val isRetryable: Boolean,
+) : Exception("Firebase Installation registration failed with HTTP $statusCode")

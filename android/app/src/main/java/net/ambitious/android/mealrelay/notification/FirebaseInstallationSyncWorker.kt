@@ -7,6 +7,9 @@ import androidx.hilt.work.HiltWorker
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import net.ambitious.android.mealrelay.MealRelayTokenStore
+import net.ambitious.android.mealrelay.notification.network.FirebaseInstallationRegistrationException
+import java.io.IOException
+import kotlinx.coroutines.CancellationException
 
 @HiltWorker
 class FirebaseInstallationSyncWorker @AssistedInject constructor(
@@ -21,8 +24,14 @@ class FirebaseInstallationSyncWorker @AssistedInject constructor(
     return try {
       installationRepository.register(token, fid)
       Result.success()
-    } catch (_: Exception) {
+    } catch (exception: FirebaseInstallationRegistrationException) {
+      if (exception.isRetryable) Result.retry() else Result.failure()
+    } catch (_: IOException) {
       Result.retry()
+    } catch (exception: CancellationException) {
+      throw exception
+    } catch (_: Exception) {
+      Result.failure()
     }
   }
 
