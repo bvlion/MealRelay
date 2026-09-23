@@ -69,7 +69,7 @@ gcloud functions deploy firebaseInstallation \
   --service-account="mealrelay-auth@<PROJECT_ID>.iam.gserviceaccount.com"
 ```
 
-この関数の URL をAndroidビルドの `mealRelayFirebaseInstallationEndpoint` に渡します。`firebaseInstallations` コレクションにはFIDとユーザー識別子が保存されます。無効と応答されたFIDは非アクティブ化され、次回以降の成功通知では対象外になります。
+この関数の URL をAndroidビルドの `mealRelayFirebaseInstallationEndpoint` に渡します。`firebaseInstallations` コレクションにはFirebase Installation IDとユーザー識別子が保存されます。無効と応答されたFirebase Installation IDは非アクティブ化され、次回以降の成功通知では対象外になります。
 
 HTTP trigger 自体は Android から到達できるよう未認証呼び出しを許可しますが、関数内では有効な MealRelay token がない要求を画像解析前に拒否します。実際の写真を用いた栄養推定精度、OpenAI API、Firestore、Google Health への一連の登録は実運用環境で確認が必要です。
 
