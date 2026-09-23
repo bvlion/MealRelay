@@ -64,6 +64,15 @@ gcloud functions deploy textMeal \
   --set-secrets="GOOGLE_OAUTH_CLIENT_SECRET=google-oauth-client-secret:latest,OPENAI_API_KEY=openai-api-key:latest"
 ```
 
+デプロイ後、次のコマンドで `textMeal` の HTTPS 関数 URL を確認します。表示された URL を以降 `<TEXT_MEAL_URL>` と呼び、手順6の `mealRelayTextEndpoint` に指定します。
+
+```sh
+gcloud functions describe textMeal \
+  --gen2 \
+  --region=<REGION> \
+  --format='value(serviceConfig.uri)'
+```
+
 ## Issue #9 の実環境確認
 
 この手順では、同じ APK を2台に入れ、異なる Google アカウントで初回認可したときに、Issue #9 が定めるユーザー識別、端末 token、Google Health 用認証情報の対応を確認します。コマンド中の `<…>` は各環境の値に置き換えます。secret の値、OAuth client secret、メールアドレス、発行された MealRelay token はシェル履歴、リポジトリ、Issue、Pull Request に残しません。

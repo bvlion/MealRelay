@@ -13,7 +13,7 @@ import javax.inject.Singleton
 object MealSubmissionModule {
   @Provides
   @Singleton
-  fun provideLocalClock(): Clock = Clock.systemUTC()
+  fun provideUtcClock(): Clock = Clock.systemUTC()
 
   @Provides
   fun provideSubmissionClock(): SubmissionClock = SubmissionClock(System::currentTimeMillis)
