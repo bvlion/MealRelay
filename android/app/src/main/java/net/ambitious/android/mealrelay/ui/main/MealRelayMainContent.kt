@@ -23,7 +23,8 @@ fun MealRelayMainContent(
   onSubmitManualMeal: (String) -> Unit,
   onRequestPhotoPermission: () -> Unit,
   onRequestNotificationPermission: () -> Unit,
-  onOpenApplicationSettings: () -> Unit,
+  onOpenPhotoApplicationSettings: () -> Unit,
+  onOpenNotificationApplicationSettings: () -> Unit,
   onOpenUnusedAppRestrictionsSettings: () -> Unit,
   onDismissUnusedAppRestrictionsGuide: () -> Unit,
   onStartAuthorization: () -> Unit,
@@ -47,9 +48,9 @@ fun MealRelayMainContent(
       state = currentSettingsState,
       onBack = { isSettingsVisible = false },
       onRequestPhotoPermission = onRequestPhotoPermission,
-      onOpenPhotoApplicationSettings = onOpenApplicationSettings,
+      onOpenPhotoApplicationSettings = onOpenPhotoApplicationSettings,
       onRequestNotificationPermission = onRequestNotificationPermission,
-      onOpenNotificationApplicationSettings = onOpenApplicationSettings,
+      onOpenNotificationApplicationSettings = onOpenNotificationApplicationSettings,
       onOpenUnusedAppRestrictions = onOpenUnusedAppRestrictionsSettings,
     )
   } else {

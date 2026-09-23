@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
+import net.ambitious.android.mealrelay.data.settings.MealRelaySetupPreferences
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -18,11 +19,17 @@ import java.util.ArrayDeque
 class MealRelaySettingsViewModelTest {
   private val application = RuntimeEnvironment.getApplication()
 
+  private fun createViewModel(context: Context, statusProvider: FakeUnusedAppRestrictionsStatusProvider):
+    MealRelaySettingsViewModel {
+    application.getSharedPreferences("mealrelay_setup", Context.MODE_PRIVATE).edit().clear().commit()
+    return MealRelaySettingsViewModel(context, statusProvider, MealRelaySetupPreferences(application))
+  }
+
   @Test
   fun restrictionsAlreadyDisabledDoNotShowInitialGuide() {
     val context = SettingsPermissionContext(application, hasPhotoAccess = true, hasNotificationPermission = false)
     val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
-    val viewModel = MealRelaySettingsViewModel(context, statusProvider)
+    val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
     statusProvider.complete(isDisabled = true)
@@ -35,7 +42,7 @@ class MealRelaySettingsViewModelTest {
   fun deniedOptionalNotificationDoesNotPreventGuideAfterPhotoAccess() {
     val context = SettingsPermissionContext(application, hasPhotoAccess = true, hasNotificationPermission = false)
     val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
-    val viewModel = MealRelaySettingsViewModel(context, statusProvider)
+    val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
     statusProvider.complete(isDisabled = false)
@@ -49,7 +56,7 @@ class MealRelaySettingsViewModelTest {
   fun guideWaitsUntilFullPhotoAccessIsGranted() {
     val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = true)
     val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
-    val viewModel = MealRelaySettingsViewModel(context, statusProvider)
+    val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
     statusProvider.complete(isDisabled = false)
@@ -62,7 +69,7 @@ class MealRelaySettingsViewModelTest {
   fun laterRefreshReflectsPermissionChangesWithoutChangingNotificationRequirement() {
     val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = false)
     val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
-    val viewModel = MealRelaySettingsViewModel(context, statusProvider)
+    val viewModel = createViewModel(context, statusProvider)
     viewModel.completeInitialSetupPermissionChecks()
     statusProvider.complete(isDisabled = false)
     context.hasPhotoAccess = true
@@ -73,6 +80,38 @@ class MealRelaySettingsViewModelTest {
     assertTrue(viewModel.state.value.hasFullPhotoAccess)
     assertFalse(viewModel.state.value.hasNotificationPermission)
     assertTrue(viewModel.state.value.shouldShowUnusedAppRestrictionsGuide)
+  }
+
+  @Test
+  fun declinedOptionalNotificationIsNotRequestedAgainAfterRestart() {
+    val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = false)
+    val firstViewModel = createViewModel(context, FakeUnusedAppRestrictionsStatusProvider())
+
+    assertTrue(firstViewModel.beginInitialNotificationPermissionCheck())
+
+    val restartedViewModel = MealRelaySettingsViewModel(
+      context,
+      FakeUnusedAppRestrictionsStatusProvider(),
+      MealRelaySetupPreferences(application),
+    )
+
+    assertFalse(restartedViewModel.beginInitialNotificationPermissionCheck())
+  }
+
+  @Test
+  fun alreadyGrantedNotificationIsNotRequestedAgainAfterRestart() {
+    val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = true)
+    val firstViewModel = createViewModel(context, FakeUnusedAppRestrictionsStatusProvider())
+
+    assertFalse(firstViewModel.beginInitialNotificationPermissionCheck())
+
+    val restartedViewModel = MealRelaySettingsViewModel(
+      context,
+      FakeUnusedAppRestrictionsStatusProvider(),
+      MealRelaySetupPreferences(application),
+    )
+
+    assertFalse(restartedViewModel.beginInitialNotificationPermissionCheck())
   }
 }
 

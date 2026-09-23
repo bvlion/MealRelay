@@ -17,6 +17,7 @@ import net.ambitious.android.mealrelay.ui.main.MealRelayMainContent
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
 import net.ambitious.android.mealrelay.ui.settings.InitialSetupPermissionFlow
 import net.ambitious.android.mealrelay.ui.settings.MealRelaySettingsViewModel
+import net.ambitious.android.mealrelay.ui.settings.SettingsPhotoAccessFlow
 
 @AndroidEntryPoint
 class MealRelayMainActivity : ComponentActivity() {
@@ -37,14 +38,14 @@ class MealRelayMainActivity : ComponentActivity() {
   ) { settingsViewModel.refresh() }
   private val requestSettingsPhotoPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions(),
-  ) {
-    onPhotoPermissionCheckCompleted()
-    settingsViewModel.refresh()
-  }
+  ) { refreshSettingsPhotoAccess() }
   private val openUnusedAppRestrictionsSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
   ) { settingsViewModel.refresh() }
-  private val openApplicationSettingsLauncher = registerForActivityResult(
+  private val openPhotoApplicationSettingsLauncher = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult(),
+  ) { refreshSettingsPhotoAccess() }
+  private val openNotificationApplicationSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
   ) { settingsViewModel.refresh() }
   private val initialSetupPermissionFlow: InitialSetupPermissionFlow by lazy {
@@ -53,6 +54,12 @@ class MealRelayMainActivity : ComponentActivity() {
         requestInitialNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
       },
       requestPhotoAccess = ::requestInitialPhotoPermission,
+    )
+  }
+  private val settingsPhotoAccessFlow: SettingsPhotoAccessFlow by lazy {
+    SettingsPhotoAccessFlow(
+      enqueuePhotoEnrollment = { PhotoEnrollmentWorker.enqueue(this) },
+      refreshSettings = settingsViewModel::refresh,
     )
   }
 
@@ -67,7 +74,8 @@ class MealRelayMainActivity : ComponentActivity() {
         onSubmitManualMeal = { text -> mainViewModel.submitManualMeal(text) },
         onRequestPhotoPermission = ::requestSettingsPhotoPermission,
         onRequestNotificationPermission = ::requestSettingsNotificationPermission,
-        onOpenApplicationSettings = ::openApplicationSettings,
+        onOpenPhotoApplicationSettings = ::openPhotoApplicationSettings,
+        onOpenNotificationApplicationSettings = ::openNotificationApplicationSettings,
         onOpenUnusedAppRestrictionsSettings = ::openUnusedAppRestrictionsSettings,
         onDismissUnusedAppRestrictionsGuide = settingsViewModel::dismissUnusedAppRestrictionsGuide,
         onStartAuthorization = ::startAuthorization,
@@ -75,8 +83,7 @@ class MealRelayMainActivity : ComponentActivity() {
     }
     mainViewModel.recoverPendingSubmissions()
     initialSetupPermissionFlow.start(
-      hasNotificationPermission =
-        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED,
+      shouldRequestNotificationPermission = settingsViewModel.beginInitialNotificationPermissionCheck(),
     )
   }
 
@@ -89,7 +96,6 @@ class MealRelayMainActivity : ComponentActivity() {
   private fun requestInitialPhotoPermission() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
       onPhotoPermissionCheckCompleted()
-      settingsViewModel.completeInitialSetupPermissionChecks()
     } else {
       requestInitialPhotoPermissionsLauncher.launch(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
@@ -99,8 +105,7 @@ class MealRelayMainActivity : ComponentActivity() {
 
   private fun requestSettingsPhotoPermission() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      onPhotoPermissionCheckCompleted()
-      settingsViewModel.refresh()
+      refreshSettingsPhotoAccess()
     } else {
       requestSettingsPhotoPermissionsLauncher.launch(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
@@ -113,7 +118,7 @@ class MealRelayMainActivity : ComponentActivity() {
       PhotoEnrollmentWorker.enqueue(this)
     }
     mainViewModel.requestAuthorization()
-    settingsViewModel.refresh()
+    settingsViewModel.completeInitialSetupPermissionChecks()
   }
 
   private fun requestSettingsNotificationPermission() {
@@ -124,12 +129,26 @@ class MealRelayMainActivity : ComponentActivity() {
     }
   }
 
-  private fun openApplicationSettings() {
+  private fun refreshSettingsPhotoAccess() {
+    val hasFullPhotoAccess = checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
+      PackageManager.PERMISSION_GRANTED
+    settingsPhotoAccessFlow.onSettingsReturned(hasFullPhotoAccess)
+  }
+
+  private fun openPhotoApplicationSettings() {
     val intent = Intent(
       Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
       android.net.Uri.fromParts("package", packageName, null),
     )
-    openApplicationSettingsLauncher.launch(intent)
+    openPhotoApplicationSettingsLauncher.launch(intent)
+  }
+
+  private fun openNotificationApplicationSettings() {
+    val intent = Intent(
+      Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+      android.net.Uri.fromParts("package", packageName, null),
+    )
+    openNotificationApplicationSettingsLauncher.launch(intent)
   }
 
   private fun openUnusedAppRestrictionsSettings() {

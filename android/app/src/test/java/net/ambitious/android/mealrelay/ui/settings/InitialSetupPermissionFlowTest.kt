@@ -13,7 +13,7 @@ class InitialSetupPermissionFlowTest {
       requestPhotoAccess = { photoAccessRequests++ },
     )
 
-    flow.start(hasNotificationPermission = false)
+    flow.start(shouldRequestNotificationPermission = true)
     assertEquals(1, notificationRequests)
     assertEquals(0, photoAccessRequests)
 
@@ -30,7 +30,7 @@ class InitialSetupPermissionFlowTest {
       requestPhotoAccess = { photoAccessRequests++ },
     )
 
-    flow.start(hasNotificationPermission = true)
+    flow.start(shouldRequestNotificationPermission = false)
 
     assertEquals(0, notificationRequests)
     assertEquals(1, photoAccessRequests)
