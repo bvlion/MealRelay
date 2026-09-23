@@ -20,4 +20,17 @@
   <string name="authorization_failed">Google Health の認可を完了できませんでした。</string>
   <string name="authorization_retry">再試行</string>
   <string name="authorization_close">閉じる</string>
+  <string name="settings_open">設定</string>
+  <string name="settings_title">自動登録の設定</string>
+  <string name="settings_photo_access">写真へのフルアクセス</string>
+  <string name="settings_notification_permission">通知権限</string>
+  <string name="settings_unused_app_restrictions">未使用アプリの制限・アプリ休止状態</string>
+  <string name="settings_configured">設定済み ✅</string>
+  <string name="settings_not_configured">未設定</string>
+  <string name="settings_configure">設定する</string>
+  <string name="settings_back">戻る</string>
+  <string name="unused_app_restrictions_title">自動登録を続けるための設定</string>
+  <string name="unused_app_restrictions_explanation">未使用アプリの制限が有効だと、MealRelayの権限が取り消されたり、バックグラウンド処理が止まったりすることがあります。アプリ情報で「アプリが使用されていない場合に一時停止」または同等の設定をオフにしてください。</string>
+  <string name="unused_app_restrictions_open_settings">アプリ情報を開く</string>
+  <string name="unused_app_restrictions_later">後で</string>
 </resources>

@@ -82,6 +82,7 @@ dependencies {
   implementation(libs.play.services.auth)
   implementation(libs.activity.ktx)
   implementation(libs.activity.compose)
+  implementation(libs.androidx.core)
   implementation(libs.lifecycle.runtime.ktx)
   implementation(libs.lifecycle.viewmodel.compose)
   implementation(platform(libs.compose.bom))
