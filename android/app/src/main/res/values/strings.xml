@@ -28,6 +28,7 @@
   <string name="settings_unused_app_restrictions">未使用アプリの制限・アプリ休止状態</string>
   <string name="settings_configured">設定済み ✅</string>
   <string name="settings_not_configured">未設定</string>
+  <string name="settings_status_unknown">状態を確認できません</string>
   <string name="settings_configure">設定する</string>
   <string name="settings_open_app_settings">アプリ設定を開く</string>
   <string name="settings_back">戻る</string>

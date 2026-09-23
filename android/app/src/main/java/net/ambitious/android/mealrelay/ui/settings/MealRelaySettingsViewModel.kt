@@ -15,9 +15,12 @@ import javax.inject.Inject
 data class MealRelaySettingsState(
   val hasFullPhotoAccess: Boolean = false,
   val hasNotificationPermission: Boolean = false,
-  val isUnusedAppRestrictionDisabled: Boolean = false,
+  val unusedAppRestrictionsStatus: UnusedAppRestrictionsStatus = UnusedAppRestrictionsStatus.UNKNOWN,
   val shouldShowUnusedAppRestrictionsGuide: Boolean = false,
-)
+) {
+  val isUnusedAppRestrictionDisabled: Boolean
+    get() = unusedAppRestrictionsStatus == UnusedAppRestrictionsStatus.DISABLED
+}
 
 @HiltViewModel
 class MealRelaySettingsViewModel @Inject constructor(
@@ -41,13 +44,13 @@ class MealRelaySettingsViewModel @Inject constructor(
       hasFullPhotoAccess = hasFullPhotoAccess,
       hasNotificationPermission = hasNotificationPermission,
     )
-    unusedAppRestrictionsStatusProvider.getStatus { isUnusedAppRestrictionDisabled ->
+    unusedAppRestrictionsStatusProvider.getStatus { unusedAppRestrictionsStatus ->
       if (generation != refreshGeneration) return@getStatus
       mutableState.value = mutableState.value.copy(
-        isUnusedAppRestrictionDisabled = isUnusedAppRestrictionDisabled,
+        unusedAppRestrictionsStatus = unusedAppRestrictionsStatus,
         shouldShowUnusedAppRestrictionsGuide = hasCompletedInitialPermissionChecks &&
           hasFullPhotoAccess &&
-          !isUnusedAppRestrictionDisabled &&
+          unusedAppRestrictionsStatus == UnusedAppRestrictionsStatus.ENABLED &&
           !hasDismissedUnusedAppRestrictionsGuide,
       )
     }

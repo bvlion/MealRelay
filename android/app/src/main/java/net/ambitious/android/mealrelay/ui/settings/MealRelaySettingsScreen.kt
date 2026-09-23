@@ -44,6 +44,14 @@ fun MealRelaySettingsScreen(
       title = stringResource(R.string.settings_unused_app_restrictions),
       isConfigured = state.isUnusedAppRestrictionDisabled,
       onClick = onOpenUnusedAppRestrictions,
+      statusDescription = stringResource(
+        when (state.unusedAppRestrictionsStatus) {
+          UnusedAppRestrictionsStatus.DISABLED -> R.string.settings_configured
+          UnusedAppRestrictionsStatus.ENABLED -> R.string.settings_not_configured
+          UnusedAppRestrictionsStatus.UNKNOWN -> R.string.settings_status_unknown
+        },
+      ),
+      shouldShowConfigureButton = state.unusedAppRestrictionsStatus == UnusedAppRestrictionsStatus.ENABLED,
     )
     Button(onClick = onBack) { Text(stringResource(R.string.settings_back)) }
   }
@@ -56,16 +64,16 @@ private fun SettingRow(
   onClick: () -> Unit,
   onOpenApplicationSettings: (() -> Unit)? = null,
   description: String? = null,
+  statusDescription: String? = null,
+  shouldShowConfigureButton: Boolean = !isConfigured,
 ) {
   Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
     Text(title)
     if (description != null) Text(description)
-    Text(
-      stringResource(
-        if (isConfigured) R.string.settings_configured else R.string.settings_not_configured,
-      ),
-    )
-    if (!isConfigured) {
+    Text(statusDescription ?: stringResource(
+      if (isConfigured) R.string.settings_configured else R.string.settings_not_configured,
+    ))
+    if (shouldShowConfigureButton) {
       Button(onClick = onClick) {
         Text(stringResource(R.string.settings_configure))
       }

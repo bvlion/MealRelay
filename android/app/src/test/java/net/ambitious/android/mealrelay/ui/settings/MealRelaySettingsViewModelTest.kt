@@ -32,7 +32,7 @@ class MealRelaySettingsViewModelTest {
     val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
-    statusProvider.complete(isDisabled = true)
+    statusProvider.complete(UnusedAppRestrictionsStatus.DISABLED)
 
     assertTrue(viewModel.state.value.isUnusedAppRestrictionDisabled)
     assertFalse(viewModel.state.value.shouldShowUnusedAppRestrictionsGuide)
@@ -45,7 +45,7 @@ class MealRelaySettingsViewModelTest {
     val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
-    statusProvider.complete(isDisabled = false)
+    statusProvider.complete(UnusedAppRestrictionsStatus.ENABLED)
 
     assertTrue(viewModel.state.value.hasFullPhotoAccess)
     assertFalse(viewModel.state.value.hasNotificationPermission)
@@ -59,9 +59,22 @@ class MealRelaySettingsViewModelTest {
     val viewModel = createViewModel(context, statusProvider)
 
     viewModel.completeInitialSetupPermissionChecks()
-    statusProvider.complete(isDisabled = false)
+    statusProvider.complete(UnusedAppRestrictionsStatus.ENABLED)
 
     assertFalse(viewModel.state.value.hasFullPhotoAccess)
+    assertFalse(viewModel.state.value.shouldShowUnusedAppRestrictionsGuide)
+  }
+
+  @Test
+  fun unknownRestrictionsStatusDoesNotShowInitialGuide() {
+    val context = SettingsPermissionContext(application, hasPhotoAccess = true, hasNotificationPermission = false)
+    val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
+    val viewModel = createViewModel(context, statusProvider)
+
+    viewModel.completeInitialSetupPermissionChecks()
+    statusProvider.complete(UnusedAppRestrictionsStatus.UNKNOWN)
+
+    assertFalse(viewModel.state.value.isUnusedAppRestrictionDisabled)
     assertFalse(viewModel.state.value.shouldShowUnusedAppRestrictionsGuide)
   }
 
@@ -71,11 +84,11 @@ class MealRelaySettingsViewModelTest {
     val statusProvider = FakeUnusedAppRestrictionsStatusProvider()
     val viewModel = createViewModel(context, statusProvider)
     viewModel.completeInitialSetupPermissionChecks()
-    statusProvider.complete(isDisabled = false)
+    statusProvider.complete(UnusedAppRestrictionsStatus.ENABLED)
     context.hasPhotoAccess = true
 
     viewModel.refresh()
-    statusProvider.complete(isDisabled = false)
+    statusProvider.complete(UnusedAppRestrictionsStatus.ENABLED)
 
     assertTrue(viewModel.state.value.hasFullPhotoAccess)
     assertFalse(viewModel.state.value.hasNotificationPermission)
@@ -131,13 +144,13 @@ private class SettingsPermissionContext(
 }
 
 private class FakeUnusedAppRestrictionsStatusProvider : UnusedAppRestrictionsStatusProvider {
-  private val pendingCallbacks = ArrayDeque<(Boolean) -> Unit>()
+  private val pendingCallbacks = ArrayDeque<(UnusedAppRestrictionsStatus) -> Unit>()
 
-  override fun getStatus(onStatus: (isDisabled: Boolean) -> Unit) {
+  override fun getStatus(onStatus: (UnusedAppRestrictionsStatus) -> Unit) {
     pendingCallbacks.addLast(onStatus)
   }
 
-  fun complete(isDisabled: Boolean) {
-    pendingCallbacks.removeFirst().invoke(isDisabled)
+  fun complete(status: UnusedAppRestrictionsStatus) {
+    pendingCallbacks.removeFirst().invoke(status)
   }
 }
