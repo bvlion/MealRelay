@@ -14,6 +14,7 @@ data class MealSubmissionEntity(
   @ColumnInfo(name = "automatic_attempt_count") val automaticAttemptCount: Int = 0,
   val state: String = STATE_PENDING,
   @ColumnInfo(name = "next_automatic_attempt_at") val nextAutomaticAttemptAt: Long? = null,
+  @ColumnInfo(name = "manual_retry_available") val isManualRetryAvailable: Boolean = true,
   @ColumnInfo(name = "created_at") val createdAt: Long,
 ) {
   companion object {

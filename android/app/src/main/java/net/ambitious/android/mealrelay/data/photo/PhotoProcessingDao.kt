@@ -20,6 +20,9 @@ interface PhotoProcessingDao {
   @Query("SELECT EXISTS(SELECT 1 FROM photo_results WHERE version = :version AND uri = :uri)")
   fun hasResult(version: String, uri: String): Boolean
 
+  @Query("SELECT EXISTS(SELECT 1 FROM photo_results WHERE uri = :uri AND captured_at = :capturedAt AND is_food = 1)")
+  fun hasFoodResult(uri: String, capturedAt: Long): Boolean
+
   @Insert(onConflict = OnConflictStrategy.IGNORE)
   fun insertResult(result: PhotoResultEntity)
 

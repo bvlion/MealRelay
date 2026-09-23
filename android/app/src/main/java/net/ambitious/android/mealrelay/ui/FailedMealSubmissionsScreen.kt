@@ -54,8 +54,10 @@ private fun FailedMealSubmissionRow(submission: FailedMealSubmission, onRetry: (
       submission.content?.let { Text(it) }
       Text(submission.occurredAt)
     }
-    Button(onClick = { onRetry(submission.mealId) }) {
-      Text(stringResource(R.string.meal_submission_retry))
+    if (submission.isManualRetryAvailable) {
+      Button(onClick = { onRetry(submission.mealId) }) {
+        Text(stringResource(R.string.meal_submission_retry))
+      }
     }
   }
 }

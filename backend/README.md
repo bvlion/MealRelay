@@ -194,10 +194,15 @@ curl --include --request GET <AUTH_EXCHANGE_URL>
 
 Android のリポジトリの `android` ディレクトリで、公開設定を Gradle property として渡して APK を作成します。これらは client ID と関数 URL であり secret ではありません。`<AUTH_EXCHANGE_URL>` には手順5で確認した完全な HTTPS URL を使用します。
 
-`mealRelayTextEndpoint` にはデプロイ済みの `textMeal` の HTTPS 関数 URL を指定します。URL が未確認の場合は、リポジトリのルートで次を実行し、表示された URL を `<TEXT_MEAL_URL>` とします。
+`mealRelayTextEndpoint` と `mealRelayImageEndpoint` には、それぞれデプロイ済みの `textMeal` と `imageMeal` の HTTPS 関数 URL を指定します。URL が未確認の場合は、リポジトリのルートで次を実行し、表示された URL をそれぞれ `<TEXT_MEAL_URL>`、`<IMAGE_MEAL_URL>` とします。
 
 ```sh
 gcloud functions describe textMeal \
+  --gen2 \
+  --region=<REGION> \
+  --format='value(serviceConfig.uri)'
+
+gcloud functions describe imageMeal \
   --gen2 \
   --region=<REGION> \
   --format='value(serviceConfig.uri)'
@@ -207,7 +212,8 @@ gcloud functions describe textMeal \
 ./gradlew :app:assembleDebug \
   -PmealRelayOauthClientId=<WEB_OAUTH_CLIENT_ID> \
   -PmealRelayAuthEndpoint=<AUTH_EXCHANGE_URL> \
-  -PmealRelayTextEndpoint=<TEXT_MEAL_URL>
+  -PmealRelayTextEndpoint=<TEXT_MEAL_URL> \
+  -PmealRelayImageEndpoint=<IMAGE_MEAL_URL>
 ```
 
 生成される `app/build/outputs/apk/debug/app-debug.apk` を、同じ署名のまま2台の Android 端末へインストールします。実機へのインストールと UI 操作は、この確認を行う利用者が実施します。

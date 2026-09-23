@@ -49,10 +49,15 @@ class MealSubmissionRepository @Inject constructor(private val dao: MealSubmissi
     )
   }
 
-  fun recordAutomaticFailure(mealId: String, attemptCount: Int) {
+  fun recordAutomaticFailure(
+    mealId: String,
+    attemptCount: Int,
+    isManualRetryAvailable: Boolean = true,
+  ) {
     dao.recordFailure(
       mealId,
       attemptCount,
+      isManualRetryAvailable,
       MealSubmissionEntity.STATE_PENDING,
       MealSubmissionEntity.STATE_SENDING,
       MealSubmissionEntity.STATE_FAILED,

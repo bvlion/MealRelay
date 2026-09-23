@@ -47,6 +47,7 @@ data class FailedMealSubmission(
   val type: FailedMealSubmissionType,
   val content: String?,
   val occurredAt: String,
+  val isManualRetryAvailable: Boolean,
 ) {
   companion object {
     fun from(submission: MealSubmissionEntity) = FailedMealSubmission(
@@ -58,6 +59,7 @@ data class FailedMealSubmission(
       },
       content = submission.text,
       occurredAt = submission.occurredAt,
+      isManualRetryAvailable = submission.isManualRetryAvailable,
     )
   }
 }

@@ -12,6 +12,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.WorkManager
 import net.ambitious.android.mealrelay.data.photo.PhotoProcessingDao
+import net.ambitious.android.mealrelay.submission.PhotoMealSubmission
 import androidx.hilt.work.HiltWorker
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -22,6 +23,7 @@ class PhotoScanWorker @AssistedInject constructor(
   @Assisted context: Context,
   @Assisted parameters: WorkerParameters,
   private val photoProcessingDao: PhotoProcessingDao,
+  private val photoMealSubmission: PhotoMealSubmission,
 ) : Worker(context, parameters) {
   override fun doWork(): Result = try {
     val isComplete = synchronized(PhotoScanner::class.java) {
@@ -29,6 +31,7 @@ class PhotoScanWorker @AssistedInject constructor(
         PhotoScanner(
           applicationContext,
           photoProcessingDao,
+          photoMealSubmission::enqueue,
           classification::prepareClassifier,
         ).scan { isStopped }
       }

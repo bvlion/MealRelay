@@ -12,5 +12,8 @@ enum class MealSubmissionReadiness { Ready, AwaitingAuthorization, Unavailable }
 sealed interface MealSubmissionSendResult {
   data object Succeeded : MealSubmissionSendResult
   data class RetryableFailure(val cause: Throwable) : MealSubmissionSendResult
-  data class PermanentFailure(val cause: Throwable) : MealSubmissionSendResult
+  data class PermanentFailure(
+    val cause: Throwable,
+    val isManualRetryAvailable: Boolean = true,
+  ) : MealSubmissionSendResult
 }
