@@ -12,46 +12,57 @@ const { completeMealRegistration, registerMeal } = require('./registerMeal');
 
 async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient, mealNotifier }) {
+  if (typeof mealNotifier?.notifyRegistration !== 'function') {
+    throw new Error('Meal registration notification is required');
+  }
   normalizeMealTime(capturedAt);
   const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
   const reservation = await mealRepository.reserve(userId, mealId, requestHash);
+  let result;
   if (reservation.type === 'saved') {
     validateImageMealRetry({ record: reservation.savedMeal.record, userId, mealId, capturedAt });
-    return completeMealRegistration({
+    result = await completeMealRegistration({
       ...reservation.savedMeal,
       authRepository,
       clientId,
       clientSecret,
       healthClient,
       mealRepository,
-      mealNotifier,
+    });
+  } else {
+    if (reservation.type === 'different') throw new MealRecordError('Meal ID already has different content', 409);
+    if (reservation.type === 'active') throw new MealRecordError('Meal is already being analyzed', 503);
+
+    let analysis;
+    try {
+      analysis = await analyzeMealImage({ client: analysisClient, image });
+    } catch (error) {
+      await mealRepository.releaseReservation(reservation);
+      throw error;
+    }
+    result = await registerMeal({
+      route: 'image',
+      authorization,
+      authenticatedUserId: userId,
+      mealId,
+      occurredAt: capturedAt,
+      analysis,
+      authRepository,
+      mealRepository,
+      clientId,
+      clientSecret,
+      healthClient,
+      reservation,
     });
   }
-  if (reservation.type === 'different') throw new MealRecordError('Meal ID already has different content', 409);
-  if (reservation.type === 'active') throw new MealRecordError('Meal is already being analyzed', 503);
-
-  let analysis;
-  try {
-    analysis = await analyzeMealImage({ client: analysisClient, image });
-  } catch (error) {
-    await mealRepository.releaseReservation(reservation);
-    throw error;
+  if (!result.isAlreadyRegistered) {
+    try {
+      await mealNotifier.notifyRegistration(result.record);
+    } catch {
+      // Notification failure must not change the completed Google Health registration.
+    }
   }
-  return registerMeal({
-    route: 'image',
-    authorization,
-    authenticatedUserId: userId,
-    mealId,
-    occurredAt: capturedAt,
-    analysis,
-    authRepository,
-    mealRepository,
-    clientId,
-    clientSecret,
-    healthClient,
-    reservation,
-    mealNotifier,
-  });
+  return result;
 }
 
 async function handleImageMealRequest({ request, response, analysisClient, authRepository,

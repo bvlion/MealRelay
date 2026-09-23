@@ -14,7 +14,7 @@ function responseFixture() {
   };
 }
 
-test('associates current FID and previous FID with authenticated MealRelay user', async () => {
+test('associates the current FID with the authenticated MealRelay user', async () => {
   const requests = [];
   const response = responseFixture();
   await handleFirebaseInstallationRequest({
@@ -22,7 +22,7 @@ test('associates current FID and previous FID with authenticated MealRelay user'
       method: 'PUT',
       is: () => true,
       get: () => 'Bearer valid',
-      body: { fid: 'new-fid', previousFid: 'old-fid' },
+      body: { fid: 'fid-current' },
     },
     response,
     authRepository: { findSubByToken: async (token) => token === 'valid' ? 'user1' : null },
@@ -31,7 +31,7 @@ test('associates current FID and previous FID with authenticated MealRelay user'
 
   assert.equal(response.statusCode, 204);
   assert.equal(response.headers['Cache-Control'], 'no-store');
-  assert.deepEqual(requests, [{ sub: 'user1', fid: 'new-fid', previousFid: 'old-fid' }]);
+  assert.deepEqual(requests, [{ sub: 'user1', fid: 'fid-current' }]);
 });
 
 test('rejects Firebase installation registration without MealRelay authentication', async () => {

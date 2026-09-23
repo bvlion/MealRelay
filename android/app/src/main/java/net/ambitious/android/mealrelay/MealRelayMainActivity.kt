@@ -8,22 +8,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
 import net.ambitious.android.mealrelay.ui.main.MainAuthorizationState
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainScreen
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
-import net.ambitious.android.mealrelay.notification.FirebaseInstallationRepository
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MealRelayMainActivity : ComponentActivity() {
-  @Inject lateinit var firebaseInstallationRepository: FirebaseInstallationRepository
   private val failedMealSubmissionsViewModel by viewModels<FailedMealSubmissionsViewModel>()
   private val mainViewModel by viewModels<MealRelayMainViewModel>()
   private val requestNotificationPermission = registerForActivityResult(
@@ -68,9 +63,6 @@ class MealRelayMainActivity : ComponentActivity() {
   override fun onResume() {
     super.onResume()
     failedMealSubmissionsViewModel.load()
-    lifecycleScope.launch {
-      runCatching { firebaseInstallationRepository.synchronize() }
-    }
   }
 
   private fun requestPhotoPermission() {

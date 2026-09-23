@@ -19,11 +19,11 @@ class FirebaseInstallationTransport(private val endpoint: String) {
       .create(FirebaseInstallationApi::class.java)
   }
 
-  suspend fun register(token: String, fid: String, previousFid: String?) {
+  suspend fun register(token: String, fid: String) {
     val response = service.register(
       endpoint,
       "Bearer $token",
-      FirebaseInstallationRequest(fid, previousFid?.takeIf { it != fid }),
+      FirebaseInstallationRequest(fid),
     )
     check(response.isSuccessful)
   }

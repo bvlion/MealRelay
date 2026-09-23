@@ -17,13 +17,12 @@ async function handleFirebaseInstallationRequest({ request, response, authReposi
     const sub = await authenticateMealRelayRequest({
       authorization: request.get('authorization'), repository: authRepository,
     });
-    const { fid, previousFid } = request.body ?? {};
-    if (typeof fid !== 'string' || !fid.trim() ||
-        (previousFid !== undefined && (typeof previousFid !== 'string' || !previousFid.trim()))) {
+    const { fid } = request.body ?? {};
+    if (typeof fid !== 'string' || !fid.trim()) {
       response.status(400).json({ error: 'Firebase Installation ID is invalid' });
       return;
     }
-    await installationRepository.register({ sub, fid, previousFid });
+    await installationRepository.register({ sub, fid });
     response.status(204).end();
   } catch (error) {
     if (error instanceof AuthenticationError) {

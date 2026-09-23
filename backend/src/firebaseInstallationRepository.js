@@ -11,21 +11,9 @@ class FirebaseInstallationRepository {
     this.firestore = firestore;
   }
 
-  async register({ sub, fid, previousFid }) {
-    const reference = (value) => this.firestore.collection('firebaseInstallations').doc(documentId(value));
-    const currentReference = reference(fid);
-    const previousReference = previousFid && previousFid !== fid ? reference(previousFid) : null;
-    await this.firestore.runTransaction(async (transaction) => {
-      const current = await transaction.get(currentReference);
-      if (current.exists && current.get('sub') !== sub) {
-        throw new Error('Firebase installation belongs to another user');
-      }
-      if (previousReference) {
-        const previous = await transaction.get(previousReference);
-        if (previous.exists && previous.get('sub') === sub) transaction.delete(previousReference);
-      }
-      transaction.set(currentReference, { sub, fid, isActive: true });
-    });
+  async register({ sub, fid }) {
+    await this.firestore.collection('firebaseInstallations').doc(documentId(fid))
+      .set({ sub, fid, isActive: true });
   }
 
   async findActiveByUser(sub) {

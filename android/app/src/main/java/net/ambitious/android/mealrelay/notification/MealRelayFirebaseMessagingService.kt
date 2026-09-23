@@ -11,10 +11,19 @@ import android.os.Build
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import net.ambitious.android.mealrelay.MealRelayMainActivity
 import net.ambitious.android.mealrelay.R
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MealRelayFirebaseMessagingService : FirebaseMessagingService() {
+  @Inject lateinit var installationSyncScheduler: FirebaseInstallationSyncScheduler
+
+  override fun onRegistered(installationId: String) {
+    installationSyncScheduler.schedule(installationId)
+  }
+
   override fun onMessageReceived(message: RemoteMessage) {
     val notification = message.notification ?: return
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
