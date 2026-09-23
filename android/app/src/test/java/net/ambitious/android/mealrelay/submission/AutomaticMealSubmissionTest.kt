@@ -1,6 +1,7 @@
 package net.ambitious.android.mealrelay.submission
 
 import android.app.Application
+import android.net.Uri
 import androidx.room.Room
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
@@ -26,6 +27,8 @@ import org.robolectric.annotation.Config
 import okhttp3.ResponseBody.Companion.toResponseBody
 import java.io.IOException
 import java.util.UUID
+import java.time.Instant
+import java.util.TimeZone
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [37])
@@ -262,6 +265,7 @@ class AutomaticMealSubmissionTest {
     val queue = MealSubmissionQueue(
       repository,
       MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
     )
     val mealId = queue.enqueue(
       MealSubmissionDraft(
@@ -275,6 +279,47 @@ class AutomaticMealSubmissionTest {
     assertEquals(mealId, UUID.fromString(mealId).toString())
     assertEquals("朝の食事", repository.get(mealId)?.text)
     assertEquals("2026-09-22T08:00:00+09:00", repository.get(mealId)?.occurredAt)
+  }
+
+  @Test
+  fun foodPhotoQueueAndProcessedResultAreAtomicAcrossMediaStoreVersions() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+    )
+    val photoUri = Uri.parse("content://media/external/images/media/1")
+    val occurredAt = "2026-09-22T08:00:00.000+09:00"
+
+    val mealId = queue.enqueueFoodPhoto(photoUri, 1_000L, "version-1", occurredAt)
+    assertEquals(true, mealId != null)
+    repository.delete(requireNotNull(mealId))
+
+    assertNull(queue.enqueueFoodPhoto(photoUri, 1_000L, "version-2", occurredAt))
+    assertEquals(emptyList<MealSubmissionEntity>(), repository.pendingSubmissions())
+    assertEquals(1, database.photoProcessingDao().getResults().size)
+  }
+
+  @Test
+  fun photoSubmissionUsesTheLocalOffsetForItsCaptureInstant() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+    )
+    val originalTimezone = TimeZone.getDefault()
+    try {
+      TimeZone.setDefault(TimeZone.getTimeZone("Asia/Tokyo"))
+      PhotoMealSubmission(queue).enqueue(
+        Uri.parse("content://media/external/images/media/2"),
+        Instant.parse("2026-09-21T23:00:00Z").toEpochMilli(),
+        "version-1",
+      )
+
+      assertEquals("2026-09-22T08:00:00.000+09:00", repository.pendingSubmissions().single().occurredAt)
+    } finally {
+      TimeZone.setDefault(originalTimezone)
+    }
   }
 
   @Test

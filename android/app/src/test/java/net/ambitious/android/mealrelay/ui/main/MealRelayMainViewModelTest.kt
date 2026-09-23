@@ -45,7 +45,7 @@ class MealRelayMainViewModelTest {
       val scheduler = MealSubmissionWorkScheduler(application, repository)
       val viewModel = MealRelayMainViewModel(
         MealRelayTokenStore(application),
-        MealSubmissionQueue(repository, scheduler),
+        MealSubmissionQueue(repository, scheduler, database),
         scheduler,
         Clock.fixed(Instant.parse("2026-09-21T23:30:00Z"), ZoneId.of("UTC")),
       )
@@ -67,7 +67,7 @@ class MealRelayMainViewModelTest {
     val scheduler = MealSubmissionWorkScheduler(application, repository)
     val viewModel = MealRelayMainViewModel(
       MealRelayTokenStore(application),
-      MealSubmissionQueue(repository, scheduler),
+      MealSubmissionQueue(repository, scheduler, database),
       scheduler,
       Clock.fixed(Instant.parse("2026-09-22T00:30:00Z"), ZoneId.of("UTC")),
     )

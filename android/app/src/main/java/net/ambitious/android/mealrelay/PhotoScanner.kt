@@ -14,7 +14,7 @@ import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 class PhotoScanner(
   private val context: Context,
   private val photoProcessingDao: PhotoProcessingDao,
-  private val submitFoodPhoto: (Uri, Long) -> Unit = { _, _ -> },
+  private val submitFoodPhoto: (Uri, Long, String) -> Unit,
   private val createClassifier: () -> (Uri) -> Boolean,
 ) {
   fun scan(shouldStop: () -> Boolean): Boolean {
@@ -72,7 +72,9 @@ class PhotoScanner(
           continue
         }
         val uri = ContentUris.withAppendedId(collection, cursor.getLong(idColumn))
-        if (photoProcessingDao.hasResult(currentVersion, uri.toString())) {
+        if (photoProcessingDao.hasFoodResult(uri.toString(), capturedAt) ||
+          photoProcessingDao.hasResult(currentVersion, uri.toString())
+        ) {
           continue
         }
         val classifier = classifyPhoto ?: createClassifier().also { classifyPhoto = it }
@@ -83,9 +85,10 @@ class PhotoScanner(
           null
         }
         if (isFood == true) {
-          submitFoodPhoto(uri, capturedAt)
+          submitFoodPhoto(uri, capturedAt, currentVersion)
+        } else {
+          photoProcessingDao.insertResult(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood))
         }
-        photoProcessingDao.insertResult(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood))
         if (isFood != null) {
           Log.i("PhotoScanner", "camera photo classified isFood=$isFood")
         }

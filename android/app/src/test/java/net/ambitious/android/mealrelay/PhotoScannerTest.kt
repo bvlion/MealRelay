@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Application
 import android.content.ContentProvider
 import android.content.ContentUris
+import android.content.Context
 import android.content.ContentValues
 import android.content.Intent
 import android.database.Cursor
@@ -13,6 +14,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.room.Room
 import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
+import net.ambitious.android.mealrelay.data.photo.PhotoProcessingDao
 import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 import net.ambitious.android.mealrelay.data.photo.PhotoScanStateEntity
 import org.junit.Assert.assertEquals
@@ -58,7 +60,7 @@ class PhotoScannerTest {
           else -> true
         }
       }
-      val scanner = PhotoScanner(application, dao) {
+      val scanner = scanner(application, dao) {
         classifierCreations++
         classify
       }
@@ -105,7 +107,7 @@ class PhotoScannerTest {
         if (id == 7L) isStopped = true
         true
       }
-      val scanner = PhotoScanner(application, dao) { classify }
+      val scanner = scanner(application, dao) { classify }
 
       assertFalse(scanner.scan { isStopped })
       assertEquals("version-1", dao.getScanState()?.version)
@@ -155,7 +157,7 @@ class PhotoScannerTest {
         classifiedIds.add(ContentUris.parseId(uri))
         true
       }
-      val scanner = PhotoScanner(application, dao) { classify }
+      val scanner = scanner(application, dao) { classify }
       assertTrue(scanner.scan { false })
       assertEquals(2L, dao.getScanState()?.generation)
 
@@ -186,7 +188,7 @@ class PhotoScannerTest {
         classifiedIds.add(ContentUris.parseId(uri))
         true
       }
-      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertTrue(scanner(application, dao) { classify }.scan { false })
       assertEquals(listOf(4L), classifiedIds)
       assertEquals(1000L, dao.getResults().single().capturedAt)
       assertEquals(6L, dao.getScanState()?.generation)
@@ -223,7 +225,7 @@ class PhotoScannerTest {
         true
       }
 
-      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertTrue(scanner(application, dao) { classify }.scan { false })
       assertEquals(listOf(2L), classifiedIds)
       assertEquals(7L, dao.getScanState()?.generation)
     } finally {
@@ -248,7 +250,7 @@ class PhotoScannerTest {
         classifiedIds.add(ContentUris.parseId(uri))
         true
       }
-      assertTrue(PhotoScanner(application, dao) { classify }.scan { false })
+      assertTrue(scanner(application, dao) { classify }.scan { false })
       assertEquals(listOf(2L), classifiedIds)
       assertEquals(provider.version, dao.getScanState()?.version)
       assertEquals(2L, dao.getScanState()?.generation)
@@ -269,7 +271,7 @@ class PhotoScannerTest {
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
       var classifierCreations = 0
       val classify: (Uri) -> Boolean = { true }
-      val scanner = PhotoScanner(application, dao) {
+      val scanner = scanner(application, dao) {
         classifierCreations++
         classify
       }
@@ -304,7 +306,7 @@ class PhotoScannerTest {
     try {
       val dao = database.photoProcessingDao()
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
-      val scanner = PhotoScanner(application, dao) {
+      val scanner = scanner(application, dao) {
         throw IllegalStateException("test classifier initialization failure")
       }
       assertThrows(IllegalStateException::class.java) { scanner.scan { false } }
@@ -327,26 +329,47 @@ class PhotoScannerTest {
     try {
       val dao = database.photoProcessingDao()
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
-      val submissions = mutableListOf<Pair<Uri, Long>>()
+      val submissions = mutableListOf<Triple<Uri, Long, String>>()
       val scanner = PhotoScanner(
         application,
         dao,
-        submitFoodPhoto = { uri, capturedAt -> submissions.add(uri to capturedAt) },
+        submitFoodPhoto = { uri, capturedAt, version ->
+          submissions.add(Triple(uri, capturedAt, version))
+          dao.insertResult(PhotoResultEntity(version, uri.toString(), capturedAt, true))
+        },
         createClassifier = { { uri -> ContentUris.parseId(uri) == 1L } },
       )
 
       assertTrue(scanner.scan { false })
       assertEquals(
-        listOf(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 1L) to 1000L),
+        listOf(Triple(
+          ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 1L),
+          1000L,
+          provider.version,
+        )),
         submissions,
       )
 
+      provider.version = "version-2"
       assertTrue(scanner.scan { false })
       assertEquals(1, submissions.size)
     } finally {
       database.close()
     }
   }
+
+  private fun scanner(
+    context: Context,
+    dao: PhotoProcessingDao,
+    createClassifier: () -> (Uri) -> Boolean,
+  ) = PhotoScanner(
+    context,
+    dao,
+    submitFoodPhoto = { uri, capturedAt, version ->
+      dao.insertResult(PhotoResultEntity(version, uri.toString(), capturedAt, true))
+    },
+    createClassifier = createClassifier,
+  )
 
   data class Photo(
     val id: Long,
