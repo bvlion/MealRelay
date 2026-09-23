@@ -17,7 +17,9 @@ fun MealRelaySettingsScreen(
   state: MealRelaySettingsState,
   onBack: () -> Unit,
   onRequestPhotoPermission: () -> Unit,
+  onOpenPhotoApplicationSettings: () -> Unit,
   onRequestNotificationPermission: () -> Unit,
+  onOpenNotificationApplicationSettings: () -> Unit,
   onOpenUnusedAppRestrictions: () -> Unit,
 ) {
   Column(
@@ -29,11 +31,14 @@ fun MealRelaySettingsScreen(
       title = stringResource(R.string.settings_photo_access),
       isConfigured = state.hasFullPhotoAccess,
       onClick = onRequestPhotoPermission,
+      onOpenApplicationSettings = onOpenPhotoApplicationSettings,
     )
     SettingRow(
       title = stringResource(R.string.settings_notification_permission),
       isConfigured = state.hasNotificationPermission,
       onClick = onRequestNotificationPermission,
+      onOpenApplicationSettings = onOpenNotificationApplicationSettings,
+      description = stringResource(R.string.settings_notification_optional),
     )
     SettingRow(
       title = stringResource(R.string.settings_unused_app_restrictions),
@@ -49,9 +54,12 @@ private fun SettingRow(
   title: String,
   isConfigured: Boolean,
   onClick: () -> Unit,
+  onOpenApplicationSettings: (() -> Unit)? = null,
+  description: String? = null,
 ) {
   Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
     Text(title)
+    if (description != null) Text(description)
     Text(
       stringResource(
         if (isConfigured) R.string.settings_configured else R.string.settings_not_configured,
@@ -60,6 +68,11 @@ private fun SettingRow(
     if (!isConfigured) {
       Button(onClick = onClick) {
         Text(stringResource(R.string.settings_configure))
+      }
+      if (onOpenApplicationSettings != null) {
+        Button(onClick = onOpenApplicationSettings) {
+          Text(stringResource(R.string.settings_open_app_settings))
+        }
       }
     }
   }

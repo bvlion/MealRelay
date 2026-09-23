@@ -3,9 +3,6 @@ package net.ambitious.android.mealrelay.ui.settings
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
-import androidx.core.content.PackageManagerCompat
-import androidx.core.content.UnusedAppRestrictionsConstants
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,11 +21,12 @@ data class MealRelaySettingsState(
 @HiltViewModel
 class MealRelaySettingsViewModel @Inject constructor(
   @param:ApplicationContext private val context: Context,
+  private val unusedAppRestrictionsStatusProvider: UnusedAppRestrictionsStatusProvider,
 ) : ViewModel() {
   private val mutableState = MutableStateFlow(MealRelaySettingsState())
   val state: StateFlow<MealRelaySettingsState> = mutableState.asStateFlow()
-  private var hasEvaluatedInitialSetup = false
-  private var hasPendingUnusedAppRestrictionsGuide = false
+  private var hasCompletedInitialPermissionChecks = false
+  private var hasDismissedUnusedAppRestrictionsGuide = false
   private var refreshGeneration = 0
 
   fun refresh() {
@@ -36,34 +34,30 @@ class MealRelaySettingsViewModel @Inject constructor(
       PackageManager.PERMISSION_GRANTED
     val hasNotificationPermission = context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
       PackageManager.PERMISSION_GRANTED
-    if (!hasEvaluatedInitialSetup && hasFullPhotoAccess && hasNotificationPermission) {
-      hasEvaluatedInitialSetup = true
-      hasPendingUnusedAppRestrictionsGuide = true
-    }
     val generation = ++refreshGeneration
-    val updatedState = mutableState.value.copy(
+    mutableState.value = mutableState.value.copy(
       hasFullPhotoAccess = hasFullPhotoAccess,
       hasNotificationPermission = hasNotificationPermission,
     )
-    mutableState.value = updatedState
-    val unusedAppRestrictionsStatus = PackageManagerCompat.getUnusedAppRestrictionsStatus(context)
-    unusedAppRestrictionsStatus.addListener({
-      if (generation != refreshGeneration) return@addListener
-      val isUnusedAppRestrictionDisabled = try {
-        unusedAppRestrictionsStatus.get() == UnusedAppRestrictionsConstants.DISABLED
-      } catch (_: Exception) {
-        false
-      }
+    unusedAppRestrictionsStatusProvider.getStatus { isUnusedAppRestrictionDisabled ->
+      if (generation != refreshGeneration) return@getStatus
       mutableState.value = mutableState.value.copy(
         isUnusedAppRestrictionDisabled = isUnusedAppRestrictionDisabled,
-        shouldShowUnusedAppRestrictionsGuide = mutableState.value.shouldShowUnusedAppRestrictionsGuide ||
-          hasPendingUnusedAppRestrictionsGuide,
+        shouldShowUnusedAppRestrictionsGuide = hasCompletedInitialPermissionChecks &&
+          hasFullPhotoAccess &&
+          !isUnusedAppRestrictionDisabled &&
+          !hasDismissedUnusedAppRestrictionsGuide,
       )
-    }, ContextCompat.getMainExecutor(context))
+    }
+  }
+
+  fun completeInitialSetupPermissionChecks() {
+    hasCompletedInitialPermissionChecks = true
+    refresh()
   }
 
   fun dismissUnusedAppRestrictionsGuide() {
-    hasPendingUnusedAppRestrictionsGuide = false
+    hasDismissedUnusedAppRestrictionsGuide = true
     mutableState.value = mutableState.value.copy(shouldShowUnusedAppRestrictionsGuide = false)
   }
 }

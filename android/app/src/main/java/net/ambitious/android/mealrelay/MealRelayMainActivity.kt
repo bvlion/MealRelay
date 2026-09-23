@@ -4,27 +4,18 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.IntentCompat
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.res.stringResource
 import dagger.hilt.android.AndroidEntryPoint
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
-import net.ambitious.android.mealrelay.ui.main.MainAuthorizationState
-import net.ambitious.android.mealrelay.ui.main.MealRelayMainScreen
+import net.ambitious.android.mealrelay.ui.main.MealRelayMainContent
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
-import net.ambitious.android.mealrelay.ui.settings.MealRelaySettingsScreen
+import net.ambitious.android.mealrelay.ui.settings.InitialSetupPermissionFlow
 import net.ambitious.android.mealrelay.ui.settings.MealRelaySettingsViewModel
 
 @AndroidEntryPoint
@@ -32,81 +23,61 @@ class MealRelayMainActivity : ComponentActivity() {
   private val failedMealSubmissionsViewModel by viewModels<FailedMealSubmissionsViewModel>()
   private val mainViewModel by viewModels<MealRelayMainViewModel>()
   private val settingsViewModel by viewModels<MealRelaySettingsViewModel>()
-  private val requestNotificationPermissionLauncher = registerForActivityResult(
+  private val requestInitialNotificationPermissionLauncher: ActivityResultLauncher<String> = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
-  ) {
-    requestPhotoPermission()
-    settingsViewModel.refresh()
-  }
-  private val requestPhotoPermissions = registerForActivityResult(
+  ) { initialSetupPermissionFlow.onNotificationPermissionRequestCompleted() }
+  private val requestInitialPhotoPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions(),
   ) {
-    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      PhotoEnrollmentWorker.enqueue(this)
-    }
-    mainViewModel.requestAuthorization()
+    onPhotoPermissionCheckCompleted()
+    settingsViewModel.completeInitialSetupPermissionChecks()
+  }
+  private val requestSettingsNotificationPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission(),
+  ) { settingsViewModel.refresh() }
+  private val requestSettingsPhotoPermissionsLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestMultiplePermissions(),
+  ) {
+    onPhotoPermissionCheckCompleted()
     settingsViewModel.refresh()
   }
-  private val openUnusedAppRestrictionsSettings = registerForActivityResult(
+  private val openUnusedAppRestrictionsSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
   ) { settingsViewModel.refresh() }
+  private val openApplicationSettingsLauncher = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult(),
+  ) { settingsViewModel.refresh() }
+  private val initialSetupPermissionFlow: InitialSetupPermissionFlow by lazy {
+    InitialSetupPermissionFlow(
+      requestNotificationPermission = {
+        requestInitialNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      },
+      requestPhotoAccess = ::requestInitialPhotoPermission,
+    )
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
-      val authorizationState by mainViewModel.authorizationState.collectAsState()
-      val settingsState by settingsViewModel.state.collectAsState()
-      var isSettingsVisible by rememberSaveable { mutableStateOf(false) }
-      LaunchedEffect(Unit) {
-        failedMealSubmissionsViewModel.load()
-        mainViewModel.recoverPendingSubmissions()
-      }
-      LaunchedEffect(authorizationState) {
-        if (authorizationState == MainAuthorizationState.Required) {
-          mainViewModel.consumeAuthorizationRequest()
-          startActivity(Intent(this@MealRelayMainActivity, MealRelayAuthorizationActivity::class.java))
-        }
-      }
-      if (isSettingsVisible) {
-        MealRelaySettingsScreen(
-          state = settingsState,
-          onBack = { isSettingsVisible = false },
-          onRequestPhotoPermission = ::requestPhotoPermission,
-          onRequestNotificationPermission = ::requestNotificationPermission,
-          onOpenUnusedAppRestrictions = ::openUnusedAppRestrictionsSettings,
-        )
-      } else {
-        MealRelayMainScreen(
-          failedMealSubmissionsViewModel.state,
-          failedMealSubmissionsViewModel::retry,
-          { text -> mainViewModel.submitManualMeal(text) },
-          onOpenSettings = { isSettingsVisible = true },
-        )
-      }
-      if (settingsState.shouldShowUnusedAppRestrictionsGuide) {
-        AlertDialog(
-          onDismissRequest = settingsViewModel::dismissUnusedAppRestrictionsGuide,
-          title = { Text(stringResource(R.string.unused_app_restrictions_title)) },
-          text = { Text(stringResource(R.string.unused_app_restrictions_explanation)) },
-          confirmButton = {
-            TextButton(onClick = {
-              settingsViewModel.dismissUnusedAppRestrictionsGuide()
-              openUnusedAppRestrictionsSettings()
-            }) { Text(stringResource(R.string.unused_app_restrictions_open_settings)) }
-          },
-          dismissButton = {
-            TextButton(onClick = settingsViewModel::dismissUnusedAppRestrictionsGuide) {
-              Text(stringResource(R.string.unused_app_restrictions_later))
-            }
-          },
-        )
-      }
+      MealRelayMainContent(
+        failedMealSubmissionsState = failedMealSubmissionsViewModel.state,
+        authorizationState = mainViewModel.authorizationState,
+        settingsState = settingsViewModel.state,
+        onRetryFailedMeal = failedMealSubmissionsViewModel::retry,
+        onSubmitManualMeal = { text -> mainViewModel.submitManualMeal(text) },
+        onRequestPhotoPermission = ::requestSettingsPhotoPermission,
+        onRequestNotificationPermission = ::requestSettingsNotificationPermission,
+        onOpenApplicationSettings = ::openApplicationSettings,
+        onOpenUnusedAppRestrictionsSettings = ::openUnusedAppRestrictionsSettings,
+        onDismissUnusedAppRestrictionsGuide = settingsViewModel::dismissUnusedAppRestrictionsGuide,
+        onStartAuthorization = ::startAuthorization,
+      )
     }
-    if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-      requestPhotoPermission()
-    } else {
-      requestNotificationPermission()
-    }
+    mainViewModel.recoverPendingSubmissions()
+    initialSetupPermissionFlow.start(
+      hasNotificationPermission =
+        checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED,
+    )
   }
 
   override fun onResume() {
@@ -115,30 +86,60 @@ class MealRelayMainActivity : ComponentActivity() {
     settingsViewModel.refresh()
   }
 
-  private fun requestPhotoPermission() {
+  private fun requestInitialPhotoPermission() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      PhotoEnrollmentWorker.enqueue(this)
-      mainViewModel.requestAuthorization()
-      settingsViewModel.refresh()
+      onPhotoPermissionCheckCompleted()
+      settingsViewModel.completeInitialSetupPermissionChecks()
     } else {
-      requestPhotoPermissions.launch(
+      requestInitialPhotoPermissionsLauncher.launch(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
       )
     }
   }
 
-  private fun requestNotificationPermission() {
+  private fun requestSettingsPhotoPermission() {
+    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+      onPhotoPermissionCheckCompleted()
+      settingsViewModel.refresh()
+    } else {
+      requestSettingsPhotoPermissionsLauncher.launch(
+        arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+      )
+    }
+  }
+
+  private fun onPhotoPermissionCheckCompleted() {
+    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
+      PhotoEnrollmentWorker.enqueue(this)
+    }
+    mainViewModel.requestAuthorization()
+    settingsViewModel.refresh()
+  }
+
+  private fun requestSettingsNotificationPermission() {
     if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
       settingsViewModel.refresh()
-      requestPhotoPermission()
     } else {
-      requestNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      requestSettingsNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
+  }
+
+  private fun openApplicationSettings() {
+    val intent = Intent(
+      Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+      android.net.Uri.fromParts("package", packageName, null),
+    )
+    openApplicationSettingsLauncher.launch(intent)
   }
 
   private fun openUnusedAppRestrictionsSettings() {
     val intent = IntentCompat.createManageUnusedAppRestrictionsIntent(this, packageName)
-    openUnusedAppRestrictionsSettings.launch(intent)
+    openUnusedAppRestrictionsSettingsLauncher.launch(intent)
+  }
+
+  private fun startAuthorization() {
+    mainViewModel.consumeAuthorizationRequest()
+    startActivity(Intent(this, MealRelayAuthorizationActivity::class.java))
   }
 
 }
