@@ -18,7 +18,7 @@ class ImageMealSubmissionSender(
     readinessChecker.check(submission)
 
   override suspend fun send(submission: MealSubmissionEntity): MealSubmissionSendResult = try {
-    transport.submit(requestFactory.create(submission, imageSource.readAll(checkNotNull(submission.imageUri))))
+    transport.submit(requestFactory.create(submission, imageSource.readAll(checkNotNull(submission.imagePayload))))
     MealSubmissionSendResult.Succeeded
   } catch (error: CancellationException) {
     throw error

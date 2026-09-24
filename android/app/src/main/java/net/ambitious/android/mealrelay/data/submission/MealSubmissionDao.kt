@@ -13,11 +13,14 @@ interface MealSubmissionDao {
   @Query("SELECT * FROM meal_submission_queue WHERE meal_id = :mealId")
   fun get(mealId: String): MealSubmissionEntity?
 
-  @Query("SELECT * FROM meal_submission_queue WHERE type = :type AND state = :state ORDER BY created_at DESC LIMIT 1")
-  fun getLatestPendingImage(type: String, state: String): MealSubmissionEntity?
+  @Query("SELECT * FROM meal_submission_queue WHERE type = :type AND state = :state AND automatic_attempt_count = 0 ORDER BY created_at")
+  fun getPendingUnattemptedImages(type: String, state: String): List<MealSubmissionEntity>
 
-  @Query("UPDATE meal_submission_queue SET image_uri = :imageUris WHERE meal_id = :mealId AND state = :state")
-  fun updatePendingImageUris(mealId: String, imageUris: String, state: String): Int
+  @Query("UPDATE meal_submission_queue SET image_uri = :imagePayload, occurred_at = :occurredAt, next_automatic_attempt_at = :submissionAt WHERE meal_id = :mealId AND state = :state AND automatic_attempt_count = 0")
+  fun updatePendingImagePayload(mealId: String, imagePayload: String, occurredAt: String, submissionAt: Long, state: String): Int
+
+  @Query("UPDATE meal_submission_queue SET next_automatic_attempt_at = :submissionAt WHERE meal_id = :mealId AND state = :pendingState AND automatic_attempt_count = 0 AND next_automatic_attempt_at IS NULL")
+  fun restorePendingImageSubmissionTime(mealId: String, submissionAt: Long, pendingState: String): Int
 
   @Query("SELECT * FROM meal_submission_queue WHERE state = :state ORDER BY created_at")
   fun getWithState(state: String): List<MealSubmissionEntity>

@@ -3,8 +3,8 @@ package net.ambitious.android.mealrelay.submission.network
 import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
+import net.ambitious.android.mealrelay.submission.ImageMealSubmissionPayload
 import net.ambitious.android.mealrelay.submission.network.model.ImageMealSubmissionImage
-import org.json.JSONArray
 import javax.inject.Inject
 
 class ImageMealSubmissionImageSource @Inject constructor(
@@ -19,13 +19,6 @@ class ImageMealSubmissionImageSource @Inject constructor(
     return ImageMealSubmissionImage(bytes, mediaType)
   }
 
-  fun readAll(imageUris: String): List<ImageMealSubmissionImage> {
-    val uris = if (imageUris.startsWith("[")) {
-      val images = JSONArray(imageUris)
-      (0 until images.length()).map { images.getJSONObject(it).getString("uri") }
-    } else {
-      listOf(imageUris)
-    }
-    return uris.map(::read)
-  }
+  fun readAll(imagePayload: String): List<ImageMealSubmissionImage> =
+    ImageMealSubmissionPayload.decode(imagePayload).photos.map { read(it.uri) }
 }
