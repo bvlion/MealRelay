@@ -9,6 +9,17 @@ class MealSubmissionRepository @Inject constructor(private val dao: MealSubmissi
 
   fun get(mealId: String): MealSubmissionEntity? = dao.get(mealId)
 
+  fun latestPendingImage(): MealSubmissionEntity? = dao.getLatestPendingImage(
+    MealSubmissionEntity.TYPE_IMAGE,
+    MealSubmissionEntity.STATE_PENDING,
+  )
+
+  fun updatePendingImageUris(mealId: String, imageUris: String): Boolean = dao.updatePendingImageUris(
+    mealId,
+    imageUris,
+    MealSubmissionEntity.STATE_PENDING,
+  ) > 0
+
   fun failedSubmissions(): List<MealSubmissionEntity> = dao.getWithState(MealSubmissionEntity.STATE_FAILED)
 
   fun pendingSubmissions(): List<MealSubmissionEntity> = dao.getWithState(MealSubmissionEntity.STATE_PENDING)

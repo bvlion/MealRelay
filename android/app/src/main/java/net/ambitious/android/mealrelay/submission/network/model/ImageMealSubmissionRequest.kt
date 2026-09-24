@@ -1,7 +1,7 @@
 package net.ambitious.android.mealrelay.submission.network.model
 
 data class ImageMealSubmissionRequest(
-  val image: ImageMealSubmissionImage,
+  val images: List<ImageMealSubmissionImage>,
   val capturedAt: String,
   val mealId: String,
 )

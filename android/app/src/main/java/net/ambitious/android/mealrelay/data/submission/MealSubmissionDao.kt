@@ -13,6 +13,12 @@ interface MealSubmissionDao {
   @Query("SELECT * FROM meal_submission_queue WHERE meal_id = :mealId")
   fun get(mealId: String): MealSubmissionEntity?
 
+  @Query("SELECT * FROM meal_submission_queue WHERE type = :type AND state = :state ORDER BY created_at DESC LIMIT 1")
+  fun getLatestPendingImage(type: String, state: String): MealSubmissionEntity?
+
+  @Query("UPDATE meal_submission_queue SET image_uri = :imageUris WHERE meal_id = :mealId AND state = :state")
+  fun updatePendingImageUris(mealId: String, imageUris: String, state: String): Int
+
   @Query("SELECT * FROM meal_submission_queue WHERE state = :state ORDER BY created_at")
   fun getWithState(state: String): List<MealSubmissionEntity>
 

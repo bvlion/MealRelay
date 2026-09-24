@@ -301,6 +301,58 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
+  fun foodPhotosWithinFifteenMinutesShareOneQueuedMealAndTheFirstCaptureTime() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+    )
+    val firstCaptureAt = System.currentTimeMillis()
+    val firstMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/11"),
+      firstCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    )
+    val secondMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/12"),
+      firstCaptureAt + 14 * 60 * 1000L,
+      "version-1",
+      "2026-09-22T08:14:00.000+09:00",
+    )
+
+    assertEquals(firstMealId, secondMealId)
+    assertEquals(1, repository.pendingSubmissions().size)
+    assertEquals("2026-09-22T08:00:00.000+09:00", repository.get(requireNotNull(firstMealId))?.occurredAt)
+    assertEquals(2, org.json.JSONArray(repository.get(requireNotNull(firstMealId))?.imageUri).length())
+  }
+
+  @Test
+  fun foodPhotoAtFifteenMinuteBoundaryStartsAnotherMeal() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+    )
+    val firstCaptureAt = System.currentTimeMillis()
+    val firstMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/21"),
+      firstCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    )
+    val secondMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/22"),
+      firstCaptureAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS,
+      "version-1",
+      "2026-09-22T08:15:00.000+09:00",
+    )
+
+    assertEquals(false, firstMealId == secondMealId)
+    assertEquals(2, repository.pendingSubmissions().size)
+  }
+
+  @Test
   fun photoSubmissionUsesTheLocalOffsetForItsCaptureInstant() {
     val queue = MealSubmissionQueue(
       repository,

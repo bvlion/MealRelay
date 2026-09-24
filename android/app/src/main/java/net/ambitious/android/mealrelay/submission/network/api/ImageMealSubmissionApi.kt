@@ -12,7 +12,7 @@ internal interface ImageMealSubmissionApi {
   @POST
   suspend fun submit(
     @Url endpoint: String,
-    @Part image: MultipartBody.Part,
+    @Part images: List<MultipartBody.Part>,
     @Part("capturedAt") capturedAt: RequestBody,
     @Part("mealId") mealId: RequestBody,
   )

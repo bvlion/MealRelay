@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.ambitious.android.mealrelay.submission.network.model.ImageMealSubmissionImage
+import org.json.JSONArray
 import javax.inject.Inject
 
 class ImageMealSubmissionImageSource @Inject constructor(
@@ -16,5 +17,15 @@ class ImageMealSubmissionImageSource @Inject constructor(
       "Image URI cannot be opened"
     }.use { it.readBytes() }
     return ImageMealSubmissionImage(bytes, mediaType)
+  }
+
+  fun readAll(imageUris: String): List<ImageMealSubmissionImage> {
+    val uris = if (imageUris.startsWith("[")) {
+      val images = JSONArray(imageUris)
+      (0 until images.length()).map { images.getJSONObject(it).getString("uri") }
+    } else {
+      listOf(imageUris)
+    }
+    return uris.map(::read)
   }
 }

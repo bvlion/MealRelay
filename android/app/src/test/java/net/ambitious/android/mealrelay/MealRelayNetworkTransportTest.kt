@@ -94,7 +94,7 @@ class MealRelayNetworkTransportTest {
   }
 
   @Test
-  fun imageTransportSendsTheOriginalImageAndCaptureTimeToTheImageEndpoint() {
+  fun imageTransportSendsAllMealImagesAndCaptureTimeToTheImageEndpoint() {
     val certificate = HeldCertificate.Builder()
       .commonName("localhost")
       .addSubjectAlternativeName("localhost")
@@ -118,7 +118,10 @@ class MealRelayNetworkTransportTest {
       runBlocking {
         transport.submit(
           ImageMealSubmissionRequest(
-            image = ImageMealSubmissionImage(byteArrayOf(1, 2, 3), "image/webp"),
+            images = listOf(
+              ImageMealSubmissionImage(byteArrayOf(1, 2, 3), "image/webp"),
+              ImageMealSubmissionImage(byteArrayOf(4, 5, 6), "image/png"),
+            ),
             capturedAt = "2026-09-22T08:00:00Z",
             mealId = "meal-1",
           ),
@@ -129,13 +132,16 @@ class MealRelayNetworkTransportTest {
         assertEquals("/image", request.path)
         assertEquals("Bearer device-token", request.getHeader("Authorization"))
         val body = request.body.readUtf8()
-        assertEquals(true, body.contains("name=\"image\"; filename=\"image\""))
+        assertEquals(true, body.contains("name=\"image\"; filename=\"image-0\""))
+        assertEquals(true, body.contains("name=\"image\"; filename=\"image-1\""))
         assertEquals(true, body.contains("Content-Type: image/webp"))
+        assertEquals(true, body.contains("Content-Type: image/png"))
         assertEquals(true, body.contains("name=\"capturedAt\""))
         assertEquals(true, body.contains("2026-09-22T08:00:00Z"))
         assertEquals(true, body.contains("name=\"mealId\""))
         assertEquals(true, body.contains("meal-1"))
         assertEquals(true, body.contains("\u0001\u0002\u0003"))
+        assertEquals(true, body.contains("\u0004\u0005\u0006"))
       }
     }
   }
