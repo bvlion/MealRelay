@@ -65,7 +65,7 @@ class AutomaticMealSubmissionTest {
       submission.submit("meal-1"),
     )
     now += AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS
-    assertEquals(AutomaticMealSubmissionResult.Failed, submission.submit("meal-1"))
+    assertEquals(AutomaticMealSubmissionResult.Failed(true), submission.submit("meal-1"))
     assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
     assertEquals(3, repository.get("meal-1")?.automaticAttemptCount)
     assertEquals(0, repository.get("meal-2")?.automaticAttemptCount)
@@ -98,7 +98,7 @@ class AutomaticMealSubmissionTest {
       SubmissionClock { now },
     )
 
-    assertEquals(AutomaticMealSubmissionResult.Failed, submission.submit("meal-1"))
+    assertEquals(AutomaticMealSubmissionResult.Failed(true), submission.submit("meal-1"))
     assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)
     assertEquals(1, repository.get("meal-1")?.automaticAttemptCount)
   }
@@ -132,7 +132,7 @@ class AutomaticMealSubmissionTest {
       SubmissionClock { now },
     )
 
-    assertEquals(AutomaticMealSubmissionResult.Failed, automaticSubmission.submit("meal-1"))
+    assertEquals(AutomaticMealSubmissionResult.Failed(false), automaticSubmission.submit("meal-1"))
     assertEquals(false, repository.get("meal-1")?.isManualRetryAvailable)
     assertEquals(
       ManualMealSubmissionResult.NotRetryable,
@@ -192,7 +192,7 @@ class AutomaticMealSubmissionTest {
       resumed.submit("meal-1"),
     )
     now += AutomaticMealSubmissionProcessor.SECOND_RETRY_DELAY_MILLIS
-    assertEquals(AutomaticMealSubmissionResult.Failed, resumed.submit("meal-1"))
+    assertEquals(AutomaticMealSubmissionResult.Failed(true), resumed.submit("meal-1"))
     assertEquals(2, sender.submissions.size)
     assertEquals(3, repository.get("meal-1")?.automaticAttemptCount)
   }
@@ -206,7 +206,7 @@ class AutomaticMealSubmissionTest {
     )
 
     assertEquals(
-      AutomaticMealSubmissionResult.Failed,
+      AutomaticMealSubmissionResult.Failed(true),
       AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now }).submit("meal-1"),
     )
     assertEquals(0, repository.get("meal-1")?.automaticAttemptCount)
@@ -223,7 +223,7 @@ class AutomaticMealSubmissionTest {
     val sender = FakeSender()
 
     assertEquals(
-      AutomaticMealSubmissionResult.Failed,
+      AutomaticMealSubmissionResult.Failed(true),
       AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now }).submit("meal-1"),
     )
     assertEquals(MealSubmissionEntity.STATE_FAILED, repository.get("meal-1")?.state)

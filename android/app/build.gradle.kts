@@ -4,6 +4,7 @@ plugins {
   alias(libs.plugins.room)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.hilt)
+  alias(libs.plugins.google.services)
 }
 
 room {
@@ -58,12 +59,22 @@ android {
       "MEAL_RELAY_IMAGE_ENDPOINT",
       "\"$mealRelayImageEndpoint\"",
     )
+    val mealRelayFirebaseInstallationEndpoint = requireNotNull(
+      providers.gradleProperty("mealRelayFirebaseInstallationEndpoint").orNull?.takeIf(String::isNotBlank),
+    ) { "mealRelayFirebaseInstallationEndpoint must be set" }
+    buildConfigField(
+      "String",
+      "MEAL_RELAY_FIREBASE_INSTALLATION_ENDPOINT",
+      "\"$mealRelayFirebaseInstallationEndpoint\"",
+    )
   }
 
   testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
+  implementation(platform(libs.firebase.bom))
+  implementation(libs.firebase.messaging)
   implementation(libs.litert)
   implementation(libs.work.runtime)
   implementation(libs.work.runtime.ktx)
@@ -71,6 +82,7 @@ dependencies {
   implementation(libs.play.services.auth)
   implementation(libs.activity.ktx)
   implementation(libs.activity.compose)
+  implementation(libs.androidx.core)
   implementation(libs.lifecycle.runtime.ktx)
   implementation(libs.lifecycle.viewmodel.compose)
   implementation(platform(libs.compose.bom))

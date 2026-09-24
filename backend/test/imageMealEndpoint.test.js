@@ -63,8 +63,8 @@ function mealAnalysis(foodDisplayName = 'ご飯 約150g、焼き鮭 約80g') {
   };
 }
 
-function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = ['success'] } = {}) {
-  const calls = { analysis: [], googleHealth: [], tokenLookups: [] };
+function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = ['success'], notificationFailure } = {}) {
+  const calls = { analysis: [], googleHealth: [], tokenLookups: [], notifications: [] };
   const meals = new Map();
   const reservations = new Map();
   const mealKey = (userId, mealId) => `${userId}:${mealId}`;
@@ -139,6 +139,12 @@ function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = 
           return [{ promise: async () => [{ name: request.dataPoint.name }] }];
         },
       },
+      mealNotifier: {
+        notifyRegistration: async (record) => {
+          calls.notifications.push(record);
+          if (notificationFailure) throw notificationFailure;
+        },
+      },
     },
   };
 }
@@ -154,6 +160,29 @@ test('an unauthenticated image is not sent to OpenAI', async () => {
   assert.equal(response.statusCode, 401);
   assert.equal(fixture.calls.analysis.length, 0);
   assert.equal(fixture.calls.googleHealth.length, 0);
+});
+
+test('image registration requires the production meal notifier dependency', async () => {
+  const response = responseFixture();
+  const fixture = endpointFixture();
+  const { mealNotifier, ...dependencies } = fixture.dependencies;
+
+  await handleImageMealRequest({ request: multipartRequest(), response, ...dependencies });
+
+  assert.equal(response.statusCode, 500);
+  assert.equal(fixture.calls.analysis.length, 0);
+  assert.equal(fixture.calls.googleHealth.length, 0);
+});
+
+test('notification delivery failure does not fail a registered image meal', async () => {
+  const response = responseFixture();
+  const fixture = endpointFixture({ notificationFailure: new Error('FCM unavailable') });
+
+  await handleImageMealRequest({ request: multipartRequest(), response, ...fixture.dependencies });
+
+  assert.equal(response.statusCode, 201);
+  assert.equal(fixture.meal().status, 'registered');
+  assert.equal(fixture.calls.notifications.length, 1);
 });
 
 test('an invalid capture time is rejected before the image is sent to OpenAI', async () => {
@@ -179,6 +208,8 @@ test('an initial image is analyzed by GPT-5.6 Luna and registered through the sh
   assert.equal(fixture.calls.analysis[0].model, 'gpt-5.6-luna');
   assert.deepEqual(fixture.calls.tokenLookups, ['token-1']);
   assert.equal(response.body.record.eatenAt, '2026-09-21T03:30:00.000Z');
+  assert.equal(fixture.calls.notifications.length, 1);
+  assert.equal(fixture.calls.notifications[0], response.body.record);
   assert.deepEqual(response.body.record.nutrition.energyKcal, {
     estimated: { value: 450, origin: 'imageAnalysis' },
     confirmed: { value: 430, origin: 'packageLabel' },
@@ -220,6 +251,7 @@ test('a pending retry reuses the first analysis even when a later model output w
   assert.equal(fixture.calls.analysis.length, 1);
   assert.equal(fixture.meal().record.foodDisplayName, '初回の食事 約1人前');
   assert.equal(fixture.calls.googleHealth.length, 2);
+  assert.equal(fixture.calls.notifications.length, 1);
 });
 
 test('an image validation failure releases the reservation before a retry', async () => {
@@ -253,4 +285,5 @@ test('a registered retry does not invoke OpenAI again', async () => {
   assert.equal(retryResponse.statusCode, 200);
   assert.equal(fixture.calls.analysis.length, 1);
   assert.equal(fixture.calls.googleHealth.length, 1);
+  assert.equal(fixture.calls.notifications.length, 1);
 });

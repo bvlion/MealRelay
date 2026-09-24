@@ -3,18 +3,26 @@
 const functions = require('@google-cloud/functions-framework');
 const { Firestore } = require('@google-cloud/firestore');
 const OpenAI = require('openai');
+const { initializeApp } = require('firebase-admin/app');
+const { getMessaging } = require('firebase-admin/messaging');
 const { completeAuthorization } = require('./src/auth');
 const { loadAuthenticationConfig } = require('./src/config');
 const { AuthenticationError } = require('./src/errors');
 const { FirestoreAuthRepository } = require('./src/firestoreAuthRepository');
+const { FirebaseInstallationRepository } = require('./src/firebaseInstallationRepository');
+const { FirebaseMealNotifier } = require('./src/firebaseMealNotifier');
+const { handleFirebaseInstallationRequest } = require('./src/firebaseInstallationEndpoint');
 const { FirestoreMealRepository } = require('./src/firestoreMealRepository');
 const { createGoogleAuthorizationService } = require('./src/googleOAuth');
 const { handleImageMealRequest } = require('./src/imageMealEndpoint');
 const { handleTextMealRequest } = require('./src/textMealEndpoint');
 
 const firestore = new Firestore();
+initializeApp();
 const repository = new FirestoreAuthRepository(firestore);
 const mealRepository = new FirestoreMealRepository(firestore);
+const installationRepository = new FirebaseInstallationRepository(firestore);
+const mealNotifier = new FirebaseMealNotifier({ installationRepository, messaging: getMessaging() });
 
 functions.http('authExchange', async (request, response) => {
   response.set('Cache-Control', 'no-store');
@@ -62,6 +70,16 @@ functions.http('imageMeal', async (request, response) => {
     mealRepository,
     clientId,
     clientSecret,
+    mealNotifier,
+  });
+});
+
+functions.http('firebaseInstallation', async (request, response) => {
+  await handleFirebaseInstallationRequest({
+    request,
+    response,
+    authRepository: repository,
+    installationRepository,
   });
 });
 

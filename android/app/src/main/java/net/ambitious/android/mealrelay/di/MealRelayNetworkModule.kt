@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import net.ambitious.android.mealrelay.MealRelayTokenStore
 import net.ambitious.android.mealrelay.BuildConfig
 import net.ambitious.android.mealrelay.authorization.network.MealRelayAuthorizationTransport
+import net.ambitious.android.mealrelay.notification.network.FirebaseInstallationTransport
 import net.ambitious.android.mealrelay.submission.MealSubmissionSender
 import net.ambitious.android.mealrelay.submission.MealSubmissionSenderRouter
 import net.ambitious.android.mealrelay.submission.network.ImageMealSubmissionFailureClassifier
@@ -25,6 +26,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object MealRelayNetworkModule {
+  @Provides
+  @Singleton
+  fun provideFirebaseInstallationTransport(): FirebaseInstallationTransport =
+    FirebaseInstallationTransport(BuildConfig.MEAL_RELAY_FIREBASE_INSTALLATION_ENDPOINT)
+
   @Provides
   @Singleton
   fun provideAuthorizationTransport(): MealRelayAuthorizationTransport =

@@ -21,8 +21,8 @@ class MealSubmissionWorker @AssistedInject constructor(
     return when (val result = automaticMealSubmissionProcessor.submit(mealId)) {
       AutomaticMealSubmissionResult.Completed -> Result.success()
       AutomaticMealSubmissionResult.AwaitingAuthorization -> Result.success()
-      AutomaticMealSubmissionResult.Failed -> {
-        mealSubmissionFailureNotifier.notifyFailure()
+      is AutomaticMealSubmissionResult.Failed -> {
+        mealSubmissionFailureNotifier.notifyFailure(result.isManualRetryAvailable)
         Result.success()
       }
       is AutomaticMealSubmissionResult.RetryAt -> {

@@ -4,14 +4,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.ambitious.android.mealrelay.authorization.model.AuthorizationCode
 import net.ambitious.android.mealrelay.authorization.network.MealRelayAuthorizationTransport
+import net.ambitious.android.mealrelay.notification.FirebaseMessagingRegistration
 import javax.inject.Inject
 
 class MealRelayAuthorizationRepository @Inject constructor(
   private val authorizationTransport: MealRelayAuthorizationTransport,
   private val tokenStore: MealRelayTokenStore,
+  private val firebaseMessagingRegistration: FirebaseMessagingRegistration,
 ) {
   suspend fun complete(authorizationCode: String) = withContext(Dispatchers.IO) {
     val result = authorizationTransport.exchange(AuthorizationCode(authorizationCode))
     tokenStore.write(result.token)
+    firebaseMessagingRegistration.register()
   }
 }

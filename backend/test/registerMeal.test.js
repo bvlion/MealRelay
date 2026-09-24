@@ -112,6 +112,7 @@ test('registration uses token owner credentials and remains idempotent on retry'
   assert.equal(first.isAlreadyRegistered, false);
   assert.equal(second.isAlreadyRegistered, true);
   assert.equal(calls.create.length, 1);
+  assert.equal(savedMeal(documents).status, 'registered');
   assert.deepEqual(calls.credentials, [{ refresh_token: 'refresh-1' }]);
   assert.equal(first.record.userId, 'user1');
   assert.equal(documents.size, 1);

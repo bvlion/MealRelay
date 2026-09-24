@@ -14,7 +14,7 @@ import net.ambitious.android.mealrelay.R
 import javax.inject.Inject
 
 class MealSubmissionFailureNotifier @Inject constructor(@ApplicationContext private val context: Context) {
-  fun notifyFailure() {
+  fun notifyFailure(isManualRetryAvailable: Boolean) {
     if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return
     val notificationManager = context.getSystemService(NotificationManager::class.java)
     notificationManager.createNotificationChannel(NotificationChannel(
@@ -33,7 +33,10 @@ class MealSubmissionFailureNotifier @Inject constructor(@ApplicationContext priv
       Notification.Builder(context, CHANNEL_ID)
         .setSmallIcon(android.R.drawable.stat_sys_warning)
         .setContentTitle(context.getString(R.string.meal_submission_failure_title))
-        .setContentText(context.getString(R.string.meal_submission_failure_text))
+        .setContentText(context.getString(
+          if (isManualRetryAvailable) R.string.meal_submission_failure_retry_available
+          else R.string.meal_submission_failure_retry_unavailable,
+        ))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
         .build(),
