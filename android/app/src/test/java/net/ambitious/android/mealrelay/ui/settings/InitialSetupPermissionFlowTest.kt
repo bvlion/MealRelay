@@ -8,9 +8,11 @@ class InitialSetupPermissionFlowTest {
   fun notificationCheckContinuesToPhotoAccessAfterPermissionRequestCompletes() {
     var notificationRequests = 0
     var photoAccessRequests = 0
+    var photoAccessCompletions = 0
     val flow = InitialSetupPermissionFlow(
       requestNotificationPermission = { notificationRequests++ },
       requestPhotoAccess = { photoAccessRequests++ },
+      onPhotoAccessCheckCompleted = { photoAccessCompletions++ },
     )
 
     flow.start(shouldRequestNotificationPermission = true)
@@ -19,6 +21,9 @@ class InitialSetupPermissionFlowTest {
 
     flow.onNotificationPermissionRequestCompleted()
     assertEquals(1, photoAccessRequests)
+
+    flow.onPhotoAccessRequestCompleted()
+    assertEquals(1, photoAccessCompletions)
   }
 
   @Test
@@ -28,6 +33,7 @@ class InitialSetupPermissionFlowTest {
     val flow = InitialSetupPermissionFlow(
       requestNotificationPermission = { notificationRequests++ },
       requestPhotoAccess = { photoAccessRequests++ },
+      onPhotoAccessCheckCompleted = {},
     )
 
     flow.start(shouldRequestNotificationPermission = false)

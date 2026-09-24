@@ -30,8 +30,7 @@ class MealRelayMainActivity : ComponentActivity() {
   private val requestInitialPhotoPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions(),
   ) {
-    onPhotoPermissionCheckCompleted()
-    settingsViewModel.completeInitialSetupPermissionChecks()
+    initialSetupPermissionFlow.onPhotoAccessRequestCompleted()
   }
   private val requestSettingsNotificationPermissionLauncher = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
@@ -54,6 +53,7 @@ class MealRelayMainActivity : ComponentActivity() {
         requestInitialNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
       },
       requestPhotoAccess = ::requestInitialPhotoPermission,
+      onPhotoAccessCheckCompleted = ::onPhotoPermissionCheckCompleted,
     )
   }
   private val settingsPhotoAccessFlow: SettingsPhotoAccessFlow by lazy {
@@ -95,7 +95,7 @@ class MealRelayMainActivity : ComponentActivity() {
 
   private fun requestInitialPhotoPermission() {
     if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      onPhotoPermissionCheckCompleted()
+      initialSetupPermissionFlow.onPhotoAccessRequestCompleted()
     } else {
       requestInitialPhotoPermissionsLauncher.launch(
         arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),

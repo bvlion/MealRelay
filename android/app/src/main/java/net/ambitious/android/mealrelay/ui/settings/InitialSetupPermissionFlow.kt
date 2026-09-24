@@ -3,6 +3,7 @@ package net.ambitious.android.mealrelay.ui.settings
 class InitialSetupPermissionFlow(
   private val requestNotificationPermission: () -> Unit,
   private val requestPhotoAccess: () -> Unit,
+  private val onPhotoAccessCheckCompleted: () -> Unit,
 ) {
   fun start(shouldRequestNotificationPermission: Boolean) {
     if (shouldRequestNotificationPermission) {
@@ -14,5 +15,9 @@ class InitialSetupPermissionFlow(
 
   fun onNotificationPermissionRequestCompleted() {
     requestPhotoAccess()
+  }
+
+  fun onPhotoAccessRequestCompleted() {
+    onPhotoAccessCheckCompleted()
   }
 }
