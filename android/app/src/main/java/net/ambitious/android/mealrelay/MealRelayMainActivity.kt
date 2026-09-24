@@ -2,7 +2,6 @@ package net.ambitious.android.mealrelay
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -12,54 +11,51 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.IntentCompat
 import dagger.hilt.android.AndroidEntryPoint
+import net.ambitious.android.mealrelay.setup.InitialSetupActions
+import net.ambitious.android.mealrelay.setup.MealRelaySetupCoordinator
 import net.ambitious.android.mealrelay.ui.FailedMealSubmissionsViewModel
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainContent
 import net.ambitious.android.mealrelay.ui.main.MealRelayMainViewModel
-import net.ambitious.android.mealrelay.ui.settings.InitialSetupPermissionFlow
 import net.ambitious.android.mealrelay.ui.settings.MealRelaySettingsViewModel
-import net.ambitious.android.mealrelay.ui.settings.SettingsPhotoAccessFlow
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MealRelayMainActivity : ComponentActivity() {
+  @Inject lateinit var setupCoordinator: MealRelaySetupCoordinator
   private val failedMealSubmissionsViewModel by viewModels<FailedMealSubmissionsViewModel>()
   private val mainViewModel by viewModels<MealRelayMainViewModel>()
   private val settingsViewModel by viewModels<MealRelaySettingsViewModel>()
   private val requestInitialNotificationPermissionLauncher: ActivityResultLauncher<String> = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
-  ) { initialSetupPermissionFlow.onNotificationPermissionRequestCompleted() }
+  ) { setupCoordinator.onInitialNotificationPermissionRequestCompleted(initialSetupActions) }
   private val requestInitialPhotoPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions(),
-  ) {
-    initialSetupPermissionFlow.onPhotoAccessRequestCompleted()
-  }
+  ) { setupCoordinator.onInitialPhotoPermissionRequestCompleted(initialSetupActions) }
   private val requestSettingsNotificationPermissionLauncher = registerForActivityResult(
     ActivityResultContracts.RequestPermission(),
   ) { settingsViewModel.refresh() }
   private val requestSettingsPhotoPermissionsLauncher = registerForActivityResult(
     ActivityResultContracts.RequestMultiplePermissions(),
-  ) { refreshSettingsPhotoAccess() }
+  ) { setupCoordinator.onSettingsPhotoAccessChanged(settingsViewModel::refresh) }
   private val openUnusedAppRestrictionsSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
   ) { settingsViewModel.refresh() }
   private val openPhotoApplicationSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
-  ) { refreshSettingsPhotoAccess() }
+  ) { setupCoordinator.onSettingsPhotoAccessChanged(settingsViewModel::refresh) }
   private val openNotificationApplicationSettingsLauncher = registerForActivityResult(
     ActivityResultContracts.StartActivityForResult(),
   ) { settingsViewModel.refresh() }
-  private val initialSetupPermissionFlow: InitialSetupPermissionFlow by lazy {
-    InitialSetupPermissionFlow(
-      requestNotificationPermission = {
-        requestInitialNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+  private val initialSetupActions: InitialSetupActions by lazy {
+    InitialSetupActions(
+      requestNotificationPermission = { requestInitialNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) },
+      requestPhotoPermission = {
+        requestInitialPhotoPermissionsLauncher.launch(
+          arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+        )
       },
-      requestPhotoAccess = ::requestInitialPhotoPermission,
-      onPhotoAccessCheckCompleted = ::onPhotoPermissionCheckCompleted,
-    )
-  }
-  private val settingsPhotoAccessFlow: SettingsPhotoAccessFlow by lazy {
-    SettingsPhotoAccessFlow(
-      enqueuePhotoEnrollment = { PhotoEnrollmentWorker.enqueue(this) },
-      refreshSettings = settingsViewModel::refresh,
+      requestAuthorization = mainViewModel::requestAuthorization,
+      completePermissionChecks = settingsViewModel::completeInitialSetupPermissionChecks,
     )
   }
 
@@ -82,9 +78,7 @@ class MealRelayMainActivity : ComponentActivity() {
       )
     }
     mainViewModel.recoverPendingSubmissions()
-    initialSetupPermissionFlow.start(
-      shouldRequestNotificationPermission = settingsViewModel.beginInitialNotificationPermissionCheck(),
-    )
+    setupCoordinator.startInitialSetup(initialSetupActions)
   }
 
   override fun onResume() {
@@ -93,46 +87,24 @@ class MealRelayMainActivity : ComponentActivity() {
     settingsViewModel.refresh()
   }
 
-  private fun requestInitialPhotoPermission() {
-    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      initialSetupPermissionFlow.onPhotoAccessRequestCompleted()
-    } else {
-      requestInitialPhotoPermissionsLauncher.launch(
-        arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
-      )
-    }
-  }
-
   private fun requestSettingsPhotoPermission() {
-    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      refreshSettingsPhotoAccess()
-    } else {
-      requestSettingsPhotoPermissionsLauncher.launch(
-        arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
-      )
-    }
-  }
-
-  private fun onPhotoPermissionCheckCompleted() {
-    if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED) {
-      PhotoEnrollmentWorker.enqueue(this)
-    }
-    mainViewModel.requestAuthorization()
-    settingsViewModel.completeInitialSetupPermissionChecks()
+    setupCoordinator.requestSettingsPhotoPermission(
+      requestPhotoPermission = {
+        requestSettingsPhotoPermissionsLauncher.launch(
+          arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED),
+        )
+      },
+      refreshSettings = settingsViewModel::refresh,
+    )
   }
 
   private fun requestSettingsNotificationPermission() {
-    if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-      settingsViewModel.refresh()
-    } else {
-      requestSettingsNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-    }
-  }
-
-  private fun refreshSettingsPhotoAccess() {
-    val hasFullPhotoAccess = checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) ==
-      PackageManager.PERMISSION_GRANTED
-    settingsPhotoAccessFlow.onSettingsReturned(hasFullPhotoAccess)
+    setupCoordinator.requestSettingsNotificationPermission(
+      requestNotificationPermission = {
+        requestSettingsNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      },
+      refreshSettings = settingsViewModel::refresh,
+    )
   }
 
   private fun openPhotoApplicationSettings() {

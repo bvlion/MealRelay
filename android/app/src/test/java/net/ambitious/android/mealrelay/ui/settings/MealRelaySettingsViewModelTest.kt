@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
-import net.ambitious.android.mealrelay.data.settings.MealRelaySetupPreferences
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -21,8 +20,7 @@ class MealRelaySettingsViewModelTest {
 
   private fun createViewModel(context: Context, statusProvider: FakeUnusedAppRestrictionsStatusProvider):
     MealRelaySettingsViewModel {
-    application.getSharedPreferences("mealrelay_setup", Context.MODE_PRIVATE).edit().clear().commit()
-    return MealRelaySettingsViewModel(context, statusProvider, MealRelaySetupPreferences(application))
+    return MealRelaySettingsViewModel(context, statusProvider)
   }
 
   @Test
@@ -95,37 +93,7 @@ class MealRelaySettingsViewModelTest {
     assertTrue(viewModel.state.value.shouldShowUnusedAppRestrictionsGuide)
   }
 
-  @Test
-  fun declinedOptionalNotificationIsNotRequestedAgainAfterRestart() {
-    val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = false)
-    val firstViewModel = createViewModel(context, FakeUnusedAppRestrictionsStatusProvider())
 
-    assertTrue(firstViewModel.beginInitialNotificationPermissionCheck())
-
-    val restartedViewModel = MealRelaySettingsViewModel(
-      context,
-      FakeUnusedAppRestrictionsStatusProvider(),
-      MealRelaySetupPreferences(application),
-    )
-
-    assertFalse(restartedViewModel.beginInitialNotificationPermissionCheck())
-  }
-
-  @Test
-  fun alreadyGrantedNotificationIsNotRequestedAgainAfterRestart() {
-    val context = SettingsPermissionContext(application, hasPhotoAccess = false, hasNotificationPermission = true)
-    val firstViewModel = createViewModel(context, FakeUnusedAppRestrictionsStatusProvider())
-
-    assertFalse(firstViewModel.beginInitialNotificationPermissionCheck())
-
-    val restartedViewModel = MealRelaySettingsViewModel(
-      context,
-      FakeUnusedAppRestrictionsStatusProvider(),
-      MealRelaySetupPreferences(application),
-    )
-
-    assertFalse(restartedViewModel.beginInitialNotificationPermissionCheck())
-  }
 }
 
 private class SettingsPermissionContext(

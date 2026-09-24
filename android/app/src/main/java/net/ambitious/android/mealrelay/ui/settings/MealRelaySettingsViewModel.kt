@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import net.ambitious.android.mealrelay.data.settings.MealRelaySetupPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +25,6 @@ data class MealRelaySettingsState(
 class MealRelaySettingsViewModel @Inject constructor(
   @param:ApplicationContext private val context: Context,
   private val unusedAppRestrictionsStatusProvider: UnusedAppRestrictionsStatusProvider,
-  private val setupPreferences: MealRelaySetupPreferences,
 ) : ViewModel() {
   private val mutableState = MutableStateFlow(MealRelaySettingsState())
   val state: StateFlow<MealRelaySettingsState> = mutableState.asStateFlow()
@@ -59,12 +57,6 @@ class MealRelaySettingsViewModel @Inject constructor(
   fun completeInitialSetupPermissionChecks() {
     hasCompletedInitialPermissionChecks = true
     refresh()
-  }
-
-  fun beginInitialNotificationPermissionCheck(): Boolean {
-    if (setupPreferences.hasRequestedInitialNotificationPermission()) return false
-    setupPreferences.markInitialNotificationPermissionRequested()
-    return context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
   }
 
   fun dismissUnusedAppRestrictionsGuide() {
