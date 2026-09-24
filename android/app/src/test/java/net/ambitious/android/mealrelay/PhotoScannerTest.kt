@@ -101,10 +101,14 @@ class PhotoScannerTest {
       dao.insertResult(PhotoResultEntity("version-1", reusedUri, 1000, false))
       val classifiedIds = mutableListOf<Long>()
       var isStopped = false
+      var shouldInterruptOnce = true
       val classify: (Uri) -> Boolean = { uri ->
         val id = ContentUris.parseId(uri)
         classifiedIds.add(id)
-        if (id == 7L) isStopped = true
+        if (id == 7L && shouldInterruptOnce) {
+          shouldInterruptOnce = false
+          isStopped = true
+        }
         true
       }
       val scanner = scanner(application, dao) { classify }
@@ -114,7 +118,7 @@ class PhotoScannerTest {
       assertEquals(5L, dao.getScanState()?.generation)
       isStopped = false
       assertTrue(scanner.scan { isStopped })
-      assertEquals(listOf(7L, 9L), classifiedIds)
+      assertEquals(listOf(7L, 7L, 9L), classifiedIds)
       assertEquals("version-2", dao.getScanState()?.version)
       assertEquals(3L, dao.getScanState()?.generation)
       val results = dao.getResults()
@@ -133,7 +137,7 @@ class PhotoScannerTest {
         Photo(10, 4, 900),
       )
       assertTrue(scanner.scan { false })
-      assertEquals(listOf(7L, 9L, 10L), classifiedIds)
+      assertEquals(listOf(7L, 7L, 9L, 10L), classifiedIds)
       assertFalse(dao.getResults().any { it.uri.endsWith("/8") })
     } finally {
       database.close()
@@ -372,6 +376,58 @@ class PhotoScannerTest {
       provider.version = "version-2"
       assertTrue(scanner.scan { false })
       assertEquals(1, submissionBatches.size)
+    } finally {
+      database.close()
+    }
+  }
+
+  @Test
+  fun interruptedScanKeepsFoodPhotosOutOfTheQueueUntilTheRescanCompletes() {
+    val application = RuntimeEnvironment.getApplication() as Application
+    Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
+    val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
+    provider.generation = 2
+    val firstCaptureAt = System.currentTimeMillis() - 60 * 60 * 1000L
+    provider.photos = listOf(
+      Photo(1, 1, firstCaptureAt),
+      Photo(2, 2, firstCaptureAt + 5 * 60 * 1000L),
+    )
+    val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
+      .allowMainThreadQueries().build()
+    try {
+      val dao = database.photoProcessingDao()
+      dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
+      val classifiedIds = mutableListOf<Long>()
+      val submissionBatches = mutableListOf<List<PhotoResultEntity>>()
+      var isStopped = false
+      val scanner = PhotoScanner(
+        application,
+        dao,
+        submitFoodPhotos = { photos ->
+          submissionBatches.add(photos)
+          photos.forEach(dao::insertResult)
+        },
+        createClassifier = { { uri ->
+          val photoId = ContentUris.parseId(uri)
+          classifiedIds.add(photoId)
+          isStopped = true
+          true
+        } },
+      )
+
+      assertFalse(scanner.scan { isStopped })
+      assertEquals(emptyList<List<PhotoResultEntity>>(), submissionBatches)
+      assertTrue(dao.getResults().isEmpty())
+      assertEquals(0L, dao.getScanState()?.generation)
+
+      isStopped = false
+      assertTrue(scanner.scan { false })
+      assertEquals(listOf(1L, 1L, 2L), classifiedIds)
+      assertEquals(1, submissionBatches.size)
+      assertEquals(listOf(firstCaptureAt, firstCaptureAt + 5 * 60 * 1000L),
+        submissionBatches.single().map { it.capturedAt })
+      assertEquals(2, dao.getResults().size)
+      assertEquals(2L, dao.getScanState()?.generation)
     } finally {
       database.close()
     }

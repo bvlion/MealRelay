@@ -99,12 +99,12 @@ class PhotoScanner(
         }
       }
     }
-    if (foodPhotos.isNotEmpty()) submitFoodPhotos(foodPhotos)
     if (isInterrupted || shouldStop() ||
       MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY) != currentVersion
     ) {
       return false
     }
+    if (foodPhotos.isNotEmpty()) submitFoodPhotos(foodPhotos)
     photoProcessingDao.updateScanState(scanState.copy(
       version = currentVersion,
       generation = scanGeneration,
