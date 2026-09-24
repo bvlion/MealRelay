@@ -30,59 +30,85 @@ class MealSubmissionQueue @Inject constructor(
   }
 
   fun enqueueFoodPhoto(uri: Uri, capturedAt: Long, version: String, occurredAt: String): String? {
-    val imageUri = uri.toString()
-    var mealId: String? = null
-    var runAt = 0L
+    return enqueueFoodPhotos(listOf(FoodPhotoSubmissionDraft(
+      imageUri = uri.toString(),
+      capturedAt = capturedAt,
+      version = version,
+      occurredAt = occurredAt,
+    ))).firstOrNull()
+  }
+
+  fun enqueueFoodPhotos(photos: List<FoodPhotoSubmissionDraft>): List<String> {
+    if (photos.isEmpty()) return emptyList()
+    val mealIds = linkedSetOf<String>()
     val removedMealIds = mutableListOf<String>()
     database.runInTransaction {
-      if (database.photoProcessingDao().hasFoodResult(imageUri, capturedAt)) return@runInTransaction
-      val pendingSubmissions = repository.pendingUnattemptedImageSubmissions()
-      val photo = ImageMealSubmissionPayload.Photo(imageUri, capturedAt)
-      val group = foodPhotoMealGrouping.group(pendingSubmissions, photo)
-        .first { photo in it.photos }
-      val photos = group.photos.sortedBy { checkNotNull(it.capturedAt) }
-      val firstPhoto = photos.first()
-      val firstPhotoSubmission = group.submissions.firstOrNull { submission ->
-        ImageMealSubmissionPayload.decode(checkNotNull(submission.imagePayload)).photos.contains(firstPhoto)
+      photos.sortedBy { it.capturedAt }.forEach { photo ->
+        enqueueFoodPhoto(photo, mealIds, removedMealIds)
       }
-      val canonicalSubmission = firstPhotoSubmission ?: group.submissions.minByOrNull { it.createdAt }
-      val groupRunAt = checkNotNull(photos.last().capturedAt) + FOOD_MEAL_WINDOW_MILLIS
-      val payload = ImageMealSubmissionPayload(photos).encode()
-      val firstOccurredAt = firstPhotoSubmission?.occurredAt ?: occurredAt
-
-      if (canonicalSubmission == null) {
-        val latestCreatedAt = pendingSubmissions.maxOfOrNull { it.createdAt } ?: 0L
-        val createdAt = maxOf(System.currentTimeMillis(), latestCreatedAt + 1)
-        val submissionMealId = UUID.randomUUID().toString()
-        repository.insert(MealSubmissionEntity(
-          mealId = submissionMealId,
-          type = MealSubmissionEntity.TYPE_IMAGE,
-          imagePayload = payload,
-          text = null,
-          occurredAt = firstOccurredAt,
-          nextAutomaticAttemptAt = groupRunAt,
-          createdAt = createdAt,
-        ))
-        mealId = submissionMealId
-      } else {
-        check(repository.updatePendingImagePayload(
-          canonicalSubmission.mealId,
-          payload,
-          firstOccurredAt,
-          groupRunAt,
-        ))
-        group.submissions.filter { it.mealId != canonicalSubmission.mealId }.forEach { submission ->
-          repository.delete(submission.mealId)
-          removedMealIds.add(submission.mealId)
-        }
-        mealId = canonicalSubmission.mealId
-      }
-      runAt = groupRunAt
-      database.photoProcessingDao().insertResult(PhotoResultEntity(version, imageUri, capturedAt, true))
     }
     removedMealIds.forEach(scheduler::cancel)
-    mealId?.let { scheduler.schedule(it, runAt, ExistingWorkPolicy.REPLACE) }
-    return mealId
+    return mealIds.mapNotNull { mealId ->
+      val submission = repository.get(mealId) ?: return@mapNotNull null
+      scheduler.schedule(
+        mealId,
+        checkNotNull(submission.nextAutomaticAttemptAt),
+        ExistingWorkPolicy.REPLACE,
+      )
+      mealId
+    }
+  }
+
+  private fun enqueueFoodPhoto(
+    photo: FoodPhotoSubmissionDraft,
+    mealIds: MutableSet<String>,
+    removedMealIds: MutableList<String>,
+  ) {
+    if (database.photoProcessingDao().hasFoodResult(photo.imageUri, photo.capturedAt)) return
+    val pendingSubmissions = repository.pendingUnattemptedImageSubmissions()
+    val newPhoto = ImageMealSubmissionPayload.Photo(photo.imageUri, photo.capturedAt)
+    val group = foodPhotoMealGrouping.group(pendingSubmissions, newPhoto)
+      .first { newPhoto in it.photos }
+    val groupedPhotos = group.photos.sortedBy { checkNotNull(it.capturedAt) }
+    val firstPhoto = groupedPhotos.first()
+    val firstPhotoSubmission = group.submissions.firstOrNull { submission ->
+      ImageMealSubmissionPayload.decode(checkNotNull(submission.imagePayload)).photos.contains(firstPhoto)
+    }
+    val canonicalSubmission = firstPhotoSubmission ?: group.submissions.minByOrNull { it.createdAt }
+    val groupRunAt = checkNotNull(groupedPhotos.last().capturedAt) + FOOD_MEAL_WINDOW_MILLIS
+    val payload = ImageMealSubmissionPayload(groupedPhotos).encode()
+    val firstOccurredAt = firstPhotoSubmission?.occurredAt ?: photo.occurredAt
+
+    if (canonicalSubmission == null) {
+      val latestCreatedAt = pendingSubmissions.maxOfOrNull { it.createdAt } ?: 0L
+      val createdAt = maxOf(System.currentTimeMillis(), latestCreatedAt + 1)
+      val submissionMealId = UUID.randomUUID().toString()
+      repository.insert(MealSubmissionEntity(
+        mealId = submissionMealId,
+        type = MealSubmissionEntity.TYPE_IMAGE,
+        imagePayload = payload,
+        text = null,
+        occurredAt = firstOccurredAt,
+        nextAutomaticAttemptAt = groupRunAt,
+        createdAt = createdAt,
+      ))
+      mealIds.add(submissionMealId)
+    } else {
+      check(repository.updatePendingImagePayload(
+        canonicalSubmission.mealId,
+        payload,
+        firstOccurredAt,
+        groupRunAt,
+      ))
+      group.submissions.filter { it.mealId != canonicalSubmission.mealId }.forEach { submission ->
+        repository.delete(submission.mealId)
+        removedMealIds.add(submission.mealId)
+      }
+      mealIds.add(canonicalSubmission.mealId)
+    }
+    database.photoProcessingDao().insertResult(
+      PhotoResultEntity(photo.version, photo.imageUri, photo.capturedAt, true),
+    )
   }
 
   companion object {
@@ -94,5 +120,12 @@ data class MealSubmissionDraft(
   val type: String,
   val imageUri: String?,
   val text: String?,
+  val occurredAt: String,
+)
+
+data class FoodPhotoSubmissionDraft(
+  val imageUri: String,
+  val capturedAt: Long,
+  val version: String,
   val occurredAt: String,
 )

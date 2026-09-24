@@ -222,14 +222,20 @@ test('multiple meal images are analyzed in one request and create one Google Hea
   const fixture = endpointFixture();
 
   await handleImageMealRequest({
-    request: multipartRequest({ images: [Buffer.from('whole-meal'), Buffer.from('side-dish')] }),
+    request: multipartRequest({ images: [
+      Buffer.from('whole-meal'),
+      Buffer.from('side-dish'),
+      Buffer.from('drink'),
+      Buffer.from('dessert'),
+      Buffer.from('extra-dish'),
+    ] }),
     response,
     ...fixture.dependencies,
   });
 
   assert.equal(response.statusCode, 201);
   assert.equal(fixture.calls.analysis.length, 1);
-  assert.equal(fixture.calls.analysis[0].input[0].content.filter(({ type }) => type === 'input_image').length, 2);
+  assert.equal(fixture.calls.analysis[0].input[0].content.filter(({ type }) => type === 'input_image').length, 5);
   assert.equal(fixture.calls.googleHealth.length, 1);
 });
 

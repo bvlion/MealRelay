@@ -14,7 +14,7 @@ import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 class PhotoScanner(
   private val context: Context,
   private val photoProcessingDao: PhotoProcessingDao,
-  private val submitFoodPhoto: (Uri, Long, String) -> Unit,
+  private val submitFoodPhotos: (List<PhotoResultEntity>) -> Unit,
   private val createClassifier: () -> (Uri) -> Boolean,
 ) {
   fun scan(shouldStop: () -> Boolean): Boolean {
@@ -48,14 +48,19 @@ class PhotoScanner(
       "${MediaStore.Images.Media.GENERATION_MODIFIED} ASC, ${MediaStore.Images.Media._ID} ASC",
     )) { "MediaStore query returned no cursor" }
     var classifyPhoto: ((Uri) -> Boolean)? = null
+    val foodPhotos = mutableListOf<PhotoResultEntity>()
+    var isInterrupted = false
     cursor.use {
       val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
       val addedGenerationColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.GENERATION_ADDED)
       val capturedAtColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_TAKEN)
       val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
       val ownerColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.OWNER_PACKAGE_NAME)
-      while (cursor.moveToNext()) {
-        if (shouldStop()) return false
+      while (!isInterrupted && cursor.moveToNext()) {
+        if (shouldStop()) {
+          isInterrupted = true
+          continue
+        }
         val capturedAt = cursor.getLong(capturedAtColumn)
         val ownerPackage = cursor.getString(ownerColumn)
         val isCameraPhoto = (cameraPackage != null && ownerPackage == cameraPackage) ||
@@ -85,7 +90,7 @@ class PhotoScanner(
           null
         }
         if (isFood == true) {
-          submitFoodPhoto(uri, capturedAt, currentVersion)
+          foodPhotos.add(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, true))
         } else {
           photoProcessingDao.insertResult(PhotoResultEntity(currentVersion, uri.toString(), capturedAt, isFood))
         }
@@ -94,7 +99,10 @@ class PhotoScanner(
         }
       }
     }
-    if (shouldStop() || MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY) != currentVersion) {
+    if (foodPhotos.isNotEmpty()) submitFoodPhotos(foodPhotos)
+    if (isInterrupted || shouldStop() ||
+      MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL_PRIMARY) != currentVersion
+    ) {
       return false
     }
     photoProcessingDao.updateScanState(scanState.copy(

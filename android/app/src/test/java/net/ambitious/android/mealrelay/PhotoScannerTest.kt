@@ -318,41 +318,60 @@ class PhotoScannerTest {
   }
 
   @Test
-  fun onlyFoodPhotosAreSubmittedWithTheirOriginalUriAndCaptureTime() {
+  fun pastFoodPhotosAreSubmittedTogetherAfterTheWholeScanIsClassified() {
     val application = RuntimeEnvironment.getApplication() as Application
     Shadows.shadowOf(application).grantPermissions(Manifest.permission.READ_MEDIA_IMAGES)
     val provider = Robolectric.setupContentProvider(PhotoMediaProvider::class.java, "media")
-    provider.generation = 2
-    provider.photos = listOf(Photo(1, 1, 1000), Photo(2, 2, 2000))
+    provider.generation = 3
+    val firstCaptureAt = System.currentTimeMillis() - 30 * 60 * 1000L
+    provider.photos = listOf(
+      Photo(1, 1, firstCaptureAt),
+      Photo(2, 2, firstCaptureAt + 5 * 60 * 1000L),
+      Photo(3, 3, firstCaptureAt + 6 * 60 * 1000L),
+    )
     val database = Room.inMemoryDatabaseBuilder(application, MealRelayDatabase::class.java)
       .allowMainThreadQueries().build()
     try {
       val dao = database.photoProcessingDao()
       dao.insertScanState(PhotoScanStateEntity(version = provider.version, generation = 0, enrolledAt = 1))
-      val submissions = mutableListOf<Triple<Uri, Long, String>>()
+      val classifiedPhotoIds = mutableListOf<Long>()
+      val submissionBatches = mutableListOf<List<PhotoResultEntity>>()
       val scanner = PhotoScanner(
         application,
         dao,
-        submitFoodPhoto = { uri, capturedAt, version ->
-          submissions.add(Triple(uri, capturedAt, version))
-          dao.insertResult(PhotoResultEntity(version, uri.toString(), capturedAt, true))
+        submitFoodPhotos = { photos ->
+          submissionBatches.add(photos)
+          photos.forEach(dao::insertResult)
         },
-        createClassifier = { { uri -> ContentUris.parseId(uri) == 1L } },
+        createClassifier = { { uri ->
+          val photoId = ContentUris.parseId(uri)
+          classifiedPhotoIds.add(photoId)
+          photoId != 3L
+        } },
       )
 
       assertTrue(scanner.scan { false })
       assertEquals(
-        listOf(Triple(
-          ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 1L),
-          1000L,
-          provider.version,
-        )),
-        submissions,
+        listOf(1L, 2L, 3L),
+        classifiedPhotoIds,
       )
+      assertEquals(1, submissionBatches.size)
+      assertEquals(
+        listOf(
+          PhotoResultEntity(provider.version, ContentUris.withAppendedId(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 1L,
+          ).toString(), firstCaptureAt, true),
+          PhotoResultEntity(provider.version, ContentUris.withAppendedId(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, 2L,
+          ).toString(), firstCaptureAt + 5 * 60 * 1000L, true),
+        ),
+        submissionBatches.single(),
+      )
+      assertEquals(3, dao.getResults().size)
 
       provider.version = "version-2"
       assertTrue(scanner.scan { false })
-      assertEquals(1, submissions.size)
+      assertEquals(1, submissionBatches.size)
     } finally {
       database.close()
     }
@@ -365,8 +384,8 @@ class PhotoScannerTest {
   ) = PhotoScanner(
     context,
     dao,
-    submitFoodPhoto = { uri, capturedAt, version ->
-      dao.insertResult(PhotoResultEntity(version, uri.toString(), capturedAt, true))
+    submitFoodPhotos = { photos ->
+      photos.forEach(dao::insertResult)
     },
     createClassifier = createClassifier,
   )

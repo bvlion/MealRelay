@@ -336,6 +336,38 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
+  fun oldFoodPhotosFromOneScanAreGroupedBeforeTheirPastDeadlineIsScheduled() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val firstCaptureAt = System.currentTimeMillis() - 2 * 60 * 60 * 1000L
+    val photos = (0..4).map { index ->
+      FoodPhotoSubmissionDraft(
+        imageUri = "content://media/external/images/media/${100 + index}",
+        capturedAt = firstCaptureAt + index * 2 * 60 * 1000L,
+        version = "version-1",
+        occurredAt = "2026-09-22T08:0$index:00.000+09:00",
+      )
+    }
+
+    val mealIds = queue.enqueueFoodPhotos(photos)
+
+    assertEquals(1, mealIds.size)
+    val submission = requireNotNull(repository.get(mealIds.single()))
+    val groupedPhotos = ImageMealSubmissionPayload.decode(requireNotNull(submission.imagePayload)).photos
+    assertEquals(5, groupedPhotos.size)
+    assertEquals(photos.map { it.capturedAt }, groupedPhotos.map { it.capturedAt })
+    assertEquals(photos.first().occurredAt, submission.occurredAt)
+    assertEquals(
+      photos.last().capturedAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS,
+      submission.nextAutomaticAttemptAt,
+    )
+  }
+
+  @Test
   fun foodPhotoAtFifteenMinuteBoundaryStartsAnotherMeal() {
     val queue = MealSubmissionQueue(
       repository,
