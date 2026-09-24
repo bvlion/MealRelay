@@ -22,12 +22,6 @@ class MealSubmissionRepository @Inject constructor(private val dao: MealSubmissi
     MealSubmissionEntity.STATE_PENDING,
   ) > 0
 
-  fun restorePendingImageSubmissionTime(mealId: String, submissionAt: Long): Boolean = dao.restorePendingImageSubmissionTime(
-    mealId,
-    submissionAt,
-    MealSubmissionEntity.STATE_PENDING,
-  ) > 0
-
   fun failedSubmissions(): List<MealSubmissionEntity> = dao.getWithState(MealSubmissionEntity.STATE_FAILED)
 
   fun pendingSubmissions(): List<MealSubmissionEntity> = dao.getWithState(MealSubmissionEntity.STATE_PENDING)

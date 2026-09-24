@@ -516,26 +516,21 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
-  fun startupRecoveryRestoresAnOlderFoodPhotoDeadlineBeforeScheduling() = runBlocking {
-    val captureAt = System.currentTimeMillis()
-    val mealId = "meal-awaiting-food-group"
+  fun startupRecoverySchedulesLegacySingleUriWithoutInventingAFoodPhotoDeadline() = runBlocking {
+    val mealId = "legacy-image-meal"
     insert(MealSubmissionEntity(
       mealId = mealId,
       type = MealSubmissionEntity.TYPE_IMAGE,
-      imagePayload = ImageMealSubmissionPayload(listOf(
-        ImageMealSubmissionPayload.Photo("content://media/external/images/media/71", captureAt),
-      )).encode(),
+      imagePayload = "content://media/external/images/media/71",
       text = null,
       occurredAt = "2026-09-22T08:00:00.000+09:00",
       createdAt = now,
     ))
     val scheduler = MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository)
-    scheduler.schedule(mealId, System.currentTimeMillis(), ExistingWorkPolicy.REPLACE)
-    val expectedDeadline = captureAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS
 
     scheduler.resumePendingSubmissions()
 
-    assertEquals(expectedDeadline, repository.get(mealId)?.nextAutomaticAttemptAt)
+    assertNull(repository.get(mealId)?.nextAutomaticAttemptAt)
     assertEquals(
       1,
       WorkManager.getInstance(RuntimeEnvironment.getApplication())
@@ -543,12 +538,6 @@ class AutomaticMealSubmissionTest {
         .get()
         .size,
     )
-    val sender = FakeSender()
-    assertEquals(
-      AutomaticMealSubmissionResult.RetryAt(expectedDeadline),
-      AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now }).submit(mealId),
-    )
-    assertEquals(emptyList<MealSubmissionEntity>(), sender.submissions)
   }
 
   @Test
