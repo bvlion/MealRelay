@@ -22,9 +22,16 @@ fun MealRelayMainScreen(
   failedMealSubmissionsState: FailedMealSubmissionsState,
   onRetryFailedMeal: (String) -> Unit,
   onSubmitManualMeal: (String) -> Unit,
+  onOpenSettings: () -> Unit,
 ) {
   var isManualMealEntryDialogVisible by remember { mutableStateOf(false) }
   Column(modifier = Modifier.fillMaxSize()) {
+    Button(
+      onClick = onOpenSettings,
+      modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp),
+    ) {
+      Text(stringResource(R.string.settings_open))
+    }
     Button(
       onClick = { isManualMealEntryDialogVisible = true },
       modifier = Modifier.padding(24.dp),

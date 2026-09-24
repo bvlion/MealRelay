@@ -1,0 +1,89 @@
+package net.ambitious.android.mealrelay.ui.settings
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import net.ambitious.android.mealrelay.R
+
+@Composable
+fun MealRelaySettingsScreen(
+  state: MealRelaySettingsState,
+  onBack: () -> Unit,
+  onRequestPhotoPermission: () -> Unit,
+  onOpenPhotoApplicationSettings: () -> Unit,
+  onRequestNotificationPermission: () -> Unit,
+  onOpenNotificationApplicationSettings: () -> Unit,
+  onOpenUnusedAppRestrictions: () -> Unit,
+) {
+  Column(
+    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp),
+  ) {
+    Text(stringResource(R.string.settings_title))
+    SettingRow(
+      title = stringResource(R.string.settings_photo_access),
+      isConfigured = state.hasFullPhotoAccess,
+      onClick = onRequestPhotoPermission,
+      onOpenApplicationSettings = onOpenPhotoApplicationSettings,
+    )
+    SettingRow(
+      title = stringResource(R.string.settings_notification_permission),
+      isConfigured = state.hasNotificationPermission,
+      onClick = onRequestNotificationPermission,
+      onOpenApplicationSettings = onOpenNotificationApplicationSettings,
+      description = stringResource(R.string.settings_notification_optional),
+    )
+    SettingRow(
+      title = stringResource(R.string.settings_unused_app_restrictions),
+      isConfigured = state.isUnusedAppRestrictionDisabled,
+      onClick = onOpenUnusedAppRestrictions,
+      statusDescription = stringResource(
+        when (state.unusedAppRestrictionsStatus) {
+          UnusedAppRestrictionsStatus.DISABLED -> R.string.settings_configured
+          UnusedAppRestrictionsStatus.ENABLED -> R.string.settings_not_configured
+          UnusedAppRestrictionsStatus.UNKNOWN -> R.string.settings_status_unknown
+        },
+      ),
+      shouldShowConfigureButton = state.unusedAppRestrictionsStatus == UnusedAppRestrictionsStatus.ENABLED,
+    )
+    Button(onClick = onBack) { Text(stringResource(R.string.settings_back)) }
+  }
+}
+
+@Composable
+private fun SettingRow(
+  title: String,
+  isConfigured: Boolean,
+  onClick: () -> Unit,
+  onOpenApplicationSettings: (() -> Unit)? = null,
+  description: String? = null,
+  statusDescription: String? = null,
+  shouldShowConfigureButton: Boolean = !isConfigured,
+) {
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Text(title)
+    if (description != null) Text(description)
+    Text(statusDescription ?: stringResource(
+      if (isConfigured) R.string.settings_configured else R.string.settings_not_configured,
+    ))
+    if (shouldShowConfigureButton) {
+      Button(onClick = onClick) {
+        Text(stringResource(R.string.settings_configure))
+      }
+      if (onOpenApplicationSettings != null) {
+        Button(onClick = onOpenApplicationSettings) {
+          Text(stringResource(R.string.settings_open_app_settings))
+        }
+      }
+    }
+  }
+}
