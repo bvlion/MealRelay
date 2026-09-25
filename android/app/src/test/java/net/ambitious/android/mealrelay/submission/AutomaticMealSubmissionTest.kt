@@ -266,6 +266,7 @@ class AutomaticMealSubmissionTest {
       repository,
       MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
       database,
+      FoodPhotoMealGrouping(),
     )
     val mealId = queue.enqueue(
       MealSubmissionDraft(
@@ -287,6 +288,7 @@ class AutomaticMealSubmissionTest {
       repository,
       MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
       database,
+      FoodPhotoMealGrouping(),
     )
     val photoUri = Uri.parse("content://media/external/images/media/1")
     val occurredAt = "2026-09-22T08:00:00.000+09:00"
@@ -301,11 +303,250 @@ class AutomaticMealSubmissionTest {
   }
 
   @Test
+  fun foodPhotosWithinFifteenMinutesShareOneQueuedMealAndTheFirstCaptureTime() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val firstCaptureAt = System.currentTimeMillis()
+    val firstMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/11"),
+      firstCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    )
+    val secondMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/12"),
+      firstCaptureAt + 14 * 60 * 1000L,
+      "version-1",
+      "2026-09-22T08:14:00.000+09:00",
+    )
+
+    assertEquals(firstMealId, secondMealId)
+    assertEquals(1, repository.pendingSubmissions().size)
+    assertEquals("2026-09-22T08:00:00.000+09:00", repository.get(requireNotNull(firstMealId))?.occurredAt)
+    assertEquals(
+      2,
+      ImageMealSubmissionPayload.decode(
+        requireNotNull(repository.get(requireNotNull(firstMealId))?.imagePayload),
+      ).photos.size,
+    )
+  }
+
+  @Test
+  fun oldFoodPhotosFromOneScanAreGroupedBeforeTheirPastDeadlineIsScheduled() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val firstCaptureAt = System.currentTimeMillis() - 2 * 60 * 60 * 1000L
+    val photos = (0..4).map { index ->
+      FoodPhotoSubmissionDraft(
+        imageUri = "content://media/external/images/media/${100 + index}",
+        capturedAt = firstCaptureAt + index * 2 * 60 * 1000L,
+        version = "version-1",
+        occurredAt = "2026-09-22T08:0$index:00.000+09:00",
+      )
+    }
+
+    val mealIds = queue.enqueueFoodPhotos(photos)
+
+    assertEquals(1, mealIds.size)
+    val submission = requireNotNull(repository.get(mealIds.single()))
+    val groupedPhotos = ImageMealSubmissionPayload.decode(requireNotNull(submission.imagePayload)).photos
+    assertEquals(5, groupedPhotos.size)
+    assertEquals(photos.map { it.capturedAt }, groupedPhotos.map { it.capturedAt })
+    assertEquals(photos.first().occurredAt, submission.occurredAt)
+    assertEquals(
+      photos.last().capturedAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS,
+      submission.nextAutomaticAttemptAt,
+    )
+  }
+
+  @Test
+  fun foodPhotoAtFifteenMinuteBoundaryStartsAnotherMeal() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val firstCaptureAt = System.currentTimeMillis()
+    val firstMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/21"),
+      firstCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    )
+    val secondMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/22"),
+      firstCaptureAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS,
+      "version-1",
+      "2026-09-22T08:15:00.000+09:00",
+    )
+
+    assertEquals(false, firstMealId == secondMealId)
+    assertEquals(2, repository.pendingSubmissions().size)
+  }
+
+  @Test
+  fun foodPhotosAreGroupedByCaptureTimeWhenScannerReportsThemOutOfOrder() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val earlierCaptureAt = System.currentTimeMillis()
+    val laterMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/31"),
+      earlierCaptureAt + 10 * 60 * 1000L,
+      "version-1",
+      "2026-09-22T08:10:00.000+09:00",
+    )
+    val earlierMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/32"),
+      earlierCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    )
+
+    assertEquals(laterMealId, earlierMealId)
+    assertEquals(1, repository.pendingSubmissions().size)
+    val submission = repository.get(requireNotNull(earlierMealId))
+    assertEquals("2026-09-22T08:00:00.000+09:00", submission?.occurredAt)
+    assertEquals(
+      listOf(earlierCaptureAt, earlierCaptureAt + 10 * 60 * 1000L),
+      ImageMealSubmissionPayload.decode(requireNotNull(submission?.imagePayload)).photos.map { it.capturedAt },
+    )
+  }
+
+  @Test
+  fun attemptedPendingImagePayloadIsNotChangedByANewFoodPhoto() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val firstCaptureAt = System.currentTimeMillis()
+    val firstMealId = requireNotNull(queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/41"),
+      firstCaptureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    ))
+    val originalPayload = repository.get(firstMealId)?.imagePayload
+    repository.beginAutomaticAttempt(firstMealId, 3, firstCaptureAt + 20 * 60 * 1000L)
+    repository.recordAutomaticRetry(firstMealId, 1, firstCaptureAt + 25 * 60 * 1000L)
+
+    val nextMealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/42"),
+      firstCaptureAt + 5 * 60 * 1000L,
+      "version-1",
+      "2026-09-22T08:05:00.000+09:00",
+    )
+
+    assertEquals(false, firstMealId == nextMealId)
+    assertEquals(originalPayload, repository.get(firstMealId)?.imagePayload)
+    assertEquals(1, ImageMealSubmissionPayload.decode(requireNotNull(repository.get(firstMealId)?.imagePayload)).photos.size)
+    assertEquals(1, ImageMealSubmissionPayload.decode(requireNotNull(repository.get(requireNotNull(nextMealId))?.imagePayload)).photos.size)
+  }
+
+  @Test
+  fun legacyImageUriWithoutCaptureTimeIsNotGroupedWithANewFoodPhoto() {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val captureAt = System.currentTimeMillis()
+    val legacySubmission = MealSubmissionEntity(
+      mealId = "legacy-image-meal",
+      type = MealSubmissionEntity.TYPE_IMAGE,
+      imagePayload = "content://media/external/images/media/51",
+      text = null,
+      occurredAt = "2026-09-22T08:00:00.000+09:00",
+      createdAt = now,
+    )
+    insert(legacySubmission)
+
+    val mealId = queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/52"),
+      captureAt,
+      "version-1",
+      "2026-09-22T08:01:00.000+09:00",
+    )
+
+    assertEquals(false, legacySubmission.mealId == mealId)
+    assertEquals(legacySubmission.imagePayload, repository.get(legacySubmission.mealId)?.imagePayload)
+    assertEquals(2, repository.pendingSubmissions().size)
+  }
+
+  @Test
+  fun foodPhotoDeadlineSurvivesStartupRecoveryAndEarlyWorkerInvocation() = runBlocking {
+    val queue = MealSubmissionQueue(
+      repository,
+      MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
+      database,
+      FoodPhotoMealGrouping(),
+    )
+    val captureAt = now + 60_000L
+    val mealId = requireNotNull(queue.enqueueFoodPhoto(
+      Uri.parse("content://media/external/images/media/61"),
+      captureAt,
+      "version-1",
+      "2026-09-22T08:00:00.000+09:00",
+    ))
+    val expectedDeadline = captureAt + MealSubmissionQueue.FOOD_MEAL_WINDOW_MILLIS
+    val sender = FakeSender()
+    val processor = AutomaticMealSubmissionProcessor(repository, sender, SubmissionClock { now })
+    val scheduler = MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository)
+
+    scheduler.resumePendingSubmissions()
+
+    assertEquals(expectedDeadline, repository.get(mealId)?.nextAutomaticAttemptAt)
+    assertEquals(AutomaticMealSubmissionResult.RetryAt(expectedDeadline), processor.submit(mealId))
+    assertEquals(emptyList<MealSubmissionEntity>(), sender.submissions)
+  }
+
+  @Test
+  fun startupRecoverySchedulesLegacySingleUriWithoutInventingAFoodPhotoDeadline() = runBlocking {
+    val mealId = "legacy-image-meal"
+    insert(MealSubmissionEntity(
+      mealId = mealId,
+      type = MealSubmissionEntity.TYPE_IMAGE,
+      imagePayload = "content://media/external/images/media/71",
+      text = null,
+      occurredAt = "2026-09-22T08:00:00.000+09:00",
+      createdAt = now,
+    ))
+    val scheduler = MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository)
+
+    scheduler.resumePendingSubmissions()
+
+    assertNull(repository.get(mealId)?.nextAutomaticAttemptAt)
+    assertEquals(
+      1,
+      WorkManager.getInstance(RuntimeEnvironment.getApplication())
+        .getWorkInfosForUniqueWork(MealSubmissionWorkScheduler.workName(mealId))
+        .get()
+        .size,
+    )
+  }
+
+  @Test
   fun photoSubmissionUsesTheLocalOffsetForItsCaptureInstant() {
     val queue = MealSubmissionQueue(
       repository,
       MealSubmissionWorkScheduler(RuntimeEnvironment.getApplication(), repository),
       database,
+      FoodPhotoMealGrouping(),
     )
     val originalTimezone = TimeZone.getDefault()
     try {
@@ -380,7 +621,7 @@ class AutomaticMealSubmissionTest {
   private fun textSubmission(mealId: String) = MealSubmissionEntity(
     mealId = mealId,
     type = MealSubmissionEntity.TYPE_TEXT,
-    imageUri = null,
+    imagePayload = null,
     text = "朝の食事",
     occurredAt = "2026-09-22T08:00:00+09:00",
     createdAt = now,

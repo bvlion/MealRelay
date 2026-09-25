@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { IMAGE_ANALYSIS_MODEL, analyzeMealImage } = require('../src/imageMealAnalysis');
 
-test('GPT-5.6 Luna parses one meal with confirmed values separate from estimates', async () => {
+test('GPT-5.6 Luna parses multiple photographs together with confirmed values separate from estimates', async () => {
   let request;
   const client = {
     responses: {
@@ -33,7 +33,10 @@ test('GPT-5.6 Luna parses one meal with confirmed values separate from estimates
 
   const analysis = await analyzeMealImage({
     client,
-    image: { data: Buffer.from('photo'), mediaType: 'image/jpeg' },
+    images: [
+      { data: Buffer.from('photo'), mediaType: 'image/jpeg' },
+      { data: Buffer.from('side-dish'), mediaType: 'image/png' },
+    ],
   });
 
   assert.equal(request.model, IMAGE_ANALYSIS_MODEL);
@@ -41,6 +44,8 @@ test('GPT-5.6 Luna parses one meal with confirmed values separate from estimates
   assert.equal(request.input[0].content[1].type, 'input_image');
   assert.equal(request.input[0].content[1].image_url,
     `data:image/jpeg;base64,${Buffer.from('photo').toString('base64')}`);
+  assert.equal(request.input[0].content[2].image_url,
+    `data:image/png;base64,${Buffer.from('side-dish').toString('base64')}`);
   assert.match(request.instructions, /shared platter/);
   assert.match(request.instructions, /actually consumed/);
   assert.equal(request.text.format.type, 'json_schema');
@@ -56,7 +61,7 @@ test('an image analysis response without structured output is rejected', async (
   await assert.rejects(
     analyzeMealImage({
       client,
-      image: { data: Buffer.from('photo'), mediaType: 'image/jpeg' },
+      images: [{ data: Buffer.from('photo'), mediaType: 'image/jpeg' }],
     }),
     /invalid result/,
   );

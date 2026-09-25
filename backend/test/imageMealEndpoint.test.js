@@ -5,15 +5,21 @@ const test = require('node:test');
 const { MealRecordError } = require('../src/mealRecord');
 const { handleImageMealRequest } = require('../src/imageMealEndpoint');
 
-function multipartRequest({ capturedAt = '2026-09-21T12:30:00+09:00' } = {}) {
+function multipartRequest({ capturedAt = '2026-09-21T12:30:00+09:00', images = [Buffer.from('image')] } = {}) {
   const boundary = 'meal-relay-boundary';
-  const body = Buffer.from(
+  const body = Buffer.concat([
+    Buffer.from(
     `--${boundary}\r\nContent-Disposition: form-data; name="mealId"\r\n\r\nphoto-1\r\n` +
-    `--${boundary}\r\nContent-Disposition: form-data; name="capturedAt"\r\n\r\n${capturedAt}\r\n` +
-    `--${boundary}\r\nContent-Disposition: form-data; name="image"; filename="meal.jpg"\r\n` +
-    'Content-Type: image/jpeg\r\n\r\nimage\r\n' +
-    `--${boundary}--\r\n`,
-  );
+    `--${boundary}\r\nContent-Disposition: form-data; name="capturedAt"\r\n\r\n${capturedAt}\r\n`,
+    ),
+    ...images.flatMap((image, index) => [
+      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="image"; filename="meal-${index}.jpg"\r\n` +
+        'Content-Type: image/jpeg\r\n\r\n'),
+      image,
+      Buffer.from('\r\n'),
+    ]),
+    Buffer.from(`--${boundary}--\r\n`),
+  ]);
   const headers = {
     authorization: 'Bearer token-1',
     'content-type': `multipart/form-data; boundary=${boundary}`,
@@ -209,6 +215,28 @@ test('an initial image is analyzed by GPT-5.6 Luna and registered through the sh
     confirmed: { value: 430, origin: 'packageLabel' },
   });
   assert.deepEqual(fixture.calls.googleHealth[0].dataPoint.nutritionLog.energy, { kcal: 430 });
+});
+
+test('multiple meal images are analyzed in one request and create one Google Health record', async () => {
+  const response = responseFixture();
+  const fixture = endpointFixture();
+
+  await handleImageMealRequest({
+    request: multipartRequest({ images: [
+      Buffer.from('whole-meal'),
+      Buffer.from('side-dish'),
+      Buffer.from('drink'),
+      Buffer.from('dessert'),
+      Buffer.from('extra-dish'),
+    ] }),
+    response,
+    ...fixture.dependencies,
+  });
+
+  assert.equal(response.statusCode, 201);
+  assert.equal(fixture.calls.analysis.length, 1);
+  assert.equal(fixture.calls.analysis[0].input[0].content.filter(({ type }) => type === 'input_image').length, 5);
+  assert.equal(fixture.calls.googleHealth.length, 1);
 });
 
 test('a pending retry reuses the first analysis even when a later model output would differ', async () => {

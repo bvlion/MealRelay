@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 data class MealSubmissionEntity(
   @PrimaryKey @ColumnInfo(name = "meal_id") val mealId: String,
   val type: String,
-  @ColumnInfo(name = "image_uri") val imageUri: String?,
+  @ColumnInfo(name = "image_uri") val imagePayload: String?,
   val text: String?,
   @ColumnInfo(name = "occurred_at") val occurredAt: String,
   @ColumnInfo(name = "automatic_attempt_count") val automaticAttemptCount: Int = 0,

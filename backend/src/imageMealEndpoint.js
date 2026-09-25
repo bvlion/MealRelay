@@ -10,13 +10,20 @@ const { GoogleHealthPendingError } = require('./googleHealthNutrition');
 const { MealRecordError, normalizeMealTime, validateImageMealRetry } = require('./mealRecord');
 const { completeMealRegistration, registerMeal } = require('./registerMeal');
 
-async function registerImageMeal({ authorization, userId, image, mealId, capturedAt,
+async function registerImageMeal({ authorization, userId, images, mealId, capturedAt,
   analysisClient, authRepository, mealRepository, clientId, clientSecret, healthClient, mealNotifier }) {
   if (typeof mealNotifier?.notifyRegistration !== 'function') {
     throw new Error('Meal registration notification is required');
   }
   normalizeMealTime(capturedAt);
-  const requestHash = createHash('sha256').update(image.data).update('\0').update(capturedAt).digest('hex');
+  const requestHashBuilder = createHash('sha256');
+  if (images.length === 1) {
+    requestHashBuilder.update(images[0].data).update('\0').update(capturedAt);
+  } else {
+    images.forEach((image) => requestHashBuilder.update(image.mediaType).update('\0').update(image.data).update('\0'));
+    requestHashBuilder.update(capturedAt);
+  }
+  const requestHash = requestHashBuilder.digest('hex');
   const reservation = await mealRepository.reserve(userId, mealId, requestHash);
   let result;
   if (reservation.type === 'saved') {
@@ -35,7 +42,7 @@ async function registerImageMeal({ authorization, userId, image, mealId, capture
 
     let analysis;
     try {
-      analysis = await analyzeMealImage({ client: analysisClient, image });
+      analysis = await analyzeMealImage({ client: analysisClient, images });
     } catch (error) {
       await mealRepository.releaseReservation(reservation);
       throw error;
@@ -80,11 +87,11 @@ async function handleImageMealRequest({ request, response, analysisClient, authR
   try {
     const authorization = request.get('authorization');
     const userId = await authenticateMealRelayRequest({ authorization, repository: authRepository });
-    const { image, mealId, capturedAt } = await parseImageMealRequest(request);
+    const { images, mealId, capturedAt } = await parseImageMealRequest(request);
     const result = await registerImageMeal({
       authorization,
       userId,
-      image,
+      images,
       mealId,
       capturedAt,
       analysisClient,

@@ -5,9 +5,9 @@ import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
 class ImageMealSubmissionRequestFactory {
   fun create(
     submission: MealSubmissionEntity,
-    image: ImageMealSubmissionImage,
+    images: List<ImageMealSubmissionImage>,
   ) = ImageMealSubmissionRequest(
-    image = image,
+    images = images,
     capturedAt = submission.occurredAt,
     mealId = submission.mealId,
   )

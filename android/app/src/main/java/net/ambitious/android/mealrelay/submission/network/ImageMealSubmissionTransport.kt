@@ -33,11 +33,17 @@ class ImageMealSubmissionTransport(
   }
 
   suspend fun submit(request: ImageMealSubmissionRequest) {
-    val imageMediaType = request.image.mediaType.toMediaTypeOrNull()
-      ?: "application/octet-stream".toMediaType()
     service.submit(
       endpoint,
-      MultipartBody.Part.createFormData("image", "image", request.image.bytes.toRequestBody(imageMediaType)),
+      request.images.mapIndexed { index, image ->
+        val imageMediaType = image.mediaType.toMediaTypeOrNull()
+          ?: "application/octet-stream".toMediaType()
+        MultipartBody.Part.createFormData(
+          "image",
+          "image-$index",
+          image.bytes.toRequestBody(imageMediaType),
+        )
+      },
       request.capturedAt.toRequestBody("text/plain".toMediaType()),
       request.mealId.toRequestBody("text/plain".toMediaType()),
     )

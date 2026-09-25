@@ -5,6 +5,7 @@ import androidx.room.Room
 import kotlinx.coroutines.runBlocking
 import net.ambitious.android.mealrelay.MealRelayTokenStore
 import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
+import net.ambitious.android.mealrelay.submission.FoodPhotoMealGrouping
 import net.ambitious.android.mealrelay.submission.MealSubmissionQueue
 import net.ambitious.android.mealrelay.submission.MealSubmissionRepository
 import net.ambitious.android.mealrelay.submission.MealSubmissionWorkScheduler
@@ -45,7 +46,7 @@ class MealRelayMainViewModelTest {
       val scheduler = MealSubmissionWorkScheduler(application, repository)
       val viewModel = MealRelayMainViewModel(
         MealRelayTokenStore(application),
-        MealSubmissionQueue(repository, scheduler, database),
+        MealSubmissionQueue(repository, scheduler, database, FoodPhotoMealGrouping()),
         scheduler,
         Clock.fixed(Instant.parse("2026-09-21T23:30:00Z"), ZoneId.of("UTC")),
       )
@@ -67,7 +68,7 @@ class MealRelayMainViewModelTest {
     val scheduler = MealSubmissionWorkScheduler(application, repository)
     val viewModel = MealRelayMainViewModel(
       MealRelayTokenStore(application),
-      MealSubmissionQueue(repository, scheduler, database),
+      MealSubmissionQueue(repository, scheduler, database, FoodPhotoMealGrouping()),
       scheduler,
       Clock.fixed(Instant.parse("2026-09-22T00:30:00Z"), ZoneId.of("UTC")),
     )

@@ -50,7 +50,7 @@ function toMealAnalysis(parsedOutput) {
   };
 }
 
-async function analyzeMealImage({ client, image }) {
+async function analyzeMealImage({ client, images }) {
   let response;
   try {
     response = await client.responses.parse({
@@ -59,11 +59,11 @@ async function analyzeMealImage({ client, image }) {
       input: [{
         role: 'user',
         content: [
-          { type: 'input_text', text: 'Analyze this photograph as one meal.' },
-          {
+          { type: 'input_text', text: 'Analyze these photographs together as one meal. Combine dishes across views and avoid counting the same dish twice when it appears in multiple photographs.' },
+          ...images.map((image) => ({
             type: 'input_image',
             image_url: `data:${image.mediaType};base64,${image.data.toString('base64')}`,
-          },
+          })),
         ],
       }],
       text: { format: zodTextFormat(IMAGE_ANALYSIS_SCHEMA, 'meal_image_analysis') },

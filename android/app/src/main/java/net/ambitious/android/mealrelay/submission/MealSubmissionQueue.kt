@@ -1,6 +1,7 @@
 package net.ambitious.android.mealrelay.submission
 
 import android.net.Uri
+import androidx.work.ExistingWorkPolicy
 import net.ambitious.android.mealrelay.data.database.MealRelayDatabase
 import net.ambitious.android.mealrelay.data.photo.PhotoResultEntity
 import net.ambitious.android.mealrelay.data.submission.MealSubmissionEntity
@@ -11,6 +12,7 @@ class MealSubmissionQueue @Inject constructor(
   private val repository: MealSubmissionRepository,
   private val scheduler: MealSubmissionWorkScheduler,
   private val database: MealRelayDatabase,
+  private val foodPhotoMealGrouping: FoodPhotoMealGrouping,
 ) {
   fun enqueue(draft: MealSubmissionDraft): String {
     val mealId = UUID.randomUUID().toString()
@@ -18,7 +20,7 @@ class MealSubmissionQueue @Inject constructor(
     repository.insert(MealSubmissionEntity(
       mealId = mealId,
       type = draft.type,
-      imageUri = draft.imageUri,
+      imagePayload = draft.imageUri,
       text = draft.text,
       occurredAt = draft.occurredAt,
       createdAt = now,
@@ -28,32 +30,127 @@ class MealSubmissionQueue @Inject constructor(
   }
 
   fun enqueueFoodPhoto(uri: Uri, capturedAt: Long, version: String, occurredAt: String): String? {
-    val imageUri = uri.toString()
-    var mealId: String? = null
-    var createdAt = 0L
+    return enqueueFoodPhotos(listOf(FoodPhotoSubmissionDraft(
+      imageUri = uri.toString(),
+      capturedAt = capturedAt,
+      version = version,
+      occurredAt = occurredAt,
+    ))).firstOrNull()
+  }
+
+  fun enqueueFoodPhotos(photos: List<FoodPhotoSubmissionDraft>): List<String> {
+    if (photos.isEmpty()) return emptyList()
+    val changes = FoodPhotoQueueChanges()
     database.runInTransaction {
-      if (database.photoProcessingDao().hasFoodResult(imageUri, capturedAt)) return@runInTransaction
-      val submissionMealId = UUID.randomUUID().toString()
-      createdAt = System.currentTimeMillis()
+      photos.sortedBy(FoodPhotoSubmissionDraft::capturedAt).forEach { photo ->
+        persistFoodPhoto(photo)?.let { update ->
+          changes.mealIdsToSchedule.add(update.mealId)
+          changes.mealIdsToCancel.addAll(update.removedMealIds)
+        }
+      }
+    }
+    changes.mealIdsToCancel.forEach(scheduler::cancel)
+    return changes.mealIdsToSchedule.mapNotNull { mealId ->
+      repository.get(mealId)?.let { submission ->
+        scheduler.schedule(
+          mealId,
+          checkNotNull(submission.nextAutomaticAttemptAt),
+          ExistingWorkPolicy.REPLACE,
+        )
+        mealId
+      }
+    }
+  }
+
+  private fun persistFoodPhoto(photo: FoodPhotoSubmissionDraft): FoodPhotoQueueUpdate? {
+    if (database.photoProcessingDao().hasFoodResult(photo.imageUri, photo.capturedAt)) return null
+    val pendingSubmissions = repository.pendingUnattemptedImageSubmissions()
+    val newPhoto = ImageMealSubmissionPayload.Photo(photo.imageUri, photo.capturedAt)
+    val group = foodPhotoMealGrouping.group(pendingSubmissions, newPhoto)
+      .first { newPhoto in it.photos }
+    val groupedPhotos = group.photos.sortedBy { checkNotNull(it.capturedAt) }
+    val firstPhoto = groupedPhotos.first()
+    val scheduledAt = checkNotNull(groupedPhotos.last().capturedAt) + FOOD_MEAL_WINDOW_MILLIS
+    val queueUpdate = persistMealGroup(
+      group.submissions,
+      pendingSubmissions,
+      firstPhoto,
+      ImageMealSubmissionPayload(groupedPhotos).encode(),
+      photo.occurredAt,
+      scheduledAt,
+    )
+    database.photoProcessingDao().insertResult(
+      PhotoResultEntity(photo.version, photo.imageUri, photo.capturedAt, true),
+    )
+    return queueUpdate
+  }
+
+  private fun persistMealGroup(
+    submissions: List<MealSubmissionEntity>,
+    pendingSubmissions: List<MealSubmissionEntity>,
+    firstPhoto: ImageMealSubmissionPayload.Photo,
+    imagePayload: String,
+    occurredAtForNewGroup: String,
+    scheduledAt: Long,
+  ): FoodPhotoQueueUpdate {
+    val firstPhotoSubmission = submissions.firstOrNull { submission ->
+      ImageMealSubmissionPayload.decode(checkNotNull(submission.imagePayload)).photos.contains(firstPhoto)
+    }
+    val canonicalSubmission = firstPhotoSubmission ?: submissions.minByOrNull { it.createdAt }
+    val occurredAt = firstPhotoSubmission?.occurredAt ?: occurredAtForNewGroup
+    if (canonicalSubmission == null) {
+      val latestCreatedAt = pendingSubmissions.maxOfOrNull { it.createdAt } ?: 0L
+      val mealId = UUID.randomUUID().toString()
       repository.insert(MealSubmissionEntity(
-        mealId = submissionMealId,
+        mealId = mealId,
         type = MealSubmissionEntity.TYPE_IMAGE,
-        imageUri = imageUri,
+        imagePayload = imagePayload,
         text = null,
         occurredAt = occurredAt,
-        createdAt = createdAt,
+        nextAutomaticAttemptAt = scheduledAt,
+        createdAt = maxOf(System.currentTimeMillis(), latestCreatedAt + 1),
       ))
-      database.photoProcessingDao().insertResult(PhotoResultEntity(version, imageUri, capturedAt, true))
-      mealId = submissionMealId
+      return FoodPhotoQueueUpdate(mealId)
     }
-    mealId?.let { scheduler.schedule(it, createdAt) }
-    return mealId
+
+    check(repository.updatePendingImagePayload(
+      canonicalSubmission.mealId,
+      imagePayload,
+      occurredAt,
+      scheduledAt,
+    ))
+    val removedMealIds = submissions
+      .filter { it.mealId != canonicalSubmission.mealId }
+      .map { it.mealId }
+    removedMealIds.forEach(repository::delete)
+    return FoodPhotoQueueUpdate(canonicalSubmission.mealId, removedMealIds)
+  }
+
+  companion object {
+    const val FOOD_MEAL_WINDOW_MILLIS = 15 * 60 * 1000L
   }
 }
+
+private data class FoodPhotoQueueChanges(
+  val mealIdsToSchedule: MutableSet<String> = linkedSetOf(),
+  val mealIdsToCancel: MutableSet<String> = linkedSetOf(),
+)
+
+private data class FoodPhotoQueueUpdate(
+  val mealId: String,
+  val removedMealIds: List<String> = emptyList(),
+)
 
 data class MealSubmissionDraft(
   val type: String,
   val imageUri: String?,
   val text: String?,
+  val occurredAt: String,
+)
+
+data class FoodPhotoSubmissionDraft(
+  val imageUri: String,
+  val capturedAt: Long,
+  val version: String,
   val occurredAt: String,
 )

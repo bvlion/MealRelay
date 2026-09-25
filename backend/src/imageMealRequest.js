@@ -17,7 +17,6 @@ function createMultipartParser(request) {
       headers: request.headers,
       limits: {
         fields: REQUEST_FIELDS.size,
-        files: 1,
       },
     });
   } catch {
@@ -33,9 +32,7 @@ function parseImageMealRequest(request) {
   return new Promise((resolve, reject) => {
     const parser = createMultipartParser(request);
     const fields = {};
-    const imageChunks = [];
-    let imageMediaType;
-    let hasImage = false;
+    const images = [];
     let requestError;
 
     parser.on('field', (name, value, information) => {
@@ -46,24 +43,23 @@ function parseImageMealRequest(request) {
       fields[name] = value;
     });
     parser.on('file', (name, stream, information) => {
-      if (name !== 'image' || hasImage) {
-        requestError ??= new ImageMealError('Exactly one meal image is required');
+      if (name !== 'image') {
+        requestError ??= new ImageMealError('Only meal images are allowed');
         stream.resume();
         return;
       }
-      hasImage = true;
-      imageMediaType = information.mimeType;
-      if (!SUPPORTED_IMAGE_MEDIA_TYPES.has(imageMediaType)) {
+      const imageChunks = [];
+      const imageIndex = images.length;
+      images.push(null);
+      if (!SUPPORTED_IMAGE_MEDIA_TYPES.has(information.mimeType)) {
         requestError ??= new ImageMealError('Image media type is not supported', 415);
       }
       stream.on('data', (chunk) => imageChunks.push(chunk));
+      stream.on('end', () => { images[imageIndex] = { data: Buffer.concat(imageChunks), mediaType: information.mimeType }; });
       stream.on('error', reject);
     });
     parser.on('fieldsLimit', () => {
       requestError ??= new ImageMealError('Multipart fields are invalid');
-    });
-    parser.on('filesLimit', () => {
-      requestError ??= new ImageMealError('Exactly one meal image is required');
     });
     parser.on('error', () => reject(new ImageMealError('Multipart request is invalid')));
     parser.on('finish', () => {
@@ -71,14 +67,14 @@ function parseImageMealRequest(request) {
         reject(requestError);
         return;
       }
-      if (!hasImage || imageChunks.length === 0 || !fields.mealId || !fields.capturedAt) {
+      if (images.length === 0 || images.some((image) => image.data.length === 0) || !fields.mealId || !fields.capturedAt) {
         reject(new ImageMealError('Meal image, meal ID, and captured time are required'));
         return;
       }
       resolve({
         mealId: fields.mealId,
         capturedAt: fields.capturedAt,
-        image: { data: Buffer.concat(imageChunks), mediaType: imageMediaType },
+        images,
       });
     });
     parser.end(request.rawBody);

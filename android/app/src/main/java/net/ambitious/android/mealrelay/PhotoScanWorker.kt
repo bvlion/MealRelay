@@ -31,7 +31,7 @@ class PhotoScanWorker @AssistedInject constructor(
         PhotoScanner(
           applicationContext,
           photoProcessingDao,
-          photoMealSubmission::enqueue,
+          photoMealSubmission::enqueueAll,
           classification::prepareClassifier,
         ).scan { isStopped }
       }

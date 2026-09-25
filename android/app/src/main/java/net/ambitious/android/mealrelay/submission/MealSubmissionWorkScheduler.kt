@@ -29,9 +29,14 @@ class MealSubmissionWorkScheduler @Inject constructor(
     )
   }
 
+  fun cancel(mealId: String) {
+    WorkManager.getInstance(context).cancelUniqueWork(workName(mealId))
+  }
+
   suspend fun resumePendingSubmissions() = withContext(Dispatchers.IO) {
     repository.pendingSubmissions().forEach { submission ->
-      schedule(submission.mealId, submission.nextAutomaticAttemptAt ?: System.currentTimeMillis(), ExistingWorkPolicy.KEEP)
+      val submissionAt = submission.nextAutomaticAttemptAt ?: System.currentTimeMillis()
+      schedule(submission.mealId, submissionAt, ExistingWorkPolicy.KEEP)
     }
   }
 
