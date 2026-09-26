@@ -4,7 +4,7 @@ const { z } = require('zod');
 const { zodTextFormat } = require('openai/helpers/zod');
 const { ImageMealError } = require('./imageMealError');
 
-const IMAGE_ANALYSIS_MODEL = 'gpt-5.6-luna';
+const IMAGE_ANALYSIS_MODEL = 'gpt-6-luna';
 const nutritionEstimateSchema = z.number().nonnegative();
 const confirmedNutritionSchema = z.object({
   value: z.number().nonnegative(),

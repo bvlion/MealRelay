@@ -2,6 +2,7 @@
 
 const { createHash } = require('node:crypto');
 const { AuthenticationError } = require('./errors');
+const { logBackendError } = require('./errorLogging');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const { GoogleHealthPendingError } = require('./googleHealthNutrition');
 const { MealRecordError, normalizeMealTime, validateTextMealRetry } = require('./mealRecord');
@@ -83,9 +84,18 @@ async function handleTextMealRequest({ request, response, analysisClient, authRe
     });
     response.status(result.isAlreadyRegistered ? 200 : 201).json(result);
   } catch (error) {
-    if (error instanceof AuthenticationError || error instanceof GoogleHealthPendingError ||
-        error instanceof TextMealError || error instanceof MealRecordError) {
-      response.status(error.status).json({ error: error.message });
+    const isHandled = error instanceof AuthenticationError || error instanceof GoogleHealthPendingError ||
+      error instanceof TextMealError || error instanceof MealRecordError;
+    const responseStatus = isHandled ? error.status : 500;
+    logBackendError({
+      message: 'Text meal request failed',
+      error,
+      responseStatus,
+      reason: isHandled ? error.message : undefined,
+      severity: responseStatus >= 500 ? 'ERROR' : 'WARNING',
+    });
+    if (isHandled) {
+      response.status(responseStatus).json({ error: error.message });
       return;
     }
     response.status(500).json({ error: 'Meal could not be registered' });

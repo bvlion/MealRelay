@@ -1,0 +1,5 @@
+mealRelayOauthClientId=<WEB_OAUTH_CLIENT_ID>
+mealRelayAuthEndpoint=<AUTH_EXCHANGE_URL>
+mealRelayTextEndpoint=<TEXT_MEAL_URL>
+mealRelayImageEndpoint=<IMAGE_MEAL_URL>
+mealRelayFirebaseInstallationEndpoint=<FIREBASE_INSTALLATION_URL>

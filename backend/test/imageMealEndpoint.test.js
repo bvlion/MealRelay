@@ -136,7 +136,7 @@ function endpointFixture({ analysisOutputs = [mealAnalysis()], healthOutcomes = 
           calls.googleHealth.push(request);
           const outcome = healthOutcomes[healthIndex++];
           if (outcome instanceof Error) throw outcome;
-          return [{ promise: async () => [{ name: request.dataPoint.name }] }];
+          return [{ promise: async () => [{ name: 'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-1' }] }];
         },
       },
       mealNotifier: {
@@ -174,15 +174,23 @@ test('image registration requires the production meal notifier dependency', asyn
   assert.equal(fixture.calls.googleHealth.length, 0);
 });
 
-test('notification delivery failure does not fail a registered image meal', async () => {
+test('notification delivery failure is logged without failing a registered image meal', async () => {
   const response = responseFixture();
   const fixture = endpointFixture({ notificationFailure: new Error('FCM unavailable') });
-
-  await handleImageMealRequest({ request: multipartRequest(), response, ...fixture.dependencies });
+  const logged = [];
+  const originalConsoleError = console.error;
+  console.error = (value) => logged.push(value);
+  try {
+    await handleImageMealRequest({ request: multipartRequest(), response, ...fixture.dependencies });
+  } finally {
+    console.error = originalConsoleError;
+  }
 
   assert.equal(response.statusCode, 201);
   assert.equal(fixture.meal().status, 'registered');
   assert.equal(fixture.calls.notifications.length, 1);
+  assert.equal(JSON.parse(logged.at(-1)).message, 'Meal registration notification failed');
+  assert.doesNotMatch(logged.at(-1), /FCM unavailable/);
 });
 
 test('an invalid capture time is rejected before the image is sent to OpenAI', async () => {
@@ -197,7 +205,7 @@ test('an invalid capture time is rejected before the image is sent to OpenAI', a
   assert.equal(fixture.calls.googleHealth.length, 0);
 });
 
-test('an initial image is analyzed by GPT-5.6 Luna and registered through the shared meal flow', async () => {
+test('an initial image is analyzed by GPT-6 Luna and registered through the shared meal flow', async () => {
   const response = responseFixture();
   const fixture = endpointFixture();
 
@@ -205,7 +213,7 @@ test('an initial image is analyzed by GPT-5.6 Luna and registered through the sh
 
   assert.equal(response.statusCode, 201);
   assert.equal(fixture.calls.analysis.length, 1);
-  assert.equal(fixture.calls.analysis[0].model, 'gpt-5.6-luna');
+  assert.equal(fixture.calls.analysis[0].model, 'gpt-6-luna');
   assert.deepEqual(fixture.calls.tokenLookups, ['token-1']);
   assert.equal(response.body.record.eatenAt, '2026-09-21T03:30:00.000Z');
   assert.equal(fixture.calls.notifications.length, 1);
@@ -239,7 +247,7 @@ test('multiple meal images are analyzed in one request and create one Google Hea
   assert.equal(fixture.calls.googleHealth.length, 1);
 });
 
-test('a pending retry reuses the first analysis even when a later model output would differ', async () => {
+test('a pending retry reuses the first analysis without repeating the Google Health POST', async () => {
   const fixture = endpointFixture({
     analysisOutputs: [mealAnalysis('初回の食事 約1人前'), mealAnalysis('再解析なら異なる食事')],
     healthOutcomes: [new Error('Google Health response lost'), 'success'],
@@ -253,11 +261,11 @@ test('a pending retry reuses the first analysis even when a later model output w
     ...fixture.dependencies });
 
   assert.equal(firstResponse.statusCode, 500);
-  assert.equal(retryResponse.statusCode, 201);
+  assert.equal(retryResponse.statusCode, 503);
   assert.equal(fixture.calls.analysis.length, 1);
   assert.equal(fixture.meal().record.foodDisplayName, '初回の食事 約1人前');
-  assert.equal(fixture.calls.googleHealth.length, 2);
-  assert.equal(fixture.calls.notifications.length, 1);
+  assert.equal(fixture.calls.googleHealth.length, 1);
+  assert.equal(fixture.calls.notifications.length, 0);
 });
 
 test('an image validation failure releases the reservation before a retry', async () => {
