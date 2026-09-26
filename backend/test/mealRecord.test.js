@@ -37,8 +37,7 @@ test('image and text results share a model with per-field provenance', () => {
   assert.deepEqual(dataPoint.nutritionLog.totalFat, { grams: 9 });
   assert.deepEqual(dataPoint.nutritionLog.nutrients,
     [{ nutrient: 'PROTEIN', quantity: { grams: 0 } }]);
-  assert.match(dataPoint.name, /^users\/me\/dataTypes\/nutrition-log\/dataPoints\/[a-f0-9]{63}$/);
-  assert.notEqual(toGoogleHealthDataPoint({ ...image, userId: 'user2' }).name, dataPoint.name);
+  assert.equal(dataPoint.name, undefined);
 });
 
 test('text without an interpreted time uses the input time', () => {
@@ -65,7 +64,7 @@ test('meal IDs are not limited by an arbitrary input length', () => {
     analysis: { foodDisplayName: 'Toast' },
   });
   assert.equal(record.mealId, mealId);
-  assert.match(toGoogleHealthDataPoint(record).name, /\/dataPoints\/[a-f0-9]{63}$/);
+  assert.equal(toGoogleHealthDataPoint(record).name, undefined);
 });
 
 test('invalid times and confirmed values are rejected', () => {
@@ -99,15 +98,16 @@ test('Google Health confirms an immediately completed registration', async () =>
       return [{
         done: true,
         promise: async () => [{
-          name: request.dataPoint.name.replace('users/me/', 'users/health-user/'),
+          name: 'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-1',
         }],
       }];
     },
   };
   const name = await createNutritionLog({ healthClient, dataPoint });
-  assert.equal(name.split('/').at(-1), dataPoint.name.split('/').at(-1));
+  assert.equal(name,
+    'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-1');
   assert.equal(sent.parent, 'users/me/dataTypes/nutrition-log');
-  assert.equal(sent.dataPoint.name, dataPoint.name);
+  assert.equal(sent.dataPoint.name, undefined);
   assert.deepEqual(sent.dataPoint.nutritionLog.interval.startUtcOffset, { seconds: 0 });
 });
 
@@ -127,7 +127,7 @@ test('official Google Health client uses the selected user OAuth client', async 
         done: true,
         response: {
           '@type': 'type.googleapis.com/google.devicesandservices.health.v4.DataPoint',
-          name: dataPoint.name,
+          name: 'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-2',
         },
       }), { status: 200, headers: { 'content-type': 'application/json' } });
     },
@@ -137,5 +137,5 @@ test('official Google Health client uses the selected user OAuth client', async 
 
   assert.equal(request.options.method, 'POST');
   assert.match(request.url, /^https:\/\/health\.googleapis\.com(?::443)?\/v4\/users\/me\/dataTypes\/nutrition-log\/dataPoints\?/);
-  assert.equal(JSON.parse(request.options.body).name, dataPoint.name);
+  assert.equal(JSON.parse(request.options.body).name, undefined);
 });

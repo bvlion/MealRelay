@@ -21,7 +21,7 @@ Kotlinで実装した `FoodClassifier` は、同梱した量子化モデルを L
 
 Firebase Cloud Messaging の `onRegistered` callbackからFirebase Installation IDを受け取り、WorkManagerがネットワーク接続時に現在のMealRelay tokenでBackendへ登録します。Google認証後はFirebase Cloud Messaging登録を明示的に要求し、同一Firebase Installation IDでも認証ユーザーの変更がBackendへ反映されます。Firebase Installation IDのSDK内部ファイルと旧Instance ID用共有設定はクラウドバックアップと端末移行から除外します。
 
-ビルド時には、両端末で共通の公開設定 `mealRelayOauthClientId`（Web OAuth client ID）、`mealRelayAuthEndpoint`（Backend HTTPS 関数 URL）、`mealRelayTextEndpoint`（テキスト送信用 Backend HTTPS 関数 URL）、`mealRelayImageEndpoint`（画像送信用 Backend HTTPS 関数 URL）、`mealRelayFirebaseInstallationEndpoint`（Firebase Installation 登録用 Backend HTTPS 関数 URL）を Gradle プロパティで指定します。これらは秘密情報ではありません。Firebase Consoleで `net.ambitious.android.mealrelay` の Android アプリを登録し、取得した `google-services.json` を `app/` に配置します。このファイルはリポジトリへ追加しません。Google Health OAuth client secret と許可メールアドレスは Backend の Secret Manager に置きます。
+ビルド時には、両端末で共通の公開設定 `mealRelayOauthClientId`（Web OAuth client ID）、`mealRelayAuthEndpoint`（Backend HTTPS 関数 URL）、`mealRelayTextEndpoint`（テキスト送信用 Backend HTTPS 関数 URL）、`mealRelayImageEndpoint`（画像送信用 Backend HTTPS 関数 URL）、`mealRelayFirebaseInstallationEndpoint`（Firebase Installation 登録用 Backend HTTPS 関数 URL）が必要です。Gradle プロパティで指定した値を優先し、指定がない場合は `mealrelay.local.properties` から読み込みます。いずれにも値がない場合や空の場合はビルドを失敗させます。これらは秘密情報ではありません。Firebase Consoleで `net.ambitious.android.mealrelay` の Android アプリを登録し、取得した `google-services.json` を `app/` に配置します。このファイルはリポジトリへ追加しません。Google Health OAuth client secret と許可メールアドレスは Backend の Secret Manager に置きます。
 
 分類結果は Room の `meal_relay.db` の `photo_results` テーブルに、MediaStore version、写真のURI、撮影時刻（Unix時刻、ミリ秒）、`is_food`（1または0）として保持します。MediaStore version、generation、登録時刻も同じデータベースの `photo_scan_state` テーブルに保持します。`meal_submission_queue` は画像URIまたはテキスト、元のRFC 3339時刻、UUID の `mealId`、自動送信回数、送信状態を保持します。MediaStore versionが変わった場合は、再同期が完了するまで旧versionの走査状態を維持します。画像の読み込みや分類に失敗した場合は `is_food` をNULLとして記録し、次の写真へ進みます。`meal_relay.db` とSQLiteの付随ファイルはcloud backupとdevice transferから除外します。
 
@@ -37,6 +37,12 @@ Room のschemaは `app/schemas/` に保存します。
 
 - JDK 25
 - Android SDK Platform 37
+
+## Android Studio でのローカル実行
+
+`mealrelay.local.properties.example` を `mealrelay.local.properties` へコピーし、各値を設定します。`mealrelay.local.properties` はGit管理対象外です。
+
+Android Studioで `android/` を開くと、このファイルの値を使って通常のRun/Debugを実行できます。コマンドラインで同じ設定をGradleプロパティとして渡した場合は、その値が `mealrelay.local.properties` より優先されます。
 
 ## 検証
 

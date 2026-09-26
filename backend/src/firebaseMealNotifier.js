@@ -1,5 +1,7 @@
 'use strict';
 
+const { logBackendError } = require('./errorLogging');
+
 const TITLE = '食事を記録しました';
 
 class FirebaseMealNotifier {
@@ -20,6 +22,11 @@ class FirebaseMealNotifier {
         });
       } catch (error) {
         if (error.code === 'messaging/installation-id-not-registered') {
+          logBackendError({
+            message: 'Firebase installation is no longer registered',
+            error,
+            severity: 'WARNING',
+          });
           await this.installationRepository.deactivate(id);
           return;
         }

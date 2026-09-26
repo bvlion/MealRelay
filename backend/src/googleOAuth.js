@@ -29,8 +29,8 @@ async function exchangeGoogleAuthorizationCode({ code, oauthClient, clientId }) 
   let tokens;
   try {
     ({ tokens } = await oauthClient.getToken(code));
-  } catch {
-    throw new AuthenticationError('Google authorization code exchange failed');
+  } catch (error) {
+    throw new AuthenticationError('Google authorization code exchange failed', 401, { cause: error });
   }
   if (!tokens.id_token || !tokens.access_token) {
     throw new AuthenticationError('Google authorization is incomplete');
@@ -38,8 +38,8 @@ async function exchangeGoogleAuthorizationCode({ code, oauthClient, clientId }) 
   let tokenInfo;
   try {
     tokenInfo = await oauthClient.getTokenInfo(tokens.access_token);
-  } catch {
-    throw new AuthenticationError('Google access token verification failed');
+  } catch (error) {
+    throw new AuthenticationError('Google access token verification failed', 401, { cause: error });
   }
   if (!tokenInfo.scopes.includes(GOOGLE_HEALTH_WRITE_SCOPE) ||
       !tokenInfo.scopes.includes(GOOGLE_HEALTH_READ_SCOPE)) {
@@ -52,8 +52,8 @@ async function exchangeGoogleAuthorizationCode({ code, oauthClient, clientId }) 
     const ticket = await oauthClient.verifyIdToken({ idToken: tokens.id_token, audience: clientId });
     sub = ticket.getUserId();
     claims = ticket.getPayload();
-  } catch {
-    throw new AuthenticationError('Google identity verification failed');
+  } catch (error) {
+    throw new AuthenticationError('Google identity verification failed', 401, { cause: error });
   }
   if (!sub || !claims?.email || claims.email_verified !== true) {
     throw new AuthenticationError('Verified Google identity is required');

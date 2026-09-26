@@ -8,6 +8,7 @@ const { getMessaging } = require('firebase-admin/messaging');
 const { completeAuthorization } = require('./src/auth');
 const { loadAuthenticationConfig } = require('./src/config');
 const { AuthenticationError } = require('./src/errors');
+const { logBackendError } = require('./src/errorLogging');
 const { FirestoreAuthRepository } = require('./src/firestoreAuthRepository');
 const { FirebaseInstallationRepository } = require('./src/firebaseInstallationRepository');
 const { FirebaseMealNotifier } = require('./src/firebaseMealNotifier');
@@ -44,8 +45,17 @@ functions.http('authExchange', async (request, response) => {
     });
     response.status(200).json({ token });
   } catch (error) {
-    if (error instanceof AuthenticationError) {
-      response.status(error.status).json({ error: error.message });
+    const isHandled = error instanceof AuthenticationError;
+    const responseStatus = isHandled ? error.status : 500;
+    logBackendError({
+      message: 'Authorization request failed',
+      error,
+      responseStatus,
+      reason: isHandled ? error.message : undefined,
+      severity: responseStatus >= 500 ? 'ERROR' : 'WARNING',
+    });
+    if (isHandled) {
+      response.status(responseStatus).json({ error: error.message });
       return;
     }
     response.status(500).json({ error: 'Authorization could not be completed' });
@@ -54,24 +64,38 @@ functions.http('authExchange', async (request, response) => {
 
 functions.http('imageMeal', async (request, response) => {
   response.set('Cache-Control', 'no-store');
-  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
-  const openaiApiKey = process.env.OPENAI_API_KEY;
-  if (!openaiApiKey || !clientId || !clientSecret) {
-    response.status(500).json({ error: 'Image analysis configuration is incomplete' });
-    return;
+  try {
+    const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+    if (!openaiApiKey || !clientId || !clientSecret) {
+      logBackendError({
+        message: 'Image meal configuration is incomplete',
+        responseStatus: 500,
+        reason: 'Required production configuration is missing',
+      });
+      response.status(500).json({ error: 'Image analysis configuration is incomplete' });
+      return;
+    }
+    const analysisClient = new OpenAI({ apiKey: openaiApiKey });
+    await handleImageMealRequest({
+      request,
+      response,
+      analysisClient,
+      authRepository: repository,
+      mealRepository,
+      clientId,
+      clientSecret,
+      mealNotifier,
+    });
+  } catch (error) {
+    logBackendError({
+      message: 'Image meal entry point failed',
+      error,
+      responseStatus: 500,
+    });
+    if (!response.headersSent) response.status(500).json({ error: 'Meal could not be registered' });
   }
-  const analysisClient = new OpenAI({ apiKey: openaiApiKey });
-  await handleImageMealRequest({
-    request,
-    response,
-    analysisClient,
-    authRepository: repository,
-    mealRepository,
-    clientId,
-    clientSecret,
-    mealNotifier,
-  });
 });
 
 functions.http('firebaseInstallation', async (request, response) => {
@@ -85,21 +109,35 @@ functions.http('firebaseInstallation', async (request, response) => {
 
 functions.http('textMeal', async (request, response) => {
   response.set('Cache-Control', 'no-store');
-  const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
-  const openaiApiKey = process.env.OPENAI_API_KEY;
-  if (!openaiApiKey || !clientId || !clientSecret) {
-    response.status(500).json({ error: 'Text analysis configuration is incomplete' });
-    return;
+  try {
+    const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+    if (!openaiApiKey || !clientId || !clientSecret) {
+      logBackendError({
+        message: 'Text meal configuration is incomplete',
+        responseStatus: 500,
+        reason: 'Required production configuration is missing',
+      });
+      response.status(500).json({ error: 'Text analysis configuration is incomplete' });
+      return;
+    }
+    const analysisClient = new OpenAI({ apiKey: openaiApiKey });
+    await handleTextMealRequest({
+      request,
+      response,
+      analysisClient,
+      authRepository: repository,
+      mealRepository,
+      clientId,
+      clientSecret,
+    });
+  } catch (error) {
+    logBackendError({
+      message: 'Text meal entry point failed',
+      error,
+      responseStatus: 500,
+    });
+    if (!response.headersSent) response.status(500).json({ error: 'Meal could not be registered' });
   }
-  const analysisClient = new OpenAI({ apiKey: openaiApiKey });
-  await handleTextMealRequest({
-    request,
-    response,
-    analysisClient,
-    authRepository: repository,
-    mealRepository,
-    clientId,
-    clientSecret,
-  });
 });

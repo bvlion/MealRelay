@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const { IMAGE_ANALYSIS_MODEL, analyzeMealImage } = require('../src/imageMealAnalysis');
 
-test('GPT-5.6 Luna parses multiple photographs together with confirmed values separate from estimates', async () => {
+test('GPT-6 Luna parses multiple photographs together with confirmed values separate from estimates', async () => {
   let request;
   const client = {
     responses: {

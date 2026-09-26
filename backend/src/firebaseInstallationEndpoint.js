@@ -1,6 +1,7 @@
 'use strict';
 
 const { AuthenticationError } = require('./errors');
+const { logBackendError } = require('./errorLogging');
 const { authenticateMealRelayRequest } = require('./apiAuthentication');
 const {
   InvalidFirebaseInstallationRequestError,
@@ -25,12 +26,20 @@ async function handleFirebaseInstallationRequest({ request, response, authReposi
     await installationRepository.register({ sub, fid });
     response.status(204).end();
   } catch (error) {
-    if (error instanceof InvalidFirebaseInstallationRequestError) {
-      response.status(400).json({ error: error.message });
-      return;
-    }
-    if (error instanceof AuthenticationError) {
-      response.status(error.status).json({ error: error.message });
+    const isHandled = error instanceof InvalidFirebaseInstallationRequestError ||
+      error instanceof AuthenticationError;
+    const responseStatus = error instanceof InvalidFirebaseInstallationRequestError
+      ? 400
+      : error instanceof AuthenticationError ? error.status : 500;
+    logBackendError({
+      message: 'Firebase installation request failed',
+      error,
+      responseStatus,
+      reason: isHandled ? error.message : undefined,
+      severity: responseStatus >= 500 ? 'ERROR' : 'WARNING',
+    });
+    if (isHandled) {
+      response.status(responseStatus).json({ error: error.message });
       return;
     }
     response.status(500).json({ error: 'Firebase installation could not be registered' });

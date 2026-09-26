@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.ksp)
@@ -6,6 +8,18 @@ plugins {
   alias(libs.plugins.hilt)
   alias(libs.plugins.google.services)
 }
+
+val mealRelayLocalProperties = Properties().apply {
+  val localConfigFile = rootProject.file("mealrelay.local.properties")
+  if (localConfigFile.isFile) {
+    localConfigFile.inputStream().use { input -> load(input) }
+  }
+}
+
+fun requiredMealRelayProperty(name: String): String =
+  providers.gradleProperty(name).orNull?.takeIf(String::isNotBlank)
+    ?: mealRelayLocalProperties.getProperty(name)?.takeIf(String::isNotBlank)
+    ?: error("$name must be set with a Gradle property or in mealrelay.local.properties")
 
 room {
   schemaDirectory("$projectDir/schemas")
@@ -27,18 +41,12 @@ android {
     versionCode = 1
     versionName = "1.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    val mealRelayOauthClientId = requireNotNull(
-      providers.gradleProperty("mealRelayOauthClientId").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayOauthClientId must be set" }
-    val mealRelayAuthEndpoint = requireNotNull(
-      providers.gradleProperty("mealRelayAuthEndpoint").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayAuthEndpoint must be set" }
-    val mealRelayTextEndpoint = requireNotNull(
-      providers.gradleProperty("mealRelayTextEndpoint").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayTextEndpoint must be set" }
-    val mealRelayImageEndpoint = requireNotNull(
-      providers.gradleProperty("mealRelayImageEndpoint").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayImageEndpoint must be set" }
+    val mealRelayOauthClientId = requiredMealRelayProperty("mealRelayOauthClientId")
+    val mealRelayAuthEndpoint = requiredMealRelayProperty("mealRelayAuthEndpoint")
+    val mealRelayTextEndpoint = requiredMealRelayProperty("mealRelayTextEndpoint")
+    val mealRelayImageEndpoint = requiredMealRelayProperty("mealRelayImageEndpoint")
+    val mealRelayFirebaseInstallationEndpoint =
+      requiredMealRelayProperty("mealRelayFirebaseInstallationEndpoint")
     buildConfigField(
       "String",
       "MEAL_RELAY_OAUTH_CLIENT_ID",
@@ -59,9 +67,6 @@ android {
       "MEAL_RELAY_IMAGE_ENDPOINT",
       "\"$mealRelayImageEndpoint\"",
     )
-    val mealRelayFirebaseInstallationEndpoint = requireNotNull(
-      providers.gradleProperty("mealRelayFirebaseInstallationEndpoint").orNull?.takeIf(String::isNotBlank),
-    ) { "mealRelayFirebaseInstallationEndpoint must be set" }
     buildConfigField(
       "String",
       "MEAL_RELAY_FIREBASE_INSTALLATION_ENDPOINT",

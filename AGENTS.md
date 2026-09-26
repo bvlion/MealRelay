@@ -52,6 +52,15 @@ validationは永続化処理や外部I/Oの責務へ混在させず、独立し�
 
 可読性の改善は対象Issueの範囲内で必要なものに限り、将来用途だけを理由にした抽象化や過剰な一般化は行わない。
 
+## Backendエラーログ
+
+Backendで例外をHTTP応答へ変換する境界では、原因を追える安全な診断情報をログへ残す。外部API、Firestore、Firebase Cloud Messaging等の失敗について、取得できるstatus、error code、error type、request ID等の非機密メタデータを記録する。
+
+主処理の結果を変えずに継続する非致命的な失敗も、例外を黙って破棄せず記録する。HTTP応答へ変換済みであることや非致命的であることは、ログを残さない理由にしない。
+
+authorization code、access token、refresh token、ID token、API key、client secret、食事本文、画像、メールアドレス等の秘密情報・個人情報をログへ出さない。外部ライブラリ由来のraw error message、stack、response bodyをそのままログへ出さず、必要な診断情報だけを構造化して記録する。
+
+
 ## Android
 
 Androidの実装コードとテストコードはKotlinで統一する。Javaの実装コードは追加しない。

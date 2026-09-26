@@ -8,6 +8,7 @@ function parsedMeal(overrides = {}) {
   return {
     foodDisplayName: 'カップ麺',
     eatenAt: '2026-09-20T20:00:00+09:00',
+    mealType: 'DINNER',
     estimated: {
       energyKcal: null,
       proteinGrams: 9,
@@ -24,7 +25,7 @@ function parsedMeal(overrides = {}) {
   };
 }
 
-test('GPT-5.6 Luna parses relative time and separates explicit nutrition from estimates', async () => {
+test('GPT-6 Luna parses relative time and separates explicit nutrition from estimates', async () => {
   let request;
   const client = {
     responses: {
@@ -48,6 +49,7 @@ test('GPT-5.6 Luna parses relative time and separates explicit nutrition from es
   assert.match(request.input[0].content[0].text, /カップ麺 351kcal/);
   assert.equal(request.text.format.type, 'json_schema');
   assert.equal(analysis.eatenAt, '2026-09-20T20:00:00+09:00');
+  assert.equal(analysis.mealType, 'DINNER');
   assert.deepEqual(analysis.confirmed, {
     energyKcal: { value: 351, origin: 'userInput' },
   });
@@ -56,6 +58,46 @@ test('GPT-5.6 Luna parses relative time and separates explicit nutrition from es
     carbohydrateGrams: 55,
     fatGrams: 14,
   });
+});
+
+test('explicit lunch meal label is preserved as Google Health meal type', async () => {
+  let request;
+  const client = {
+    responses: {
+      parse: async (value) => {
+        request = value;
+        return {
+          output_parsed: parsedMeal({
+            foodDisplayName: 'カレーパン、たまごパン、トースト',
+            eatenAt: null,
+            mealType: 'LUNCH',
+            estimated: {
+              energyKcal: 700,
+              proteinGrams: 20,
+              carbohydrateGrams: 100,
+              fatGrams: 25,
+            },
+            confirmed: {
+              energyKcal: null,
+              proteinGrams: null,
+              carbohydrateGrams: null,
+              fatGrams: null,
+            },
+          }),
+        };
+      },
+    },
+  };
+
+  const analysis = await analyzeTextMeal({
+    client,
+    text: '昼 カレーパン、たまごパン、トースト',
+    inputAt: '2026-09-26T12:30:00+09:00',
+  });
+
+  assert.match(request.instructions, /mealType/);
+  assert.equal(analysis.mealType, 'LUNCH');
+  assert.equal(analysis.eatenAt, undefined);
 });
 
 test('text analysis without structured output is rejected', async () => {

@@ -32,12 +32,13 @@ function responseFixture() {
   };
 }
 
-function textAnalysis({ foodDisplayName = 'トーストとヨーグルト', eatenAt = null,
+function textAnalysis({ foodDisplayName = 'トーストとヨーグルト', eatenAt = null, mealType = null,
   confirmedEnergyKcal = null, estimatedEnergyKcal = 420, proteinGrams = 12,
   carbohydrateGrams = 35, fatGrams = 8 } = {}) {
   return {
     foodDisplayName,
     eatenAt,
+    mealType,
     estimated: { energyKcal: estimatedEnergyKcal, proteinGrams, carbohydrateGrams, fatGrams },
     confirmed: {
       energyKcal: confirmedEnergyKcal === null
@@ -123,7 +124,7 @@ function endpointFixture({ analysisOutputs = [textAnalysis()], healthOutcomes = 
           calls.googleHealth.push(request);
           const outcome = healthOutcomes[healthIndex++];
           if (outcome instanceof Error) throw outcome;
-          return [{ promise: async () => [{ name: request.dataPoint.name }] }];
+          return [{ promise: async () => [{ name: 'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-1' }] }];
         },
       },
     },
@@ -170,7 +171,7 @@ test('natural text without a date uses input time and reaches the authenticated 
 
   assert.equal(response.statusCode, 201);
   assert.equal(fixture.calls.analysis.length, 1);
-  assert.equal(fixture.calls.analysis[0].model, 'gpt-5.6-luna');
+  assert.equal(fixture.calls.analysis[0].model, 'gpt-6-luna');
   assert.deepEqual(fixture.calls.tokenLookups, ['token-1']);
   assert.equal(response.body.record.userId, 'user1');
   assert.equal(response.body.record.eatenAt, '2026-09-20T23:00:00.000Z');
@@ -179,6 +180,26 @@ test('natural text without a date uses input time and reaches the authenticated 
   assert.deepEqual(response.body.record.nutrition.proteinGrams.estimated,
     { value: 12, origin: 'textAnalysis' });
   assert.equal(fixture.calls.googleHealth.length, 1);
+});
+
+test('explicit lunch label reaches Google Health as LUNCH', async () => {
+  const response = responseFixture();
+  const fixture = endpointFixture({
+    analysisOutputs: [textAnalysis({
+      foodDisplayName: 'カレーパン、たまごパン、トースト',
+      mealType: 'LUNCH',
+    })],
+  });
+
+  await handleTextMealRequest({
+    request: requestFixture({ text: '昼 カレーパン、たまごパン、トースト' }),
+    response,
+    ...fixture.dependencies,
+  });
+
+  assert.equal(response.statusCode, 201);
+  assert.equal(response.body.record.mealType, 'LUNCH');
+  assert.equal(fixture.calls.googleHealth[0].dataPoint.nutritionLog.mealType, 'LUNCH');
 });
 
 test('relative date text is converted from the input time', async () => {
@@ -280,4 +301,31 @@ test('a saved meal ID rejects a retry with different text before analysis', asyn
   assert.equal(firstResponse.statusCode, 201);
   assert.equal(changedResponse.statusCode, 409);
   assert.equal(fixture.calls.analysis.length, 1);
+});
+
+
+
+test('an unexpected registration failure is logged at the request boundary', async () => {
+  const response = responseFixture();
+  const failure = new Error('sensitive upstream detail');
+  failure.code = 7;
+  failure.response = { status: 403, data: { error: 'permission_denied' } };
+  const fixture = endpointFixture({ healthOutcomes: [failure] });
+  const logged = [];
+  const originalConsoleError = console.error;
+  console.error = (value) => logged.push(value);
+  try {
+    await handleTextMealRequest({ request: requestFixture(), response, ...fixture.dependencies });
+  } finally {
+    console.error = originalConsoleError;
+  }
+
+  assert.equal(response.statusCode, 500);
+  const entry = JSON.parse(logged.at(-1));
+  assert.equal(entry.message, 'Text meal request failed');
+  assert.equal(entry.responseStatus, 500);
+  assert.equal(entry.errorCode, 7);
+  assert.equal(entry.upstreamStatus, 403);
+  assert.equal(entry.upstreamError, 'permission_denied');
+  assert.doesNotMatch(logged.at(-1), /sensitive upstream detail/);
 });

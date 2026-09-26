@@ -6,13 +6,15 @@ const { FirestoreMealRepository } = require('../src/firestoreMealRepository');
 const { GoogleHealthPendingError } = require('../src/googleHealthNutrition');
 const { completeMealRegistration, registerMeal } = require('../src/registerMeal');
 
+const SERVER_GOOGLE_HEALTH_NAME =
+  'users/health-user/dataTypes/nutrition-log/dataPoints/server-generated-1';
+
 function registrationFixture({ route = 'image', mealId = 'photo-1',
   occurredAt = '2026-01-01T12:00:00Z', analysis = { foodDisplayName: 'Rice' },
-  createOperation = ({ dataPoint }) => ({
+  createOperation = () => ({
     done: true,
-    promise: async () => [{ name: dataPoint.name }],
-  }),
-  getPoint = () => { throw { code: 5 }; } } = {}) {
+    promise: async () => [{ name: SERVER_GOOGLE_HEALTH_NAME }],
+  }) } = {}) {
   const documents = new Map();
   const firestore = {
     collection: () => ({ doc: (id) => ({
@@ -33,15 +35,11 @@ function registrationFixture({ route = 'image', mealId = 'photo-1',
       delete: (reference) => { documents.delete(reference.id); },
     }),
   };
-  const calls = { create: [], get: [], credentials: [] };
+  const calls = { create: [], credentials: [] };
   const healthClient = {
     createDataPoint: async (request) => {
       calls.create.push(request);
       return [await createOperation(request, calls.create.length)];
-    },
-    getDataPoint: async (request) => {
-      calls.get.push(request);
-      return [await getPoint(request)];
     },
   };
   const args = {
@@ -112,7 +110,9 @@ test('registration uses token owner credentials and remains idempotent on retry'
   assert.equal(first.isAlreadyRegistered, false);
   assert.equal(second.isAlreadyRegistered, true);
   assert.equal(calls.create.length, 1);
+  assert.equal(calls.create[0].dataPoint.name, undefined);
   assert.equal(savedMeal(documents).status, 'registered');
+  assert.equal(savedMeal(documents).googleHealthName, SERVER_GOOGLE_HEALTH_NAME);
   assert.deepEqual(calls.credentials, [{ refresh_token: 'refresh-1' }]);
   assert.equal(first.record.userId, 'user1');
   assert.equal(documents.size, 1);
@@ -133,12 +133,10 @@ test('a pending operation becomes registered only after Google Health reports su
   const { args, calls, documents } = registrationFixture({
     route: 'text', mealId: 'text-1', occurredAt: '2026-01-03T20:00:00+09:00',
     analysis: { foodDisplayName: 'Toast', eatenAt: '2026-01-01T08:00:00+09:00' },
-    createOperation: ({ dataPoint }) => ({
+    createOperation: () => ({
       done: false,
       promise: () => new Promise((resolve) => {
-        completeOperation = () => resolve([{
-          name: dataPoint.name.replace('users/me/', 'users/health-user/'),
-        }]);
+        completeOperation = () => resolve([{ name: SERVER_GOOGLE_HEALTH_NAME }]);
       }),
     }),
   });
@@ -167,28 +165,9 @@ test('a pending operation that does not create a point is not marked registered'
 
   assert.equal(savedMeal(documents).status, 'pending');
   assert.equal(calls.create.length, 1);
-});
 
-test('a conflict without a readable point stays pending until the point exists', async () => {
-  let isPointVisible = false;
-  const { args, calls, documents } = registrationFixture({
-    createOperation: (_request, attempt) => {
-      if (attempt === 1) throw new Error('Response lost');
-      throw { code: 6 };
-    },
-    getPoint: ({ name }) => {
-      if (!isPointVisible) throw { code: 5 };
-      return { name: name.replace('users/me/', 'users/health-user/') };
-    },
-  });
-
-  await assert.rejects(registerReserved(args), /Response lost/);
   const record = savedMeal(documents).record;
   await assert.rejects(completeSaved(args, record, 'pending'), GoogleHealthPendingError);
-  assert.equal(savedMeal(documents).status, 'pending');
-  isPointVisible = true;
-  await completeSaved(args, record, 'pending');
-
-  assert.equal(savedMeal(documents).status, 'registered');
-  assert.equal(calls.create.length, 2);
+  assert.equal(calls.create.length, 1);
 });
+
