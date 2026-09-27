@@ -11,8 +11,11 @@ permissions:
   contents: read
 
 jobs:
-  ci:
+  changes:
     runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.classify.outputs.android }}
+      backend: ${{ steps.classify.outputs.backend }}
 
     steps:
       - name: Checkout
@@ -20,8 +23,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine changed paths
-        id: changes
+      - name: Check diff and classify changed paths
+        id: classify
         shell: bash
         run: |
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
@@ -46,19 +49,25 @@ jobs:
             echo "backend=false" >> "$GITHUB_OUTPUT"
           fi
 
+  android:
+    needs: changes
+    if: needs.changes.outputs.android == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Set up JDK 25
-        if: steps.changes.outputs.android == 'true'
         uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "25"
 
       - name: Set up Gradle
-        if: steps.changes.outputs.android == 'true'
         uses: gradle/actions/setup-gradle@v6
 
       - name: Prepare Android CI configuration
-        if: steps.changes.outputs.android == 'true'
         shell: bash
         run: |
           cat > android/app/google-services.json <<'JSON'
@@ -74,15 +83,19 @@ jobs:
                   "android_client_info": {
                     "package_name": "net.ambitious.android.mealrelay"
                   }
-                }
+                },
+                "api_key": [
+                  {
+                    "current_key": "ci-not-a-real-api-key"
+                  }
+                ]
               }
             ],
             "configuration_version": "1"
           }
           JSON
 
-      - name: Android build, unit tests, and lint
-        if: steps.changes.outputs.android == 'true'
+      - name: Build, unit tests, and lint
         working-directory: android
         run: >-
           ./gradlew
@@ -95,20 +108,26 @@ jobs:
           -PmealRelayImageEndpoint=https://example.invalid/image
           -PmealRelayFirebaseInstallationEndpoint=https://example.invalid/firebase-installation
 
+  backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
       - name: Set up Node.js 24
-        if: steps.changes.outputs.backend == 'true'
         uses: actions/setup-node@v6
         with:
           node-version: "24"
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
-      - name: Install Backend dependencies
-        if: steps.changes.outputs.backend == 'true'
+      - name: Install dependencies
         working-directory: backend
         run: npm ci
 
-      - name: Run Backend tests
-        if: steps.changes.outputs.backend == 'true'
+      - name: Run tests
         working-directory: backend
         run: npm test
