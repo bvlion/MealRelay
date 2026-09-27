@@ -1,0 +1,114 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+
+concurrency:
+  group: pr-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed paths
+        id: changes
+        shell: bash
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          MERGE_BASE="$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
+          CHANGED_FILES="$(git diff --name-only "$MERGE_BASE" "$HEAD_SHA")"
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          git diff --check "$MERGE_BASE" "$HEAD_SHA"
+
+          if echo "$CHANGED_FILES" | grep -Eq '^(android/|\.github/workflows/pr-ci\.yml$)'; then
+            echo "android=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "android=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if echo "$CHANGED_FILES" | grep -Eq '^(backend/|\.github/workflows/pr-ci\.yml$)'; then
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up JDK 25
+        if: steps.changes.outputs.android == 'true'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Set up Gradle
+        if: steps.changes.outputs.android == 'true'
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Prepare Android CI configuration
+        if: steps.changes.outputs.android == 'true'
+        shell: bash
+        run: |
+          cat > android/app/google-services.json <<'JSON'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "mealrelay-ci"
+            },
+            "client": [
+              {
+                "client_info": {
+                  "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
+                  "android_client_info": {
+                    "package_name": "net.ambitious.android.mealrelay"
+                  }
+                }
+              }
+            ],
+            "configuration_version": "1"
+          }
+          JSON
+
+      - name: Android build, unit tests, and lint
+        if: steps.changes.outputs.android == 'true'
+        working-directory: android
+        run: >-
+          ./gradlew
+          testDebugUnitTest
+          lintDebug
+          assembleDebug
+          -PmealRelayOauthClientId=ci-client-id
+          -PmealRelayAuthEndpoint=https://example.invalid/auth
+          -PmealRelayTextEndpoint=https://example.invalid/text
+          -PmealRelayImageEndpoint=https://example.invalid/image
+          -PmealRelayFirebaseInstallationEndpoint=https://example.invalid/firebase-installation
+
+      - name: Set up Node.js 24
+        if: steps.changes.outputs.backend == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install Backend dependencies
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: backend
+        run: npm ci
+
+      - name: Run Backend tests
+        if: steps.changes.outputs.backend == 'true'
+        working-directory: backend
+        run: npm test
